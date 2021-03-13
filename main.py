@@ -4,7 +4,10 @@ import random
 # 必要な設定を定義
 ACCESS_TOKEN = 'ODIwMjcwNTYwOTUyMTg4OTQ4.YEyufQ.XtPyfFRuytMTU06fW85jnVbsCVE'
 ready_message = "接続し、準備ができました"
-bot_ch_id = 813717329296228393
+# CC botチャンネル
+# bot_ch_id = 813717329296228393
+# Discord Test Server
+bot_ch_id = 817733583833792515
 
 random_contents = [
     "にゃーん",
@@ -29,11 +32,16 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot:
         return
-    if message.content == "にあちゃん" and message.channel.id == bot_ch_id:
-        content = random.choice(random_contents)
+    if message.content == "にあちゃん":
         print('チャンネル名：' + str(message.channel))
+        print('チャンネルID: ' + str(message.channel.id))
         print('メッセージ受信を確認。 内容：' + message.content)
-        await message.channel.send(content)
-        print('反応を送信しました。 内容：' + content)
+        if message.channel.id == bot_ch_id:
+           content = random.choice(random_contents)
+
+           await message.channel.send(content)
+           print('IDが一致したため、反応を送信しました。 内容：' + content)
+        elif message.channel.id != bot_ch_id:
+           print('IDが一致しないため、返信しませんでした')
 
 client.run(ACCESS_TOKEN)
