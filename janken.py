@@ -25,7 +25,35 @@ random_contents = [
     "みら姉"
 ]
 
-janken_hand = ['パー','チョキ','グー']
+janken_hand = [
+    'ぱー！　',
+    'ちょき！　',
+    'ぐー！　'
+]
+
+janken_hand_p = 'ぱー！　'
+
+janken_hand_c = 'ちょき！　'
+
+janken_hand_g = 'ぐー！　'
+
+janken_start_mes = [
+    'じゃんけんするんだね？いくよー！じゃんけん……'
+]
+
+janken_win_mes = [
+    "私の勝ち！"
+    "まだまだだね！"
+]
+
+janken_lose_mes = [
+    "負けちゃった～"
+    "くっそー、もう一回！"
+]
+
+janeken_favour_mes = [
+    "あーいこーで……"
+]
 
 client = discord.Client()
 
@@ -50,22 +78,39 @@ async def on_message(message):
     if message.author.bot:
         return
     if model.state == 'ON':
-     pass
+        bot_hand = random.choice(janken_hand)
+        if message.channel.id == bot_ch_id:
+            if message.content == "ぐー" and bot_hand == janken_hand_p \
+                    or message.content == "ぱー" and bot_hand == janken_hand_c \
+                    or message.content == "ちょき" and bot_hand == janken_hand_g:
+                await message.channel.send(bot_hand + random.choice(janken_win_mes))
+                print('結果：botの勝ち　じゃんけんモード終了')
+                model.switch_OFF()
+            elif message.content == "ぐー" and bot_hand == janken_hand_c \
+                    or message.content == "ぱー" and bot_hand == janken_hand_g \
+                    or message.content == "ちょき" and bot_hand == janken_hand_p:
+                await message.channel.send(bot_hand + random.choice(janken_lose_mes))
+                print('結果：botの負け　じゃんけんモード終了')
+                model.switch_OFF()
+            elif message.content in bot_hand:
+                await message.channel.send(bot_hand + random.choice(janeken_favour_mes))
+                print('結果：あいこ　じゃんけんモード継続')
     elif model.state == 'OFF':
         if message.content == "にあちゃん":
-          print('チャンネル名：' + str(message.channel))
-          print('チャンネルID: ' + str(message.channel.id))
-          print('メッセージ受信を確認。 内容：' + message.content)
-          if message.channel.id == bot_ch_id and message.content == 'じゃんけん':
-             model.switch_ON()
-             print('じゃんけんモードに入ります')
-             await message.channel.send('じゃんけんするんだね？いくよー！じゃんけん…')
-          elif message.channel.id == bot_ch_id:
-             content = random.choice(random_contents)
-             await message.channel.send(content)
-             print('IDが一致したため、反応を送信しました。 内容：' + content)
-          elif message.channel.id != bot_ch_id:
-             print('IDが一致しないため、返信しませんでした')
+            print('チャンネル名：' + str(message.channel))
+            print('チャンネルID: ' + str(message.channel.id))
+            print('メッセージ受信：' + message.content)
+            if message.channel.id == bot_ch_id:
+                content = random.choice(random_contents)
+                await message.channel.send(content)
+                print('IDが一致　反応：' + content)
+            elif message.channel.id != bot_ch_id:
+                print('IDが不一致')
+        elif message.channel.id == bot_ch_id and 'じゃんけん' in message.content:
+            model.switch_ON()
+            print('じゃんけんモードへ遷移')
+            await message.channel.send(random.choice(janken_start_mes))
+
 
 client.run(ACCESS_TOKEN)
 
