@@ -42,17 +42,18 @@ janken_start_mes = [
 ]
 
 janken_win_mes = [
-    "私の勝ち！"
+    "私の勝ち！",
     "まだまだだね！"
 ]
 
 janken_lose_mes = [
-    "負けちゃった～"
+    "負けちゃった～",
     "くっそー、もう一回！"
 ]
 
 janeken_favour_mes = [
-    "あーいこーで……"
+    "やるね！　あーいこーで……",
+    "さすが！　あーいこーで……"
 ]
 
 client = discord.Client()
@@ -77,24 +78,34 @@ async def on_ready():
 async def on_message(message):
     if message.author.bot:
         return
+
+    # じゃんけんモード
     if model.state == 'ON':
         bot_hand = random.choice(janken_hand)
         if message.channel.id == bot_ch_id:
+            # bot勝利ルート
             if message.content == "ぐー" and bot_hand == janken_hand_p \
                     or message.content == "ぱー" and bot_hand == janken_hand_c \
                     or message.content == "ちょき" and bot_hand == janken_hand_g:
-                await message.channel.send(bot_hand + random.choice(janken_win_mes))
+                result_mes = random.choice(janken_win_mes)
+                await message.channel.send(bot_hand + result_mes)
                 print('結果：botの勝ち　じゃんけんモード終了')
                 model.switch_OFF()
+            # bot敗北ルート
             elif message.content == "ぐー" and bot_hand == janken_hand_c \
                     or message.content == "ぱー" and bot_hand == janken_hand_g \
                     or message.content == "ちょき" and bot_hand == janken_hand_p:
-                await message.channel.send(bot_hand + random.choice(janken_lose_mes))
+                result_mes = random.choice(janken_lose_mes)
+                await message.channel.send(bot_hand + result_mes)
                 print('結果：botの負け　じゃんけんモード終了')
                 model.switch_OFF()
+            # あいこルート
             elif message.content in bot_hand:
-                await message.channel.send(bot_hand + random.choice(janeken_favour_mes))
+                result_mes = random.choice(janeken_favour_mes)
+                await message.channel.send(bot_hand + result_mes)
                 print('結果：あいこ　じゃんけんモード継続')
+
+    # 通常モード
     elif model.state == 'OFF':
         if message.content == "にあちゃん":
             print('チャンネル名：' + str(message.channel))
@@ -106,6 +117,7 @@ async def on_message(message):
                 print('IDが一致　反応：' + content)
             elif message.channel.id != bot_ch_id:
                 print('IDが不一致')
+        # じゃんけん起動
         elif message.channel.id == bot_ch_id and 'じゃんけん' in message.content:
             model.switch_ON()
             print('じゃんけんモードへ遷移')
