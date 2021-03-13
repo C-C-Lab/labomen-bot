@@ -1,13 +1,14 @@
 from transitions import Machine
 import discord
 import random
+from threading import Timer
 
-states = ['OFF', 'ON', 'timeout']    #状態の定義
+states = ['OFF', 'ON', 'TIMEOUT']    #状態の定義
 
 transitions = [
     {'trigger':'switch_ON', 'source':'OFF', 'dest':'ON'},       # 状態OFFからONへの遷移定義
     {'trigger':'switch_OFF', 'source':'*', 'dest':'OFF'},      # 全状態からOFFへの遷移定義
-    {'trigger':'switch_TIMEOUT', 'source':'ON', 'dest':'timeout'},      # 状態ONからtimeoutへの遷移定義
+    {'trigger':'switch_TIMEOUT', 'source':'ON', 'dest':'TIMEOUT'},      # 状態ONからtimeoutへの遷移定義
 ]
 
 # 必要な設定を定義
@@ -66,6 +67,10 @@ model = Model()
 machine = Machine(model=model, states=states, transitions=transitions, initial=states[0],
                   auto_transitions=False, ordered_transitions=False)
 
+def timeout():
+    print("タイムアウト")
+    model.switch_OFF()
+
 # テストコード
 # print(model.state)
 # model.switch_ON()
@@ -91,12 +96,15 @@ async def on_message(message):
 
     # じゃんけんモード
     if model.state == 'ON':
+        timeout_counter = Timer(10, timeout, ())
+        timeout_counter.start()
         bot_hand = random.choice(janken_hand)
         if message.channel.id == bot_ch_id:
             # bot勝利ルート
             if message.content == "ぐー" and bot_hand == janken_hand_p \
                     or message.content == "ぱー" and bot_hand == janken_hand_c \
                     or message.content == "ちょき" and bot_hand == janken_hand_g:
+                timeout_counter.cancel()
                 result_mes = random.choice(janken_win_mes)
                 await message.channel.send(bot_hand + result_mes)
                 print('結果：botの勝ち　じゃんけんモード終了')
@@ -105,12 +113,16 @@ async def on_message(message):
             elif message.content == "ぐー" and bot_hand == janken_hand_c \
                     or message.content == "ぱー" and bot_hand == janken_hand_g \
                     or message.content == "ちょき" and bot_hand == janken_hand_p:
+                timeout_counter.cancel()
                 result_mes = random.choice(janken_lose_mes)
                 await message.channel.send(bot_hand + result_mes)
                 print('結果：botの負け　じゃんけんモード終了')
                 model.switch_OFF()
             # あいこルート
             elif message.content in bot_hand:
+                timeout_counter.cancel()
+                timeout_counter = Timer(10, timeout, ())
+                timeout_counter.start()
                 result_mes = random.choice(janeken_favour_mes)
                 await message.channel.send(bot_hand + result_mes)
                 print('結果：あいこ　じゃんけんモード継続')
