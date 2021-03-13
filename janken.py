@@ -1,6 +1,7 @@
 from transitions import Machine
 import discord
 import random
+import datetime
 
 states = ['OFF', 'ON', 'TIMEOUT']    #状態の定義
 
@@ -86,11 +87,13 @@ async def on_ready():
 # メッセージ待受イベント
 @client.event
 async def on_message(message):
+    dt_now = str(datetime.datetime.now())
 
     if message.author.bot:
         return
     # じゃんけんモード
     elif model.state == 'ON':
+        print('時刻：' + dt_now)
         bot_hand = random.choice(janken_hand)
         if message.channel.id == bot_ch_id:
             # bot勝利ルート
@@ -116,6 +119,7 @@ async def on_message(message):
                 print('結果：あいこ　じゃんけんモード継続')
     # 通常モード
     elif model.state == 'OFF':
+        print('時刻：' + dt_now)
         if message.content == "にあちゃん":
             print('チャンネル名：' + str(message.channel))
             print('チャンネルID: ' + str(message.channel.id))
