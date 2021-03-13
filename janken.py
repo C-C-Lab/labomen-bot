@@ -2,11 +2,12 @@ from transitions import Machine
 import discord
 import random
 
-states = ['OFF', 'ON']    #状態の定義
+states = ['OFF', 'ON', 'timeout']    #状態の定義
 
 transitions = [
     {'trigger':'switch_ON', 'source':'OFF', 'dest':'ON'},       # 状態OFFからONへの遷移定義
-    {'trigger':'switch_OFF', 'source':'ON', 'dest':'OFF'},      # 状態ONからOFFへの遷移定義
+    {'trigger':'switch_OFF', 'source':'*', 'dest':'OFF'},      # 全状態からOFFへの遷移定義
+    {'trigger':'switch_TIMEOUT', 'source':'ON', 'dest':'timeout'},      # 状態ONからtimeoutへの遷移定義
 ]
 
 # 必要な設定を定義
@@ -64,6 +65,15 @@ class Model(object):
 model = Model()
 machine = Machine(model=model, states=states, transitions=transitions, initial=states[0],
                   auto_transitions=False, ordered_transitions=False)
+
+# テストコード
+# print(model.state)
+# model.switch_ON()
+# print(model.state)
+# model.switch_TIMEOUT()
+# print(model.state)
+# model.switch_OFF()
+# print(model.state)
 
 # アプリスタート時に走るイベント
 @client.event
