@@ -80,10 +80,12 @@ async def on_ready():
     print(ready_message)
     print(discord.__title__ + " ライブラリのバージョン：" + discord.__version__)
     print(discord.__copyright__)
+    print('現在のモード: '+ mode.state)
 
 # メッセージ待受イベント
 @client.event
 async def on_message(message):
+    print('現在のモード: '+ mode.state)
     dt_now = str(datetime.datetime.now())
 
     if message.author.bot:
@@ -99,9 +101,9 @@ async def on_message(message):
             if message.channel.id == bot_ch_id:
                 content = random.choice(random_contents)
                 await message.channel.send(content)
-                print('channel idが一致 -> 反応：' + content)
+                print('channel_id が一致 -> 反応：' + content)
             elif message.channel.id != bot_ch_id:
-                print('channel idが不一致 -> 反応なし')
+                print('channel_id が不一致 -> 反応なし')
         # じゃんけん起動
         elif message.channel.id == bot_ch_id and 'じゃんけん' in message.content:
             mode.to_JANKEN()
