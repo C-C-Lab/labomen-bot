@@ -5,25 +5,27 @@ import datetime
 import pickle
 
 
-### ここからtransitionsの設定 ###
+# ここからtransitionsの設定
 # 状態の定義
-states = ['NORMAL','JANKEN', 'TIMEOUT']
+states = ['NORMAL', 'JANKEN', 'TIMEOUT']
 
 # 状態変化の定義
 transitions = [
-    {'trigger':'to_NORMAL', 'source':'*', 'dest':'NORMAL'},
-    {'trigger':'to_JANKEN', 'source':'*', 'dest':'JANKEN'},
-    {'trigger':'to_TIMEOUT', 'source':'*', 'dest':'TIMEOUT'},
+    {'trigger': 'to_NORMAL', 'source': '*', 'dest': 'NORMAL'},
+    {'trigger': 'to_JANKEN', 'source': '*', 'dest': 'JANKEN'},
+    {'trigger': 'to_TIMEOUT', 'source': '*', 'dest': 'TIMEOUT'},
 ]
+
 
 class Model(object):
     pass
+
 
 mode = Model()
 machine = Machine(model=mode, states=states, transitions=transitions, initial=states[0],
                   auto_transitions=False, ordered_transitions=False)
 
-### ここまでtransitionsの設定 ###
+# ここまでtransitionsの設定
 
 # discordの設定
 ACCESS_TOKEN = 'ODIwMjcwNTYwOTUyMTg4OTQ4.YEyufQ.XtPyfFRuytMTU06fW85jnVbsCVE'
@@ -37,7 +39,7 @@ ready_message = "接続し、準備ができました"
 bot_ch_ids = [
     817733583833792515,
     813717329296228393
-    ]
+]
 
 random_contents = [
     "にゃーん",
@@ -80,6 +82,7 @@ janeken_favour_mes = [
 
 client = discord.Client()
 
+
 # アプリスタート時に走るイベント
 @client.event
 async def on_ready():
@@ -87,27 +90,26 @@ async def on_ready():
     print(ready_message)
     print(discord.__title__ + " ライブラリのバージョン：" + discord.__version__)
     print(discord.__copyright__)
-    print('現在のモード: '+ mode.state)
-
+    print('現在のモード: ' + mode.state)
 
 
 # メッセージ待受イベント
 @client.event
 async def on_message(message):
-    print('現在のモード: '+ mode.state)
+    print('現在のモード: ' + mode.state)
     dt_now = datetime.datetime.now()
 
     if message.author.bot:
         return
     else:
         print('時刻：' + str(dt_now))
-        with open('timeout.pkl','rb') as dt_pkl:
+        with open('timeout.pkl', 'rb') as dt_pkl:
             dt_recent = pickle.load(dt_pkl)
             if dt_now - dt_recent > datetime.timedelta(0, 20):
                 print('20秒以上経過　NORMALへ遷移')
                 mode.to_NORMAL()
-        with open('timeout.pkl','wb') as dt_pkl:
-            pickle.dump(dt_now , dt_pkl)
+        with open('timeout.pkl', 'wb') as dt_pkl:
+            pickle.dump(dt_now, dt_pkl)
         print('チャンネル名：' + str(message.channel))
         print('チャンネルID: ' + str(message.channel.id))
         print('メッセージ受信：' + message.content)
@@ -150,7 +152,7 @@ async def on_message(message):
                     await message.channel.send(bot_hand + result_mes)
                     print('結果：あいこ　JANKEN継続')
         elif message.channel.id not in bot_ch_ids:
-                print('message.channel.id が不一致 -> 反応なし')
-                return
+            print('message.channel.id が不一致 -> 反応なし')
+            return
 
 client.run(ACCESS_TOKEN)
