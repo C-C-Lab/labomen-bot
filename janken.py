@@ -2,6 +2,7 @@ from transitions import Machine
 import discord
 import random
 import datetime
+import pickle
 
 
 ### ここからtransitionsの設定 ###
@@ -88,16 +89,25 @@ async def on_ready():
     print(discord.__copyright__)
     print('現在のモード: '+ mode.state)
 
+
+
 # メッセージ待受イベント
 @client.event
 async def on_message(message):
     print('現在のモード: '+ mode.state)
-    dt_now = str(datetime.datetime.now())
+    dt_now = datetime.datetime.now()
 
     if message.author.bot:
         return
     else:
-        print('時刻：' + dt_now)
+        print('時刻：' + str(dt_now))
+        with open('timeout.pkl','rb') as dt_pkl:
+            dt_recent = pickle.load(dt_pkl)
+            if dt_now - dt_recent > datetime.timedelta(0, 20):
+                print('20秒以上経過　NORMALへ遷移')
+                mode.to_NORMAL()
+        with open('timeout.pkl','wb') as dt_pkl:
+            pickle.dump(dt_now , dt_pkl)
         print('チャンネル名：' + str(message.channel))
         print('チャンネルID: ' + str(message.channel.id))
         print('メッセージ受信：' + message.content)
