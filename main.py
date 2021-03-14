@@ -32,11 +32,6 @@ ACCESS_TOKEN = settings.ACCESS_TOKEN
 bot_ch_ids = settings.CHANNEL_IDS
 ready_message = "接続し、準備ができました"
 
-# bot ch in CC
-# 813717329296228393
-# Discord Test Server
-# 817733583833792515
-
 random_contents = [
     "にゃーん",
     "わん！",
