@@ -44,6 +44,8 @@ async def on_ready():
     print(discord.__title__ + " ライブラリのバージョン：" + discord.__version__)
     print(discord.__copyright__)
     print('現在のモード: ' + mode.state)
+    with open('timeout.pkl', 'wb') as dt_pkl:
+        pickle.dump(datetime.datetime.now(), dt_pkl)
 
 
 # メッセージ待受イベント
