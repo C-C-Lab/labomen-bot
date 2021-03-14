@@ -29,7 +29,7 @@ machine = Machine(model=mode, states=states, transitions=transitions, initial=st
 
 # discordの設定
 ACCESS_TOKEN = settings.ACCESS_TOKEN
-bot_ch_id = settings.CHANNEL_ID
+bot_ch_ids = settings.CHANNEL_IDS
 ready_message = "接続し、準備ができました"
 
 # bot ch in CC
@@ -109,7 +109,7 @@ async def on_message(message):
         print('チャンネル名：' + str(message.channel))
         print('チャンネルID: ' + str(message.channel.id))
         print('メッセージ受信：' + message.content)
-        if message.channel.id == int(bot_ch_id):
+        if str(message.channel.id) in bot_ch_ids:
             # 通常モード
             if mode.state == 'NORMAL':
                 if 'にあちゃん' in message.content:
@@ -147,7 +147,7 @@ async def on_message(message):
                     result_mes = random.choice(janeken_favour_mes)
                     await message.channel.send(bot_hand + result_mes)
                     print('結果：あいこ　JANKEN継続')
-        elif message.channel.id != int(bot_ch_id):
+        elif str(message.channel.id) not in bot_ch_ids:
             print('message.channel.id が不一致 -> 反応なし')
             return
 
