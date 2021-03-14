@@ -5,16 +5,8 @@ import datetime
 import pickle
 import settings
 
-# ここからtransitionsの設定
-# 状態の定義
-states = ['NORMAL', 'JANKEN', 'TIMEOUT']
-
-# 状態変化の定義
-transitions = [
-    {'trigger': 'to_NORMAL', 'source': '*', 'dest': 'NORMAL'},
-    {'trigger': 'to_JANKEN', 'source': '*', 'dest': 'JANKEN'},
-    {'trigger': 'to_TIMEOUT', 'source': '*', 'dest': 'TIMEOUT'},
-]
+states = settings.STATES
+transitions = settings.TRAMSITIONS
 
 
 class Model(object):
@@ -30,46 +22,16 @@ machine = Machine(model=mode, states=states, transitions=transitions, initial=st
 # discordの設定
 ACCESS_TOKEN = settings.ACCESS_TOKEN
 BOT_CH_IDS = settings.CHANNEL_IDS
-ready_message = "接続し、準備ができました"
-
-random_contents = [
-    "にゃーん",
-    "わん！",
-    "コケッコッコー",
-    "お嬢",
-    "みら姉"
-]
-
-janken_hand = [
-    'ぱー！　',
-    'ちょき！　',
-    'ぐー！　'
-]
-
-janken_hand_p = 'ぱー！　'
-
-janken_hand_c = 'ちょき！　'
-
-janken_hand_g = 'ぐー！　'
-
-janken_start_mes = [
-    'じゃんけんするんだね？いくよー！じゃんけん……'
-]
-
-janken_win_mes = [
-    "私の勝ち！",
-    "まだまだだね！"
-]
-
-janken_lose_mes = [
-    "負けちゃった～",
-    "くっそー、もう一回！"
-]
-
-janeken_favour_mes = [
-    "やるね！　あーいこーで……",
-    "さすが！　あーいこーで……"
-]
+ready_message = settings.READY_MESSAGE
+random_contents = settings.RANDOM_CONTENTS
+janken_hands = settings.JANKEN_HANDS
+janken_hand_p = settings.JANKEN_HAND_P
+janken_hand_c = settings.JANKEN_HAND_C
+janken_hand_g = settings.JANKEN_HAND_G
+janken_start_mes = settings.JANKEN_START_MES
+janken_win_mes = settings.JANKEN_WIN_MES
+janken_lose_mes = settings.JANKEN_LOSE_MES
+janeken_favour_mes = settings.JANKEN_FAVOUR_MES
 
 client = discord.Client()
 
@@ -120,7 +82,7 @@ async def on_message(message):
                     print('未設定メッセージ -> 反応なし')
             # じゃんけんモード
             elif mode.state == 'JANKEN':
-                bot_hand = random.choice(janken_hand)
+                bot_hand = random.choice(janken_hands)
                 # bot勝利ルート
                 if message.content == "ぐー" and bot_hand == janken_hand_p \
                         or message.content == "ぱー" and bot_hand == janken_hand_c \
