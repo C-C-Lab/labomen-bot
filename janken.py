@@ -139,7 +139,7 @@ async def on_message(message):
                     result_mes = random.choice(janeken_favour_mes)
                     await message.channel.send(bot_hand + result_mes)
                     print('結果：あいこ　JANKEN継続')
-        elif message.channel.id != bot_ch_id:
+        elif message.channel.id not in bot_ch_ids:
                 print('channel_id が不一致 -> 反応なし')
                 return
 
