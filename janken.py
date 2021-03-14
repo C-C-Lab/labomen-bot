@@ -27,10 +27,16 @@ machine = Machine(model=mode, states=states, transitions=transitions, initial=st
 # discordの設定
 ACCESS_TOKEN = 'ODIwMjcwNTYwOTUyMTg4OTQ4.YEyufQ.XtPyfFRuytMTU06fW85jnVbsCVE'
 ready_message = "接続し、準備ができました"
-# CC botチャンネル
-# bot_ch_id = 813717329296228393
+
+# bot ch in CC
+# 813717329296228393
 # Discord Test Server
-bot_ch_id = 817733583833792515
+# 817733583833792515
+
+bot_ch_ids = [
+    817733583833792515,
+    813717329296228393
+    ]
 
 random_contents = [
     "にゃーん",
@@ -95,7 +101,7 @@ async def on_message(message):
         print('チャンネル名：' + str(message.channel))
         print('チャンネルID: ' + str(message.channel.id))
         print('メッセージ受信：' + message.content)
-        if message.channel.id == bot_ch_id:
+        if message.channel.id in bot_ch_ids:
             # 通常モード
             if mode.state == 'NORMAL':
                 if 'にあちゃん' in message.content:
