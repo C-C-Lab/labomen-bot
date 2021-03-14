@@ -90,51 +90,51 @@ async def on_message(message):
 
     if message.author.bot:
         return
-
-    # 通常モード
-    elif mode.state == 'NORMAL':
+    else:
         print('時刻：' + dt_now)
-        if message.content == "にあちゃん":
-            print('チャンネル名：' + str(message.channel))
-            print('チャンネルID: ' + str(message.channel.id))
-            print('メッセージ受信：' + message.content)
-            if message.channel.id == bot_ch_id:
-                content = random.choice(random_contents)
-                await message.channel.send(content)
-                print('channel_id が一致 -> 反応：' + content)
-            elif message.channel.id != bot_ch_id:
-                print('channel_id が不一致 -> 反応なし')
-        # じゃんけん起動
-        elif message.channel.id == bot_ch_id and 'じゃんけん' in message.content:
-            mode.to_JANKEN()
-            print('じゃんけんモードへ遷移')
-            await message.channel.send(random.choice(janken_start_mes))
-
-    # じゃんけんモード
-    elif mode.state == 'JANKEN':
-        print('時刻：' + dt_now)
-        bot_hand = random.choice(janken_hand)
+        print('チャンネル名：' + str(message.channel))
+        print('チャンネルID: ' + str(message.channel.id))
+        print('メッセージ受信：' + message.content)
         if message.channel.id == bot_ch_id:
-            # bot勝利ルート
-            if message.content == "ぐー" and bot_hand == janken_hand_p \
-                    or message.content == "ぱー" and bot_hand == janken_hand_c \
-                    or message.content == "ちょき" and bot_hand == janken_hand_g:
-                result_mes = random.choice(janken_win_mes)
-                await message.channel.send(bot_hand + result_mes)
-                print('結果：botの勝ち　じゃんけんモード終了')
-                mode.to_NORMAL()
-            # bot敗北ルート
-            elif message.content == "ぐー" and bot_hand == janken_hand_c \
-                    or message.content == "ぱー" and bot_hand == janken_hand_g \
-                    or message.content == "ちょき" and bot_hand == janken_hand_p:
-                result_mes = random.choice(janken_lose_mes)
-                await message.channel.send(bot_hand + result_mes)
-                print('結果：botの負け　じゃんけんモード終了')
-                mode.to_NORMAL()
-            # あいこルート
-            elif message.content in bot_hand:
-                result_mes = random.choice(janeken_favour_mes)
-                await message.channel.send(bot_hand + result_mes)
-                print('結果：あいこ　じゃんけんモード継続')
+            # 通常モード
+            if mode.state == 'NORMAL':
+                if 'にあちゃん' in message.content:
+                    content = random.choice(random_contents)
+                    await message.channel.send(content)
+                    print('channel_id が一致 -> 反応：' + content)
+                # じゃんけん起動
+                elif 'じゃんけん' in message.content:
+                    mode.to_JANKEN()
+                    print('JANKENへ遷移')
+                    await message.channel.send(random.choice(janken_start_mes))
+                else:
+                    print('未設定メッセージ -> 反応なし')
+            # じゃんけんモード
+            elif mode.state == 'JANKEN':
+                bot_hand = random.choice(janken_hand)
+                # bot勝利ルート
+                if message.content == "ぐー" and bot_hand == janken_hand_p \
+                        or message.content == "ぱー" and bot_hand == janken_hand_c \
+                        or message.content == "ちょき" and bot_hand == janken_hand_g:
+                    result_mes = random.choice(janken_win_mes)
+                    await message.channel.send(bot_hand + result_mes)
+                    print('結果：botの勝ち　NORMALへ遷移')
+                    mode.to_NORMAL()
+                # bot敗北ルート
+                elif message.content == "ぐー" and bot_hand == janken_hand_c \
+                        or message.content == "ぱー" and bot_hand == janken_hand_g \
+                        or message.content == "ちょき" and bot_hand == janken_hand_p:
+                    result_mes = random.choice(janken_lose_mes)
+                    await message.channel.send(bot_hand + result_mes)
+                    print('結果：botの負け　NORMALへ遷移')
+                    mode.to_NORMAL()
+                # あいこルート
+                elif message.content in bot_hand:
+                    result_mes = random.choice(janeken_favour_mes)
+                    await message.channel.send(bot_hand + result_mes)
+                    print('結果：あいこ　JANKEN継続')
+        elif message.channel.id != bot_ch_id:
+                print('channel_id が不一致 -> 反応なし')
+                return
 
 client.run(ACCESS_TOKEN)
