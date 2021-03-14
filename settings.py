@@ -25,6 +25,11 @@ TRAMSITIONS = [
 # BOTのメッセージなどの設定
 READY_MESSAGE = "接続し、準備ができました"
 
+COMMANDS = {
+    'NORMAL': 'にあちゃん',
+    'JANKEN': 'じゃんけん'
+}
+
 RANDOM_CONTENTS = [
     "にゃーん",
     "わん！",
