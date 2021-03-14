@@ -3,7 +3,7 @@ import discord
 import random
 import datetime
 import pickle
-import settings
+from packages import settings
 import os
 
 states = settings.STATES
