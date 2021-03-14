@@ -12,3 +12,5 @@ pyvenv.cfg
 .env
 pip-selfcheck.json
 .vscode/settings.json
+__pychache__
+timeout.pkl
