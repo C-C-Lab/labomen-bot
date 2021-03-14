@@ -3,7 +3,7 @@ import discord
 import random
 import datetime
 import pickle
-from packages import settings
+from packages import settings, janken
 import os
 
 states = settings.STATES
@@ -24,14 +24,14 @@ machine = Machine(model=mode, states=states, transitions=transitions, initial=st
 ACCESS_TOKEN = settings.ACCESS_TOKEN
 BOT_CH_IDS = settings.CHANNEL_IDS
 commands = settings.COMMANDS
-janken_hands = settings.JANKEN_HANDS
-janken_hand_p = settings.JANKEN_HAND_P
-janken_hand_c = settings.JANKEN_HAND_C
-janken_hand_g = settings.JANKEN_HAND_G
-janken_start_mes = settings.JANKEN_START_MES
-janken_win_mes = settings.JANKEN_WIN_MES
-janken_lose_mes = settings.JANKEN_LOSE_MES
-janeken_favour_mes = settings.JANKEN_FAVOUR_MES
+janken_hands = janken.JANKEN_HANDS
+janken_hand_p = janken.JANKEN_HAND_P
+janken_hand_c = janken.JANKEN_HAND_C
+janken_hand_g = janken.JANKEN_HAND_G
+janken_start_mes = janken.JANKEN_START_MES
+janken_win_mes = janken.JANKEN_WIN_MES
+janken_lose_mes = janken.JANKEN_LOSE_MES
+janeken_favour_mes = janken.JANKEN_FAVOUR_MES
 ready_message = settings.READY_MESSAGE
 random_contents = settings.RANDOM_CONTENTS
 
