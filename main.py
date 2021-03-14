@@ -3,7 +3,7 @@ import discord
 import random
 import datetime
 import pickle
-
+import settings
 
 # ここからtransitionsの設定
 # 状態の定義
@@ -28,18 +28,14 @@ machine = Machine(model=mode, states=states, transitions=transitions, initial=st
 # ここまでtransitionsの設定
 
 # discordの設定
-ACCESS_TOKEN = 'ODIwMjcwNTYwOTUyMTg4OTQ4.YEyufQ.XtPyfFRuytMTU06fW85jnVbsCVE'
+ACCESS_TOKEN = settings.ACCESS_TOKEN
+bot_ch_id = settings.CHANNEL_ID
 ready_message = "接続し、準備ができました"
 
 # bot ch in CC
 # 813717329296228393
 # Discord Test Server
 # 817733583833792515
-
-bot_ch_ids = [
-    817733583833792515,
-    813717329296228393
-]
 
 random_contents = [
     "にゃーん",
@@ -113,7 +109,7 @@ async def on_message(message):
         print('チャンネル名：' + str(message.channel))
         print('チャンネルID: ' + str(message.channel.id))
         print('メッセージ受信：' + message.content)
-        if message.channel.id in bot_ch_ids:
+        if message.channel.id == int(bot_ch_id):
             # 通常モード
             if mode.state == 'NORMAL':
                 if 'にあちゃん' in message.content:
@@ -151,7 +147,7 @@ async def on_message(message):
                     result_mes = random.choice(janeken_favour_mes)
                     await message.channel.send(bot_hand + result_mes)
                     print('結果：あいこ　JANKEN継続')
-        elif message.channel.id not in bot_ch_ids:
+        elif message.channel.id != int(bot_ch_id):
             print('message.channel.id が不一致 -> 反応なし')
             return
 
