@@ -4,7 +4,7 @@ import random
 import datetime
 
 
-# ここからtransitionsの設定
+### ここからtransitionsの設定 ###
 # 状態の定義
 states = ['NORMAL','JANKEN', 'TIMEOUT']
 
@@ -22,7 +22,7 @@ mode = Model()
 machine = Machine(model=mode, states=states, transitions=transitions, initial=states[0],
                   auto_transitions=False, ordered_transitions=False)
 
-# ここまでtransitionsの設定
+### ここまでtransitionsの設定 ###
 
 # discordの設定
 ACCESS_TOKEN = 'ODIwMjcwNTYwOTUyMTg4OTQ4.YEyufQ.XtPyfFRuytMTU06fW85jnVbsCVE'
