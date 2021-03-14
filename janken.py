@@ -107,7 +107,7 @@ async def on_message(message):
                 if 'にあちゃん' in message.content:
                     content = random.choice(random_contents)
                     await message.channel.send(content)
-                    print('channel_id が一致 -> 反応：' + content)
+                    print('message.channel.id が一致 -> 反応：' + content)
                 # じゃんけん起動
                 elif 'じゃんけん' in message.content:
                     mode.to_JANKEN()
@@ -140,7 +140,7 @@ async def on_message(message):
                     await message.channel.send(bot_hand + result_mes)
                     print('結果：あいこ　JANKEN継続')
         elif message.channel.id not in bot_ch_ids:
-                print('channel_id が不一致 -> 反応なし')
+                print('message.channel.id が不一致 -> 反応なし')
                 return
 
 client.run(ACCESS_TOKEN)
