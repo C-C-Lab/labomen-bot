@@ -4,6 +4,7 @@ import random
 import datetime
 import pickle
 import settings
+import os
 
 states = settings.STATES
 transitions = settings.TRAMSITIONS
@@ -44,7 +45,10 @@ async def on_ready():
     print(discord.__title__ + " ライブラリのバージョン：" + discord.__version__)
     print(discord.__copyright__)
     print('現在のモード: ' + mode.state)
-    with open('timeout.pkl', 'wb') as dt_pkl:
+    PKL_DIR = 'pickles'
+    if not os.path.exists(PKL_DIR):
+        os.makedirs(PKL_DIR)
+    with open('./pickles/timeout.pkl', 'wb') as dt_pkl:
         pickle.dump(datetime.datetime.now(), dt_pkl)
 
 
@@ -58,12 +62,12 @@ async def on_message(message):
         return
     else:
         print('時刻：' + str(dt_now))
-        with open('timeout.pkl', 'rb') as dt_pkl:
+        with open('./pickles/timeout.pkl', 'rb') as dt_pkl:
             dt_recent = pickle.load(dt_pkl)
             if dt_now - dt_recent > datetime.timedelta(0, 20):
                 print('20秒以上経過　NORMALへ遷移')
                 mode.to_NORMAL()
-        with open('timeout.pkl', 'wb') as dt_pkl:
+        with open('./pickles/timeout.pkl', 'wb') as dt_pkl:
             pickle.dump(dt_now, dt_pkl)
         print('チャンネル名：' + str(message.channel))
         print('チャンネルID: ' + str(message.channel.id))
