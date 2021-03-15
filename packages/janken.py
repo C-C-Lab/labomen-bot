@@ -7,12 +7,6 @@ BOT_HANDS = {
     'ぱー！　': 3
 }
 
-JANKEN_HAND_P = 'ぱー！　'
-
-JANKEN_HAND_C = 'ちょき！　'
-
-JANKEN_HAND_G = 'ぐー！　'
-
 USER_HANDS = {
     'ぐー': 1,
     'ちょき': 2,

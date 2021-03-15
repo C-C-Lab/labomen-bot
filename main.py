@@ -30,14 +30,7 @@ machine = Machine(model=mode, states=states, transitions=transitions, initial=st
 ACCESS_TOKEN = settings.ACCESS_TOKEN
 BOT_CH_IDS = settings.CHANNEL_IDS
 commands = settings.COMMANDS
-janken_hands = janken.BOT_HANDS
-janken_hand_p = janken.JANKEN_HAND_P
-janken_hand_c = janken.JANKEN_HAND_C
-janken_hand_g = janken.JANKEN_HAND_G
 janken_start_mes = janken.JANKEN_START_MES
-janken_win_mes = janken.JANKEN_WIN_MES
-janken_lose_mes = janken.JANKEN_LOSE_MES
-janeken_favour_mes = janken.JANKEN_FAVOUR_MES
 random_contents = settings.RANDOM_CONTENTS
 
 client = discord.Client()
