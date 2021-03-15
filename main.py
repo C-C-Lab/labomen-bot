@@ -24,12 +24,13 @@ client = discord.Client()
 @client.event
 async def on_ready():
     utilities.version_check()
+    # picklesディレクトリがない場合は作成
     PKL_DIR = 'pickles'
     if not os.path.exists(PKL_DIR):
         os.makedirs(PKL_DIR)
-    # 各pklファイルを初期化
-    utilities.pkl_dump('timeout', utilities.get_time())
-    utilities.pkl_dump('janken_userid', 'initial value')
+    # .pklの初期化
+    utilities.reset_pkl()
+    print('---------------------------------------')
 
 
 # メッセージ待受イベント
@@ -42,11 +43,11 @@ async def on_message(message):
     else:
         # 20秒経過している場合リセット
         if utilities.get_time() - utilities.pkl_load('timeout') > datetime.timedelta(0, 20):
-            utilities.pkl_dump('janken_userid', 'initial value')
             print('20秒以上経過')
-            print('じゃんけんユーザーIDを初期化')
+            utilities.reset_pkl()
         utilities.pkl_dump('timeout', utilities.get_time())
         utilities.message_info(message)
+        # チャンネルIDを照合
         if str(message.channel.id) in BOT_CH_IDS:
             recent_janken_userid = utilities.pkl_load('janken_userid')
             # ユーザーがじゃんけん中か判定

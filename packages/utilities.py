@@ -3,7 +3,10 @@ import pickle
 
 import discord
 
-from packages import settings
+from packages import (
+    settings,
+    utilities
+)
 
 
 # コマンド有無を確認
@@ -23,6 +26,15 @@ def version_check():
     print(discord.__title__ + ' ライブラリのバージョン：' + discord.__version__)
     print(discord.__copyright__)
     print('---------------------------------------')
+
+
+# .pklの初期化
+def reset_pkl():
+    """.pklをすべて初期化するメソッドです。
+    """
+    utilities.pkl_dump('timeout', utilities.get_time())
+    utilities.pkl_dump('janken_userid', 'initial value')
+    print('.pklを初期化')
 
 
 # メッセージ受信情報
