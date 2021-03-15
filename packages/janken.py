@@ -37,7 +37,7 @@ JANKEN_FAVOUR_MES = [
 
 
 async def janken_battle(message):
-    """じゃんけんを行うメソッドです。
+    """じゃんけんを実行します。
     結果に応じてメッセージを送信します。
 
     Args:

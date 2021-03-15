@@ -10,13 +10,13 @@ from packages import (
     utilities
 )
 
+
 # discordの設定
 ACCESS_TOKEN = settings.ACCESS_TOKEN
 BOT_CH_IDS = settings.CHANNEL_IDS
 commands = settings.COMMANDS
 janken_start_mes = janken.JANKEN_START_MES
 random_contents = settings.RANDOM_CONTENTS
-
 client = discord.Client()
 
 
