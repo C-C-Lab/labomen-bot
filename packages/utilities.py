@@ -1,5 +1,7 @@
-import discord
+import datetime
 import pickle
+
+import discord
 
 from packages import settings
 
@@ -23,17 +25,22 @@ def version_check(mode):
 
 
 # メッセージ受信情報
-def message_info(message, dt_now):
-    print('時刻：' + str(dt_now))
+def message_info(message):
+    print('時刻：' + str(get_time()))
     print('チャンネル名：' + str(message.channel))
     print('チャンネルID: ' + str(message.channel.id))
     print('ユーザー名:' + get_user_name(message.author))
     print('メッセージ受信：' + message.content)
 
 
-# 送信者名取得
+# 送信者名を取得
 def get_user_name(user, ):
     return user.name + '#' + user.discriminator
+
+
+# 現在時刻を取得
+def get_time():
+    return datetime.datetime.now()
 
 
 # pickleへdumpするdef pkl_dump(file, content):
