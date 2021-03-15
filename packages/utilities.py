@@ -19,13 +19,18 @@ def command_check(word):
 # 起動確認用バージョン情報
 def version_check(mode):
     print(settings.READY_MESSAGE)
-    print(discord.__title__ + " ライブラリのバージョン：" + discord.__version__)
+    print(discord.__title__ + ' ライブラリのバージョン：' + discord.__version__)
     print(discord.__copyright__)
     print('現在のモード: ' + mode)
 
 
 # メッセージ受信情報
 def message_info(message):
+    """受信メッセージの情報を出力するメソッドです。
+
+    Args:
+      message(Any): Message Model of discord.py
+    """
     print('時刻：' + str(get_time()))
     print('チャンネル名：' + str(message.channel))
     print('チャンネルID: ' + str(message.channel.id))
@@ -34,7 +39,7 @@ def message_info(message):
 
 
 # 送信者名を取得
-def get_user_name(user, ):
+def get_user_name(user):
     return user.name + '#' + user.discriminator
 
 
@@ -43,7 +48,7 @@ def get_time():
     return datetime.datetime.now()
 
 
-# pickleへdumpするdef pkl_dump(file, content):
+# pickleへdumpする
 def pkl_dump(file, content):
     with open('./pickles/' + file + '.pkl', 'wb') as pkl:
         pickle.dump(content, pkl)
