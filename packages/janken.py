@@ -1,5 +1,6 @@
 import random
 
+from packages import utilities
 
 BOT_HANDS = {
     'ぐー！　': 1,
@@ -42,6 +43,7 @@ async def janken_battle(message):
     Args:
         message (any): Message Model of discord.py
     """
+    print('じゃんけんを実行')
     # 手に応じた整数をdictから取得
     bot_hand, bot_hand_num = random.choice(list(BOT_HANDS.items()))
     user_hand_num = USER_HANDS[message.content]
@@ -53,16 +55,20 @@ async def janken_battle(message):
     if result in [-1, 2]:
         bot_mes = random.choice(JANKEN_WIN_MES)
         result_mes = bot_hand + bot_mes
-        print('結果：botの勝ち　NORMALへ遷移')
+        utilities.pkl_dump('janken_userid', 'initial value')
+        print('結果：botの勝ち')
+        print('じゃんけんユーザーIDを初期化')
     # bot敗北ルート
     elif result in [1, -2]:
         bot_mes = random.choice(JANKEN_LOSE_MES)
         result_mes = bot_hand + bot_mes
-        print('結果：botの負け　NORMALへ遷移')
+        utilities.pkl_dump('janken_userid', 'initial value')
+        print('結果：botの負け')
+        print('じゃんけんユーザーIDを初期化')
     # あいこルート
     elif result == 0:
         bot_mes = random.choice(JANKEN_FAVOUR_MES)
         result_mes = bot_hand + bot_mes
-        print('結果：あいこ　JANKEN継続')
+        print('結果：あいこ')
     # 結果メッセージを送信
     await message.channel.send(result_mes)

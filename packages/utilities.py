@@ -17,11 +17,12 @@ def command_check(word):
 
 
 # 起動確認用バージョン情報
-def version_check(mode):
+def version_check():
+    print('---------------------------------------')
     print(settings.READY_MESSAGE)
     print(discord.__title__ + ' ライブラリのバージョン：' + discord.__version__)
     print(discord.__copyright__)
-    print('現在のモード: ' + mode)
+    print('---------------------------------------')
 
 
 # メッセージ受信情報

@@ -11,16 +11,6 @@ load_dotenv(dotenv_path)
 ACCESS_TOKEN = os.environ.get('DISCORD_ACCESS_TOKEN')
 CHANNEL_IDS = os.environ.get('DISCORD_CHANNEL_IDS').split(',')
 
-# transitionsの状態の定義
-STATES = ['NORMAL', 'JANKEN', 'TIMEOUT']
-
-# 状態変化の定義
-TRAMSITIONS = [
-    {'trigger': 'to_NORMAL', 'source': '*', 'dest': 'NORMAL'},
-    {'trigger': 'to_JANKEN', 'source': '*', 'dest': 'JANKEN'},
-    {'trigger': 'to_TIMEOUT', 'source': '*', 'dest': 'TIMEOUT'},
-]
-
 # BOTのメッセージなどの設定
 READY_MESSAGE = '接続し、準備ができました'
 
