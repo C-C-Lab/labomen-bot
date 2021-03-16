@@ -55,14 +55,16 @@ async def janken_battle(message):
     if result in [-1, 2]:
         bot_mes = random.choice(JANKEN_WIN_MES)
         result_mes = bot_hand + bot_mes
-        utilities.pkl_dump('janken_userid', 'initial value')
+        utilities.slv_save('user_data', utilities.get_user_name(
+            message.author), 'mode', 'normal')
         print('結果：botの勝ち')
         print('じゃんけんユーザーIDを初期化')
     # bot敗北ルート
     elif result in [1, -2]:
         bot_mes = random.choice(JANKEN_LOSE_MES)
         result_mes = bot_hand + bot_mes
-        utilities.pkl_dump('janken_userid', 'initial value')
+        utilities.slv_save('user_data', utilities.get_user_name(
+            message.author), 'mode', 'normal')
         print('結果：botの負け')
         print('じゃんけんユーザーIDを初期化')
     # あいこルート
@@ -70,5 +72,8 @@ async def janken_battle(message):
         bot_mes = random.choice(JANKEN_FAVOUR_MES)
         result_mes = bot_hand + bot_mes
         print('結果：あいこ')
+        # 発言時刻記録
+        utilities.slv_save('user_data', utilities.get_user_name(message.author),
+                           'timeout', str(utilities.get_time()))
     # 結果メッセージを送信
-    await message.channel.send(result_mes)
+    await message.channel.send(message.author.mention + '\n' + result_mes)

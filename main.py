@@ -1,5 +1,4 @@
 import datetime
-import os
 import random
 
 import discord
@@ -24,12 +23,8 @@ client = discord.Client()
 @client.event
 async def on_ready():
     utilities.version_check()
-    # picklesディレクトリがない場合は作成
-    PKL_DIR = 'pickles'
-    if not os.path.exists(PKL_DIR):
-        os.makedirs(PKL_DIR)
-    # .pklの初期化
-    utilities.reset_pkl()
+    # shelvesディレクトリがない場合は作成
+    utilities.add_dir('shelves')
     print('---------------------------------------')
 
 
@@ -41,24 +36,33 @@ async def on_message(message):
     if message.author.bot:
         return
     else:
+        # 送信者名を取得
+        mes_author = utilities.get_user_name(message.author)
         # 20秒経過している場合リセット
-        if utilities.get_time() - utilities.pkl_load('timeout') > datetime.timedelta(0, 20):
-            print('20秒以上経過')
-            utilities.reset_pkl()
-        utilities.pkl_dump('timeout', utilities.get_time())
+        try:
+            if utilities.get_time() - utilities.slv_load('user_data', mes_author, 'timeout') > datetime.timedelta(0, 20):
+                print('20秒以上経過')
+                utilities.slv_save('user_data', utilities.get_user_name(
+                    message.author), 'mode', 'normal')
+        except TypeError:
+            pass
         utilities.message_info(message)
         # チャンネルIDを照合
         if str(message.channel.id) in BOT_CH_IDS:
-            recent_janken_userid = utilities.pkl_load('janken_userid')
-            # ユーザーがじゃんけん中か判定
-            if recent_janken_userid == utilities.get_user_name(message.author):
+            # モード情報を取得
+            user_mode = utilities.get_mode(mes_author)
+            # じゃんけんモード判定
+            if user_mode == 'janken':
                 # じゃんけん処理
                 if message.content in janken.USER_HANDS:
                     await janken.janken_battle(message)
                 # USER_HANDSと不一致
                 else:
-                    await message.channel.send('あれ？　じゃんけんは？')
+                    await message.channel.send(message.author.mention + '\nあれ？　じゃんけんは？')
                     print('回答がJANKEN_HANDSと不一致')
+                    # 発言時刻記録
+                    utilities.slv_save('user_data', mes_author,
+                                       'timeout', str(utilities.get_time()))
             # 通常モード
             else:
                 # 鳴き声機能
@@ -68,11 +72,15 @@ async def on_message(message):
                     print('message.channel.id が一致 -> 反応：' + content)
                 # じゃんけん起動
                 elif commands['JANKEN'] in message.content:
-                    utilities.pkl_dump(
-                        'janken_userid', utilities.get_user_name(message.author))
-                    print('じゃんけんユーザーIDを取得')
+                    # モード切替
+                    utilities.slv_save(
+                        'user_data', mes_author, 'mode', 'janken')
+                    # 発言時刻記録
+                    utilities.slv_save('user_data', mes_author,
+                                       'timeout', utilities.get_time())
+                    # メッセージ送信
                     content = random.choice(janken_start_mes)
-                    await message.channel.send(content)
+                    await message.channel.send(message.author.mention + '\n' + content)
                 # 未設定メッセージを受信時
                 else:
                     print('未設定メッセージ -> 反応なし')
