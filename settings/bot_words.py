@@ -1,11 +1,13 @@
 """bot_words.py botの基本的な発言やコマンドをまとめたモジュールです。
     """
 
+# botが反応するコマンド一覧
 COMMANDS = {
     'NORMAL': 'にあちゃん',
     'JANKEN': 'じゃんけん'
 }
 
+# ランダムに返すメッセージ
 RANDOM_CONTENTS = [
     'にゃーん',
     'わん！',
