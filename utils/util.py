@@ -95,8 +95,11 @@ def pkl_dump(file, content):
     note:
         引数に.pklは不要です。
     """
-    with open('./pickles/' + file + '.pkl', 'wb') as pkl:
-        pickle.dump(content, pkl)
+    try:
+        with open('./pickles/' + file + '.pkl', 'wb') as pkl:
+            pickle.dump(content, pkl)
+    except Exception as e:
+        error_print(e)
 
 
 def pkl_load(file):
@@ -111,11 +114,16 @@ def pkl_load(file):
     note:
         引数に.pklは不要です。
     """
-    with open('./pickles/' + file + '.pkl', 'rb') as pkl:
-        return pickle.load(pkl)
+    try:
+        with open('./pickles/' + file + '.pkl', 'rb') as pkl:
+            return pickle.load(pkl)
+    except Exception as e:
+        error_print(e)
 
 
 def error_print(e):
+    """Error内容を出力します。
+    """
     print(type(e))
     print(e.args)
     print(e)
