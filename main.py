@@ -11,15 +11,12 @@ from utils import util
 
 
 # discordの設定
-try:
-    ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
-    BOT_CH_IDS = discord_settings.CHANNEL_IDS
-    commands = bot_words.COMMANDS
-    janken_start_mes = janken_words.JANKEN_START_MES
-    random_contents = bot_words.RANDOM_CONTENTS
-    client = discord.Client()
-except Exception as e:
-    util.error_print(e)
+ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
+BOT_CH_IDS = discord_settings.CHANNEL_IDS
+commands = bot_words.COMMANDS
+janken_start_mes = janken_words.JANKEN_START_MES
+random_contents = bot_words.RANDOM_CONTENTS
+client = discord.Client()
 
 
 # アプリスタート時に走るイベント
