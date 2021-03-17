@@ -71,9 +71,9 @@ def get_user_name(user):
         user : User Model of discord.py
 
     Returns:
-        str: user.name + '#' + user.discriminator
+        str: user.name + '＃' + user.discriminator
     """
-    return str(user.name + '#' + user.discriminator)
+    return str(user.name + '＃' + user.discriminator)
 
 
 def get_time():
