@@ -51,29 +51,37 @@ async def janken_battle(message):
     # -1, 2なら勝利
     # 1, -2なら敗北
     result = bot_hand_num - user_hand_num
-    # bot勝利ルート
     if result in [-1, 2]:
-        bot_mes = random.choice(JANKEN_WIN_MES)
-        result_mes = bot_hand + bot_mes
-        utilities.slv_save('user_data', utilities.get_user_name(
-            message.author), 'mode', 'normal')
-        print('結果：botの勝ち')
-        print('じゃんけんユーザーIDを初期化')
-    # bot敗北ルート
+        result_mes = gen_result_mes(JANKEN_WIN_MES, '勝ち', bot_hand, message)
     elif result in [1, -2]:
-        bot_mes = random.choice(JANKEN_LOSE_MES)
-        result_mes = bot_hand + bot_mes
-        utilities.slv_save('user_data', utilities.get_user_name(
-            message.author), 'mode', 'normal')
-        print('結果：botの負け')
-        print('じゃんけんユーザーIDを初期化')
-    # あいこルート
+        result_mes = gen_result_mes(JANKEN_LOSE_MES, '負け', bot_hand, message)
     elif result == 0:
-        bot_mes = random.choice(JANKEN_FAVOUR_MES)
-        result_mes = bot_hand + bot_mes
-        print('結果：あいこ')
-        # 発言時刻記録
-        utilities.slv_save('user_data', utilities.get_user_name(message.author),
-                           'timeout', str(utilities.get_time()))
+        result_mes = gen_result_mes(
+            JANKEN_FAVOUR_MES, 'あいこ', bot_hand, message)
     # 結果メッセージを送信
     await message.channel.send(message.author.mention + '\n' + result_mes)
+
+
+def gen_result_mes(janken_mes, r, bot_hand, message):
+    """じゃんけんの結果に応じたメッセージを生成します。
+
+    Args:
+        janken_mes (list): 結果に応じたlist
+        r (str): 勝敗
+        bot_hand (str): bot_hand
+        message (any): message
+
+    Returns:
+        str: じゃんけん結果メッセージ
+    """
+    bot_mes = random.choice(janken_mes)
+    result_mes = bot_hand + bot_mes
+    if janken_mes != JANKEN_FAVOUR_MES:
+        print('結果：botの' + r)
+        utilities.slv_save('user_data', utilities.get_user_name(
+            message.author), 'mode', 'normal')
+    else:
+        print('結果：' + r)
+        utilities.slv_save('user_data', utilities.get_user_name(message.author),
+                           'timeout', str(utilities.get_time()))
+    return result_mes

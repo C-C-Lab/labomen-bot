@@ -38,14 +38,6 @@ async def on_message(message):
     else:
         # 送信者名を取得
         mes_author = utilities.get_user_name(message.author)
-        # 20秒経過している場合リセット
-        try:
-            if utilities.get_time() - utilities.slv_load('user_data', mes_author, 'timeout') > datetime.timedelta(0, 20):
-                print('20秒以上経過')
-                utilities.slv_save('user_data', utilities.get_user_name(
-                    message.author), 'mode', 'normal')
-        except TypeError:
-            pass
         utilities.message_info(message)
         # チャンネルIDを照合
         if str(message.channel.id) in BOT_CH_IDS:
@@ -53,6 +45,15 @@ async def on_message(message):
             user_mode = utilities.get_mode(mes_author)
             # じゃんけんモード判定
             if user_mode == 'janken':
+                # 20秒経過している場合normalへ遷移
+                try:
+                    if utilities.get_time() - utilities.slv_load('user_data', mes_author, 'timeout') > datetime.timedelta(0, 20):
+                        print('20秒以上経過')
+                        utilities.slv_save('user_data', utilities.get_user_name(
+                            message.author), 'mode', 'normal')
+                # mode情報がない場合は例外を無視
+                except TypeError:
+                    pass
                 # じゃんけん処理
                 if message.content in janken.USER_HANDS:
                     await janken.janken_battle(message)
@@ -88,6 +89,7 @@ async def on_message(message):
         elif str(message.channel.id) not in BOT_CH_IDS:
             print('message.channel.id が不一致 -> 反応なし')
             return
-    print('---------------------------------------')
+    print('=======================================')
+
 
 client.run(ACCESS_TOKEN)
