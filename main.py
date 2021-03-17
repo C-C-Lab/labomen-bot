@@ -58,7 +58,7 @@ async def on_message(message):
                 except TypeError:
                     pass
                 # じゃんけん処理
-                if message.content in janken_words.USER_HANDS:
+                if message.content in janken.USER_HANDS:
                     await janken.janken_battle(message)
                 # USER_HANDSと不一致
                 else:
