@@ -1,13 +1,13 @@
 import os
-from os.path import join, dirname
 from dotenv import load_dotenv
+import dotenv
 """
 discord_settings.py ディスコードの設定に関わるメソッドをまとめたモジュールです。
 """
 
 # .envをロード
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(verbose=True, dotenv_path=dotenv_path)
+dotenv_path = dotenv.find_dotenv()
+load_dotenv(dotenv_path, verbose=True)
 
 # .envからの読み込み項目設定
 ACCESS_TOKEN = os.environ.get('DISCORD_ACCESS_TOKEN')
