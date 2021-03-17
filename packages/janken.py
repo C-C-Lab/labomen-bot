@@ -1,6 +1,9 @@
 import random
 
 from packages import utilities
+"""
+janken.py じゃんけん機能に関連する関数をまとめたモジュールです。
+"""
 
 BOT_HANDS = {
     'ぐー！　': 1,

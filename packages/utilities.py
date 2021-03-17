@@ -7,6 +7,9 @@ import traceback
 import discord
 
 from packages import settings
+"""
+utility.py 自作の便利関数をまとめたモジュールです。
+"""
 
 
 def command_check(word):

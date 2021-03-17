@@ -1,6 +1,9 @@
 import os
 from os.path import join, dirname
 from dotenv import load_dotenv
+"""
+settings.py 設定に関わる変数をまとめたモジュールです。
+"""
 
 load_dotenv(verbose=True)
 
