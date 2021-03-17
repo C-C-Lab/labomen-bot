@@ -6,9 +6,10 @@ import traceback
 
 import discord
 
-from packages import settings
+from settings import discord_settings
+from settings import bot_words
 """
-utility.py 自作の便利関数をまとめたモジュールです。
+utility.py 自作の便利メソッドをまとめたモジュールです。
 """
 
 
@@ -21,7 +22,7 @@ def command_check(word):
     Returns:
         boolean
     """
-    command_words = settings.COMMANDS.values()
+    command_words = bot_words.COMMANDS.values()
     for command in command_words:
         if command in word:
             return True
@@ -33,7 +34,7 @@ def version_check():
     """起動確認用のバージョン情報を出力します。
     """
     print('---------------------------------------')
-    print(settings.READY_MESSAGE)
+    print(discord_settings.READY_MESSAGE)
     print(discord.__title__ + ' ライブラリのバージョン：' + discord.__version__)
     print(discord.__copyright__)
     print('---------------------------------------')
