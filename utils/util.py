@@ -156,7 +156,11 @@ async def send_mention(message, content):
         message (Any): Message Model of discord.py
         content (str): メッセージ文
     """
-    await message.channel.send(message.author.mention + '\n' + content)
+    try:
+        await message.channel.send(message.author.mention + '\n' + content)
+    except Exception as e:
+        print('-----メンション送信に失敗-----')
+        error_print(e)
 
 
 async def send_reply(message, content):
@@ -166,4 +170,8 @@ async def send_reply(message, content):
         message (Any): Message Model of discord.py
         content (str): メッセージ文
     """
-    await message.reply(content, mention_author=True)
+    try:
+        await message.reply(content, mention_author=True)
+    except Exception as e:
+        print('-----リプライ送信に失敗-----')
+        error_print(e)
