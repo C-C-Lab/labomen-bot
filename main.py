@@ -60,7 +60,7 @@ async def on_message(message):
                 await janken.janken_battle(message)
             # USER_HANDSと不一致
             else:
-                await message.channel.send(message.author.mention + '\nあれ？　じゃんけんは？')
+                await util.send_reply(message, 'あれ？　じゃんけんは？')
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
                 slv_utils.slv_save('user_data', mes_author,
@@ -82,7 +82,7 @@ async def on_message(message):
                                    'last_update', util.get_time())
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
-                await message.channel.send(message.author.mention + '\n' + content)
+                await util.send_reply(message, content)
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')

@@ -146,3 +146,23 @@ def get_mode(mes_author):
         print('現在のモード：None')
     finally:
         return user_mode
+
+
+async def send_mention(message, content):
+    """メンション付メッセージを送信します。
+
+    Args:
+        message (Any): Message Model of discord.py
+        content (str): メッセージ文
+    """
+    await message.channel.send(message.author.mention + '\n' + content)
+
+
+async def send_reply(message, content):
+    """リプライメッセージを送信します。
+
+    Args:
+        message (Any): Message Model of discord.py
+        content (str): メッセージ文
+    """
+    await message.reply(content, mention_author=True)

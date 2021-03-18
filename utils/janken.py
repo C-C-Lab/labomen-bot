@@ -49,7 +49,7 @@ async def janken_battle(message):
         result_mes = gen_result_mes(
             favour_mes, 'あいこ', bot_hand, message)
     # 結果メッセージを送信
-    await message.channel.send(message.author.mention + '\n' + result_mes)
+    await util.send_reply(message, result_mes)
 
 
 def gen_result_mes(janken_mes, r, bot_hand, message):
