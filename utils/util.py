@@ -1,13 +1,13 @@
 import datetime
 import os
 import pickle
-import shelve
 import traceback
 
 import discord
 
 from settings import discord_settings
 from settings import bot_words
+from utils import slv_utils
 """
 utility.py 自作の便利メソッドをまとめたモジュールです。
 """
@@ -130,69 +130,6 @@ def error_print(e):
     print('トレースバック：' + traceback.format_exc())
 
 
-def slv_save(file, user, key, content):
-    """shelveに情報を記録します。
-
-    Args:
-        file (str): shelveファイル名
-        user (str): ユーザー名
-        key (str): key
-        content (any): 記録内容
-    """
-    print('---------------------------------------')
-    s = shelve.open('./shelves/' + file + '.shelve')
-    print(file + 'に記録')
-    try:
-        if user in s:
-            data = s[user]
-            data[key] = content
-            s[user] = data
-            print(user + 'の' + key + 'を変更 -> ' + str(content))
-        else:
-            s[user] = {key: content}
-            print(user + 'の項目を作成')
-            print(key + ' -> ' + str(content))
-        s.close()
-    except OSError as e:
-        print('-----OSError-----')
-        error_print(e)
-    except LookupError as e:
-        print('-----LookupError-----')
-        error_print(e)
-    except Exception as e:
-        print('-----Error-----')
-        error_print(e)
-
-
-def slv_load(file, user, key):
-    """shelveから情報を取得します。
-
-    Args:
-        file (str): shelveファイル名
-        user (str): ユーザー名
-        key (str): key
-
-    Returns:
-        any: value
-    """
-    print('---------------------------------------')
-    try:
-        s = shelve.open('./shelves/' + file + '.shelve')
-        print(file + 'を参照')
-        data = s[user]
-        s.close()
-        print(user + ':' + key + ' -> ' + str(data[key]))
-        return data[key]
-    except OSError as e:
-        print('-----OSError-----')
-        error_print(e)
-    except KeyError:
-        print('key情報なし')
-    except Exception as e:
-        print('-----Error-----')
-        error_print(e)
-
-
 def get_mode(mes_author):
     """現在のモードを取得します。
 
@@ -202,7 +139,7 @@ def get_mode(mes_author):
     Returns:
         str: モード名
     """
-    user_mode = slv_load('user_data', mes_author, 'mode')
+    user_mode = slv_utils.slv_load('user_data', mes_author, 'mode')
     try:
         print('現在のモード：' + user_mode)
     except KeyError:

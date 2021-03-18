@@ -1,5 +1,6 @@
 import random
 
+from utils import slv_utils
 from utils import util
 from settings import janken_words
 """
@@ -68,11 +69,11 @@ def gen_result_mes(janken_mes, r, bot_hand, message):
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
         print('結果：botの' + r)
-        util.slv_save('user_data', util.get_user_name(
+        slv_utils.slv_save('user_data', util.get_user_name(
             message.author), 'mode', 'normal')
     # あいこ処理
     else:
         print('結果：' + r)
-        util.slv_save('user_data', util.get_user_name(message.author),
-                      'timeout', str(util.get_time()))
+        slv_utils.slv_save('user_data', util.get_user_name(message.author),
+                           'last_update', str(util.get_time()))
     return result_mes

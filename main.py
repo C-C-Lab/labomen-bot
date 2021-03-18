@@ -7,6 +7,7 @@ from settings import bot_words
 from settings import discord_settings
 from settings import janken_words
 from utils import janken
+from utils import slv_utils
 from utils import util
 
 
@@ -29,7 +30,7 @@ async def on_ready():
 
 
 # メッセージ待受イベント
-@client.event
+@ client.event
 async def on_message(message):
 
     # botの発言を無視
@@ -37,6 +38,7 @@ async def on_message(message):
         return
     # 送信者名を取得
     mes_author = util.get_user_name(message.author)
+    slv_utils.slv_init(mes_author)
     util.message_info(message)
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
@@ -46,9 +48,9 @@ async def on_message(message):
         if user_mode == 'janken':
             # 20秒経過している場合normalへ遷移
             try:
-                if util.get_time() - util.slv_load('user_data', mes_author, 'timeout') > datetime.timedelta(0, 20):
+                if util.get_time() - slv_utils.slv_load('user_data', mes_author, 'last_update') > datetime.timedelta(0, 20):
                     print('20秒以上経過')
-                    util.slv_save('user_data', util.get_user_name(
+                    slv_utils.slv_save('user_data', util.get_user_name(
                         message.author), 'mode', 'normal')
             # mode情報がない場合は例外を無視
             except TypeError:
@@ -61,8 +63,8 @@ async def on_message(message):
                 await message.channel.send(message.author.mention + '\nあれ？　じゃんけんは？')
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
-                util.slv_save('user_data', mes_author,
-                              'timeout', str(util.get_time()))
+                slv_utils.slv_save('user_data', mes_author,
+                                   'last_update', str(util.get_time()))
         # 通常モード
         else:
             # 鳴き声機能
@@ -73,11 +75,11 @@ async def on_message(message):
             # じゃんけん起動
             elif commands['JANKEN'] in message.content:
                 # モード切替
-                util.slv_save(
+                slv_utils.slv_save(
                     'user_data', mes_author, 'mode', 'janken')
                 # 発言時刻記録
-                util.slv_save('user_data', mes_author,
-                              'timeout', util.get_time())
+                slv_utils.slv_save('user_data', mes_author,
+                                   'last_update', util.get_time())
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
                 await message.channel.send(message.author.mention + '\n' + content)
@@ -88,7 +90,7 @@ async def on_message(message):
     elif str(message.channel.id) not in BOT_CH_IDS:
         print('message.channel.id が不一致 -> 反応なし')
         return
-print('=======================================')
+    print('=======================================')
 
 
 client.run(ACCESS_TOKEN)
