@@ -12,22 +12,24 @@ def slv_save(file_name, user, key, content):
 
     Args:
         file_name (str): shelveファイル名
-        user (str): ユーザー名
+        user (user): discord.pyのユーザーモデル
         key (str): key
         content (any): 記録内容
     """
+    user_id = str(user.id)
+    user_name = util.get_user_name(user)
     print('---------------------------------------')
     try:
         s = shelve.open('./shelves/' + file_name + '.shelve')
         print(file_name + 'に記録')
-        if user in s:
-            data = s[user]
+        if user_id in s:
+            data = s[user_id]
             data[key] = content
-            s[user] = data
-            print(user + 'の' + key + 'を変更 -> ' + str(content))
+            s[user_id] = data
+            print(user_name + 'の' + key + 'を変更 -> ' + str(content))
         else:
-            s[user] = {key: content}
-            print(user + 'の項目を作成')
+            s[user_id] = {key: content}
+            print(user_name + 'の項目を作成')
             print(key + ' -> ' + str(content))
         s.close()
     except OSError as e:
@@ -46,19 +48,21 @@ def slv_load(file_name, user, key):
 
     Args:
         file_name (str): shelveファイル名
-        user (str): ユーザー名
+        user (user): discord.pyのユーザーモデル
         key (str): key
 
     Returns:
         any: value
     """
+    user_id = str(user.id)
+    user_name = util.get_user_name(user)
     print('---------------------------------------')
     try:
         s = shelve.open('./shelves/' + file_name + '.shelve')
         print(file_name + 'を参照')
-        data = s[user]
+        data = s[user_id]
         s.close()
-        print(user + ':' + key + ' -> ' + str(data[key]))
+        print(user_name + ':' + key + ' -> ' + str(data[key]))
         return data[key]
     except OSError as e:
         print('-----OSError-----')
@@ -74,22 +78,24 @@ def slv_init(user):
     """user_data.slvに不足している項目があれば初期値を記録します。
 
     Args:
-        user (str): ユーザー名
+        user (user): discord.pyのユーザーモデル
     """
+    user_id = str(user.id)
+    user_name = util.get_user_name(user)
     s = shelve.open('./shelves/user_data.shelve')
-    if user in s:
-        data = s[user]
+    if user_id in s:
+        data = s[user_id]
         difference = init_states.keys() - data.keys()
         s.close()
         if difference != set():
-            print('ユーザーデータに不足項目あり')
+            print(user_name + 'のデータに不足項目あり')
             print(difference)
             print('不足項目に初期値を入力')
-            slv_save_init(user, difference)
+            slv_save_init(user_id, difference)
     else:
-        print('ユーザーデータなし')
-        print(user + 'の項目を作成')
-        s[user] = init_states
+        print(user_name + 'の一致データなし')
+        print(user_name + 'の項目を作成')
+        s[user_id] = init_states
         s.close()
 
 
@@ -98,13 +104,14 @@ def slv_save_init(user, k):
 
     Args:
         s (str): s
-        user (str): user
+        user (user): user
         k (set): 記録したいkeyリスト
     """
+    user_id = user.id
     for key in k:
         s = shelve.open('./shelves/user_data.shelve')
         value = init_states[key]
-        data = s[user]
+        data = s[user_id]
         data[key] = value
-        s[user] = data
+        s[user_id] = data
         s.close()
