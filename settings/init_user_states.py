@@ -7,7 +7,6 @@ initial_user_state dict:
 """
 
 initial_user_state = {
-    "name": "initial_state",
     "mode": "normal",
     "last_update": "initial_state",
 }

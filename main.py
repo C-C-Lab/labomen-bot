@@ -37,21 +37,20 @@ async def on_message(message):
     if message.author.bot:
         return
     # 送信者名を取得
-    mes_author = util.get_user_name(message.author)
-    slv_utils.slv_init(mes_author)
+    author = message.author
+    slv_utils.slv_init(author)
     util.message_info(message)
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
         # モード情報を取得
-        user_mode = util.get_mode(mes_author)
+        user_mode = util.get_mode(author)
         # じゃんけんモード判定
         if user_mode == 'janken':
             # 20秒経過している場合normalへ遷移
             try:
-                if util.get_now() - slv_utils.slv_load('user_data', mes_author, 'last_update') > datetime.timedelta(0, 20):
+                if util.get_now() - slv_utils.slv_load('user_data', author, 'last_update') > datetime.timedelta(0, 20):
                     print('20秒以上経過')
-                    slv_utils.slv_save('user_data', util.get_user_name(
-                        message.author), 'mode', 'normal')
+                    slv_utils.slv_save('user_data', author, 'mode', 'normal')
             # mode情報がない場合は例外を無視
             except TypeError:
                 pass
@@ -63,7 +62,7 @@ async def on_message(message):
                 await util.send_reply(message, 'あれ？　じゃんけんは？')
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
-                slv_utils.slv_save('user_data', mes_author,
+                slv_utils.slv_save('user_data', author,
                                    'last_update', str(util.get_now()))
         # 通常モード
         else:
@@ -76,9 +75,9 @@ async def on_message(message):
             elif commands['JANKEN'] in message.content:
                 # モード切替
                 slv_utils.slv_save(
-                    'user_data', mes_author, 'mode', 'janken')
+                    'user_data', author, 'mode', 'janken')
                 # 発言時刻記録
-                slv_utils.slv_save('user_data', mes_author,
+                slv_utils.slv_save('user_data', author,
                                    'last_update', util.get_now())
                 # メッセージ送信
                 content = random.choice(janken_start_mes)

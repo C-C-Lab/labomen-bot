@@ -57,11 +57,12 @@ def message_info(message):
     Args:
       message(Any): Message Model of discord.py
     """
-    print('時刻：' + str(get_now()))
-    print('チャンネル名：' + str(message.channel))
+    print('時刻:' + str(get_now()))
+    print('チャンネル名:' + str(message.channel))
     print('チャンネルID: ' + str(message.channel.id))
     print('ユーザー名:' + get_user_name(message.author))
-    print('メッセージ受信：' + message.content)
+    print('ユーザーID:' + str(message.author.id))
+    print('メッセージ受信:' + message.content)
 
 
 def get_user_name(user):
@@ -131,16 +132,16 @@ def error_print(e):
     print('トレースバック：' + traceback.format_exc())
 
 
-def get_mode(mes_author):
+def get_mode(user_id):
     """現在のモードを取得します。
 
     Args:
-        mes_author (str): メッセージ送信者ID
+        user_id (str): メッセージ送信者ID
 
     Returns:
         str: モード名
     """
-    user_mode = slv_utils.slv_load('user_data', mes_author, 'mode')
+    user_mode = slv_utils.slv_load('user_data', user_id, 'mode')
     try:
         print('現在のモード：' + user_mode)
     except KeyError:
