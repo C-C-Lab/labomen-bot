@@ -38,7 +38,6 @@ async def on_message(message):
         return
     # 送信者名を取得
     author = message.author
-    # mes_author_name = util.get_user_name(message.author)
     slv_utils.slv_init(author)
     util.message_info(message)
     # チャンネルIDを照合
