@@ -75,5 +75,5 @@ def gen_result_mes(janken_mes, r, bot_hand, message):
     else:
         print('結果：' + r)
         slv_utils.slv_save('user_data', util.get_user_name(message.author),
-                           'last_update', str(util.get_time()))
+                           'last_update', str(util.get_now()))
     return result_mes

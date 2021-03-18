@@ -48,7 +48,7 @@ async def on_message(message):
         if user_mode == 'janken':
             # 20秒経過している場合normalへ遷移
             try:
-                if util.get_time() - slv_utils.slv_load('user_data', mes_author, 'last_update') > datetime.timedelta(0, 20):
+                if util.get_now() - slv_utils.slv_load('user_data', mes_author, 'last_update') > datetime.timedelta(0, 20):
                     print('20秒以上経過')
                     slv_utils.slv_save('user_data', util.get_user_name(
                         message.author), 'mode', 'normal')
@@ -64,7 +64,7 @@ async def on_message(message):
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
                 slv_utils.slv_save('user_data', mes_author,
-                                   'last_update', str(util.get_time()))
+                                   'last_update', str(util.get_now()))
         # 通常モード
         else:
             # 鳴き声機能
@@ -79,7 +79,7 @@ async def on_message(message):
                     'user_data', mes_author, 'mode', 'janken')
                 # 発言時刻記録
                 slv_utils.slv_save('user_data', mes_author,
-                                   'last_update', util.get_time())
+                                   'last_update', util.get_now())
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
                 await util.send_reply(message, content)

@@ -7,19 +7,19 @@ from utils import util
 init_states = init_user_states.initial_user_state
 
 
-def slv_save(file, user, key, content):
+def slv_save(file_name, user, key, content):
     """shelveに情報を記録します。
 
     Args:
-        file (str): shelveファイル名
+        file_name (str): shelveファイル名
         user (str): ユーザー名
         key (str): key
         content (any): 記録内容
     """
     print('---------------------------------------')
     try:
-        s = shelve.open('./shelves/' + file + '.shelve')
-        print(file + 'に記録')
+        s = shelve.open('./shelves/' + file_name + '.shelve')
+        print(file_name + 'に記録')
         if user in s:
             data = s[user]
             data[key] = content
@@ -41,11 +41,11 @@ def slv_save(file, user, key, content):
         util.error_print(e)
 
 
-def slv_load(file, user, key):
+def slv_load(file_name, user, key):
     """shelveから情報を取得します。
 
     Args:
-        file (str): shelveファイル名
+        file_name (str): shelveファイル名
         user (str): ユーザー名
         key (str): key
 
@@ -54,8 +54,8 @@ def slv_load(file, user, key):
     """
     print('---------------------------------------')
     try:
-        s = shelve.open('./shelves/' + file + '.shelve')
-        print(file + 'を参照')
+        s = shelve.open('./shelves/' + file_name + '.shelve')
+        print(file_name + 'を参照')
         data = s[user]
         s.close()
         print(user + ':' + key + ' -> ' + str(data[key]))

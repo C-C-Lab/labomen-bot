@@ -40,15 +40,15 @@ def version_check():
     print('---------------------------------------')
 
 
-def add_dir(dir):
+def add_dir(dir_name):
     """ディレクトリを作成します。
 
     Args:
-        dir (str): 作成したいディレクトリ名
+        dir_name (str): 作成したいディレクトリ名
     """
-    if not os.path.exists(dir):
-        os.makedirs(dir)
-        print(dir + "ディレクトリを作成")
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+        print(dir_name + "ディレクトリを作成")
 
 
 def message_info(message):
@@ -57,7 +57,7 @@ def message_info(message):
     Args:
       message(Any): Message Model of discord.py
     """
-    print('時刻：' + str(get_time()))
+    print('時刻：' + str(get_now()))
     print('チャンネル名：' + str(message.channel))
     print('チャンネルID: ' + str(message.channel.id))
     print('ユーザー名:' + get_user_name(message.author))
@@ -71,42 +71,43 @@ def get_user_name(user):
         user : User Model of discord.py
 
     Returns:
-        str: user.name + '＃' + user.discriminator
+        str: user.name + '_' + user.discriminator
     """
-    return str(user.name + '＃' + user.discriminator)
+    return str(user.name + '_' + user.discriminator)
 
 
-def get_time():
+def get_now():
     """現在時刻を取得します。
 
     Returns:
         str: 現在時刻
     """
-    return datetime.datetime.now()
+    now = datetime.datetime.now()
+    return now
 
 
-def pkl_dump(file, content):
+def pkl_dump(file_name, content):
     """.pklへdumpします。
 
     Args:
-        file (str): ファイル名
+        file_name (str): ファイル名
         content (Any): dump内容
 
     note:
         引数に.pklは不要です。
     """
     try:
-        with open('./pickles/' + file + '.pkl', 'wb') as pkl:
+        with open('./pickles/' + file_name + '.pkl', 'wb') as pkl:
             pickle.dump(content, pkl)
     except Exception as e:
         error_print(e)
 
 
-def pkl_load(file):
+def pkl_load(file_name):
     """.pklからloadします。
 
     Args:
-        file (str): ファイル名
+        file_name (str): ファイル名
 
     Returns:
         Any: load内容
@@ -115,7 +116,7 @@ def pkl_load(file):
         引数に.pklは不要です。
     """
     try:
-        with open('./pickles/' + file + '.pkl', 'rb') as pkl:
+        with open('./pickles/' + file_name + '.pkl', 'rb') as pkl:
             return pickle.load(pkl)
     except Exception as e:
         error_print(e)
