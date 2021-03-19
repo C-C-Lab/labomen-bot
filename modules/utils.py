@@ -1,3 +1,6 @@
+"""
+自作の便利メソッドをまとめたモジュールです。
+"""
 import datetime
 import os
 import pickle
@@ -7,20 +10,17 @@ import discord
 
 from settings import discord_settings
 from settings import bot_words
-from utils import slv_utils
-"""
-utility.py 自作の便利メソッドをまとめたモジュールです。
-"""
+from modules import slv
 
 
-def command_check(word):
+def check_command(word):
     """有効なコマンドが存在するかをチェックします。
 
     Args:
         word (str): チェックしたい文字列。
 
     Returns:
-        boolean
+        bool
     """
     command_words = bot_words.COMMANDS.values()
     for command in command_words:
@@ -30,7 +30,7 @@ def command_check(word):
         return False
 
 
-def version_check():
+def check_version():
     """起動確認用のバージョン情報を出力します。
     """
     print('---------------------------------------')
@@ -51,11 +51,11 @@ def add_dir(dir_name):
         print(dir_name + "ディレクトリを作成")
 
 
-def message_info(message):
+def print_message_info(message):
     """受信メッセージの情報を出力します。
 
     Args:
-      message(Any): Message Model of discord.py
+      message(Any): discord.pyのmessageモデル
     """
     print('時刻:' + str(get_now()))
     print('チャンネル名:' + str(message.channel))
@@ -69,7 +69,7 @@ def get_user_name(user):
     """discord内のユーザー名を取得します。
 
     Args:
-        user : User Model of discord.py
+        user : discord.pyのuserモデル
 
     Returns:
         str: user.name + '_' + user.discriminator
@@ -81,49 +81,43 @@ def get_now():
     """現在時刻を取得します。
 
     Returns:
-        str: 現在時刻
+        datetime: 現在時刻
     """
     now = datetime.datetime.now()
     return now
 
 
-def pkl_dump(file_name, content):
-    """.pklへdumpします。
+def save_pkl(file_name, content):
+    """pklへ記録します。
 
     Args:
         file_name (str): ファイル名
-        content (Any): dump内容
-
-    note:
-        引数に.pklは不要です。
+        content (Any): 記録内容
     """
     try:
         with open('./pickles/' + file_name + '.pkl', 'wb') as pkl:
             pickle.dump(content, pkl)
     except Exception as e:
-        error_print(e)
+        print_error(e)
 
 
-def pkl_load(file_name):
-    """.pklからloadします。
+def get_pkl(file_name):
+    """pklから内容を取得します。
 
     Args:
         file_name (str): ファイル名
 
     Returns:
-        Any: load内容
-
-    note:
-        引数に.pklは不要です。
+        Any: 取得内容
     """
     try:
         with open('./pickles/' + file_name + '.pkl', 'rb') as pkl:
             return pickle.load(pkl)
     except Exception as e:
-        error_print(e)
+        print_error(e)
 
 
-def error_print(e):
+def print_error(e):
     """Error内容を出力します。
     """
     print(type(e))
@@ -133,46 +127,71 @@ def error_print(e):
 
 
 def get_mode(user_id):
-    """現在のモードを取得します。
+    """現在のモードをslvから取得します。
 
     Args:
-        user_id (str): メッセージ送信者ID
+        user_id (str): user_id
 
     Returns:
         str: モード名
     """
-    user_mode = slv_utils.slv_load('user_data', user_id, 'mode')
-    try:
-        print('現在のモード：' + user_mode)
-    except KeyError:
-        print('現在のモード：None')
-    finally:
-        return user_mode
+    slv_path = get_user_slv_path(user_id)
+    user_mode = slv.get_value(slv_path, 'data', 'mode')
+    print('現在のモード：' + user_mode)
+    return user_mode
+
+
+def get_user_slv_path(user_id):
+    """userのslvパスを取得します。
+
+    Args:
+        user_id (str or int): user_id
+
+    Returns:
+        str: ファイルパス
+    """
+    str_id = str(user_id)
+    user_slv_path = './shelves/users/' + str_id + '.slv'
+    return user_slv_path
 
 
 async def send_mention(message, content):
     """メンション付メッセージを送信します。
 
     Args:
-        message (Any): Message Model of discord.py
+        message (Any): discord.pyのmessageモデル
         content (str): メッセージ文
     """
     try:
         await message.channel.send(message.author.mention + '\n' + content)
     except Exception as e:
         print('-----メンション送信に失敗-----')
-        error_print(e)
+        print_error(e)
 
 
 async def send_reply(message, content):
     """リプライメッセージを送信します。
 
     Args:
-        message (Any): Message Model of discord.py
+        message (Any): discord.pyのmessageモデル
         content (str): メッセージ文
     """
     try:
         await message.reply(content, mention_author=True)
     except Exception as e:
         print('-----リプライ送信に失敗-----')
-        error_print(e)
+        print_error(e)
+
+
+async def send_message(channel, content):
+    """メッセージを送信します。
+
+    Args:
+        channel (Any): discord.pyのchannelモデル
+        content (str): メッセージ文
+    """
+    try:
+        await channel.send(content)
+    except Exception as e:
+        print('-----メッセージ送信に失敗-----')
+        print_error(e)
