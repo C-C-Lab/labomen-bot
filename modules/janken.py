@@ -67,15 +67,14 @@ def gen_result_mes(janken_mes, r, bot_hand, message):
     bot_mes = random.choice(janken_mes)
     result_mes = bot_hand + bot_mes
     user_id = str(message.author.id)
-    user_slv = './shelves/users/' + user_id + '.slv'
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
         print('結果：botの' + r)
-        slv.update_user_value(user_slv, 'mode', 'normal')
+        slv.update_user_value(user_id, 'mode', 'normal')
     # あいこ処理
     else:
         print('結果：' + r)
         now = utils.get_now()
-        slv.update_user_value(user_slv, 'last_act_at', now)
+        slv.update_user_value(user_id, 'last_act_at', now)
 
     return result_mes
