@@ -6,9 +6,9 @@ import discord
 from settings import bot_words
 from settings import discord_settings
 from settings import janken_words
-from utils import janken
-from utils import slv_utils
-from utils import util
+from modules import janken
+from modules import slv
+from modules import utils
 
 # discordの設定
 ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
@@ -17,15 +17,16 @@ commands = bot_words.COMMANDS
 janken_start_mes = janken_words.JANKEN_START_MES
 random_contents = bot_words.RANDOM_CONTENTS
 client = discord.Client()
+user_slv = './shelves/user_data.shelve'
 
 
 # アプリスタート時に走るイベント
 @client.event
 async def on_ready():
-    util.version_check()
+    utils.version_check()
     # shelvesディレクトリがない場合は作成
-    util.add_dir('shelves')
-    slv_utils.initialize_mode()
+    utils.add_dir('shelves')
+    slv.initialize_user_mode()
     print('---------------------------------------')
 
 
@@ -38,36 +39,36 @@ async def on_message(message):
         return
     # 送信者名を取得
     author = message.author
-    user_name = util.get_user_name(author)
+    user_name = utils.get_user_name(author)
     user_id = str(message.author.id)
-    slv_utils.slv_init(author)
-    slv_utils.slv_save('user_data', author, 'name', user_name)
-    util.message_info(message)
+    slv.initialize_user(author)
+    slv.update_value(user_slv, user_id, 'name', user_name)
+    utils.message_info(message)
+    now = utils.get_now()
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
         # モード情報を取得
-        user_mode = util.get_mode(author)
+        user_mode = utils.get_mode(user_id)
+        # 20秒経過している場合normalへ遷移
+        time_passed = now - slv.get_value(user_slv, user_id, 'last_act_at')
+        print(str(time_passed))
+        if time_passed > datetime.timedelta(0, 20):
+            print('20秒以上経過')
+            slv.update_value(user_slv, user_id, 'mode', 'normal')
+            user_mode = 'normal'
         # じゃんけんモード判定
         if user_mode == 'janken':
-            # 20秒経過している場合normalへ遷移
-            try:
-                if util.get_now() - slv_utils.slv_load('user_data', author, 'updated_at') > datetime.timedelta(0, 20):
-                    print('20秒以上経過')
-                    slv_utils.slv_save('user_data', author, 'mode', 'normal')
-            # mode情報がない場合は例外を無視
-            except TypeError:
-                pass
             # じゃんけん処理
             if message.content in janken.USER_HANDS:
                 await janken.janken_battle(message)
             # USER_HANDSと不一致
             else:
-                await util.send_reply(message, 'あれ？　じゃんけんは？')
+                await utils.send_reply(message, 'あれ？　じゃんけんは？')
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
-                slv_utils.save_update_time(user_id)
+                slv.update_value(user_slv, user_id, 'last_act_at', now)
         # 通常モード
-        else:
+        elif user_mode == 'normal':
             # 鳴き声機能
             if commands['NORMAL'] in message.content:
                 content = random.choice(random_contents)
@@ -76,11 +77,12 @@ async def on_message(message):
             # じゃんけん起動
             elif commands['JANKEN'] in message.content:
                 # モード切替
-                slv_utils.slv_save(
-                    'user_data', author, 'mode', 'janken')
+                slv.update_value(
+                    user_slv, user_id, 'mode', 'janken')
+                slv.update_value(user_slv, user_id, 'last_act_at', now)
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
-                await util.send_reply(message, content)
+                await utils.send_reply(message, content)
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')

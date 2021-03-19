@@ -7,7 +7,7 @@ import discord
 
 from settings import discord_settings
 from settings import bot_words
-from utils import slv_utils
+from modules import slv
 """
 utility.py 自作の便利メソッドをまとめたモジュールです。
 """
@@ -81,7 +81,7 @@ def get_now():
     """現在時刻を取得します。
 
     Returns:
-        str: 現在時刻
+        datetime: 現在時刻
     """
     now = datetime.datetime.now()
     return now
@@ -141,13 +141,9 @@ def get_mode(user_id):
     Returns:
         str: モード名
     """
-    user_mode = slv_utils.slv_load('user_data', user_id, 'mode')
-    try:
-        print('現在のモード：' + user_mode)
-    except KeyError:
-        print('現在のモード：None')
-    finally:
-        return user_mode
+    user_mode = slv.get_value('./shelves/user_data.shelve', user_id, 'mode')
+    print('現在のモード：' + user_mode)
+    return user_mode
 
 
 async def send_mention(message, content):

@@ -9,6 +9,7 @@ initial_user_state dict:
 initial_user_state = {
     'name': '',
     'mode': 'normal',
+    'last_act_at': '',
     'updated_at': '',
     'created_at': '',
     'deleted_at': ''

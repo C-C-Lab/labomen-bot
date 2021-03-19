@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 import dotenv
 
-from utils import util
+from modules import utils
 """
 discord_settings.py ディスコードの設定に関わるメソッドをまとめたモジュールです。
 """
@@ -15,13 +15,13 @@ load_dotenv(dotenv_path, verbose=True)
 try:
     ACCESS_TOKEN = os.environ.get('DISCORD_ACCESS_TOKEN')
 except Exception as e:
-    util.error_print(e)
+    utils.error_print(e)
     print('ACCESS_TOKENの取得に失敗')
 
 try:
     CHANNEL_IDS = os.environ.get('DISCORD_CHANNEL_IDS').split(',')
 except Exception as e:
-    util.error_print(e)
+    utils.error_print(e)
     print('CHANNEL_IDSの取得に失敗')
 
 # 接続時のコンソール用メッセージ

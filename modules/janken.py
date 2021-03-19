@@ -1,7 +1,7 @@
 import random
 
-from utils import slv_utils
-from utils import util
+from modules import slv
+from modules import utils
 from settings import janken_words
 """
 janken.py じゃんけん機能に関連するメソッドをまとめたモジュールです。
@@ -49,7 +49,7 @@ async def janken_battle(message):
         result_mes = gen_result_mes(
             favour_mes, 'あいこ', bot_hand, message)
     # 結果メッセージを送信
-    await util.send_reply(message, result_mes)
+    await utils.send_reply(message, result_mes)
 
 
 def gen_result_mes(janken_mes, r, bot_hand, message):
@@ -66,13 +66,17 @@ def gen_result_mes(janken_mes, r, bot_hand, message):
     """
     bot_mes = random.choice(janken_mes)
     result_mes = bot_hand + bot_mes
+    user_id = str(message.author.id)
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
         print('結果：botの' + r)
-        slv_utils.slv_save('user_data', message.author, 'mode', 'normal')
+        slv.update_value('./shelves/user_data.shelve',
+                         user_id, 'mode', 'normal')
     # あいこ処理
     else:
         print('結果：' + r)
-        user_id = str(message.author.id)
-        slv_utils.save_update_time(user_id)
+        now = utils.get_now()
+        slv.update_value('./shelves/user_data.shelve',
+                         user_id, 'last_act_at', now)
+
     return result_mes
