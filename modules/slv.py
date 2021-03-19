@@ -103,11 +103,14 @@ def initialize_user(user):
         user_slv = utils.get_user_slv_path(user_id)
         slv_dict = get_dict(user_slv)
         user_name = utils.get_user_name(user)
-        index_key = 'data'
         print(user_name + 'の一致データなし')
         print(user_name + 'の項目を作成')
+        index_key = 'data'
         slv_dict[index_key] = init_user_states.INITIAL_USER_STATES
         now = utils.get_now()
         slv_dict[index_key]['created_at'] = now
         slv_dict[index_key]['last_act_at'] = now
+        merge_dict(slv_dict, user_slv)
+        index_key = 'omikuji'
+        slv_dict[index_key] = init_user_states.INITIAL_OMIKUJI_STATES
         merge_dict(slv_dict, user_slv)

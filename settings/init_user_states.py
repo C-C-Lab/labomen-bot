@@ -17,3 +17,8 @@ INITIAL_USER_STATES = {
     'created_at': '',
     'deleted_at': ''
 }
+
+INITIAL_OMIKUJI_STATES = {
+    'date': '',
+    'result': '',
+}
