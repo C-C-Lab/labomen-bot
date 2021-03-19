@@ -141,10 +141,24 @@ def get_mode(user_id):
     Returns:
         str: モード名
     """
-    user_mode = slv.get_value(
-        './shelves/users/' + user_id + '.slv', 'data', 'mode')
+    slv_path = get_user_slv_path(user_id)
+    user_mode = slv.get_value(slv_path, 'data', 'mode')
     print('現在のモード：' + user_mode)
     return user_mode
+
+
+def get_user_slv_path(user_id):
+    """userのslvパスを取得する。
+
+    Args:
+        user_id (str or int): user_id
+
+    Returns:
+        str: ファイルパス
+    """
+    str_id = str(user_id)
+    user_slv_path = './shelves/users/' + str_id + '.slv'
+    return user_slv_path
 
 
 async def send_mention(message, content):

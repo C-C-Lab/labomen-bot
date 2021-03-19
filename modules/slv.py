@@ -75,7 +75,7 @@ def update_user_value(user_id, dict_key=None, value=None):
         dict_key (str or int): shelveのdict_key
         value (str or int): 上書き内容
     """
-    file_name = './shelves/users/' + user_id + '.slv'
+    file_name = utils.get_user_slv_path(user_id)
     slv_dict = get_dict(file_name)
     now = utils.get_now()
     _dict = slv_dict['data']
@@ -97,7 +97,7 @@ def initialize_user(user):
     replace_list = [s.replace('./shelves/users/', '') for s in slv_list]
     id_list = [s.replace('.slv', '') for s in replace_list]
     if user_id not in id_list:
-        user_slv = './shelves/users/' + user_id + '.slv'
+        user_slv = utils.get_user_slv_path(user_id)
         slv_dict = get_dict(user_slv)
         user_name = utils.get_user_name(user)
         index_key = 'data'

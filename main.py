@@ -40,7 +40,7 @@ async def on_message(message):
     author = message.author
     user_name = utils.get_user_name(author)
     user_id = str(message.author.id)
-    user_slv = './shelves/users/' + user_id + '.slv'
+    user_slv = utils.get_user_slv_path(user_id)
     slv.initialize_user(author)
     slv.update_user_value(user_id, 'name', user_name)
     utils.message_info(message)
