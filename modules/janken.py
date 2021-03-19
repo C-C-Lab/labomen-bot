@@ -37,7 +37,9 @@ async def play_janken(message):
     print('じゃんけんを実行')
     # 手に応じた整数をdictから取得
     bot_hand, bot_hand_num = random.choice(list(BOT_HANDS.items()))
-    user_hand_num = USER_HANDS[message.content]
+    hiragana_content = utils.get_hiragana(message.content)
+    command_word = utils.get_command(hiragana_content, USER_HANDS)
+    user_hand_num = USER_HANDS[command_word]
     # 取得した整数を比較
     # -1, 2なら勝利
     # 1, -2なら敗北
