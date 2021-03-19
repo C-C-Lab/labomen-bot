@@ -17,7 +17,6 @@ commands = bot_words.COMMANDS
 janken_start_mes = janken_words.JANKEN_START_MES
 random_contents = bot_words.RANDOM_CONTENTS
 client = discord.Client()
-user_slv = './shelves/user_data.shelve'
 
 
 # アプリスタート時に走るイベント
@@ -26,7 +25,7 @@ async def on_ready():
     utils.version_check()
     # shelvesディレクトリがない場合は作成
     utils.add_dir('shelves')
-    slv.initialize_user_mode()
+    utils.add_dir('shelves/users')
     print('---------------------------------------')
 
 
@@ -41,8 +40,9 @@ async def on_message(message):
     author = message.author
     user_name = utils.get_user_name(author)
     user_id = str(message.author.id)
+    user_slv = './shelves/users/' + user_id + '.slv'
     slv.initialize_user(author)
-    slv.update_value(user_slv, user_id, 'name', user_name)
+    slv.update_value(user_slv, 'data', 'name', user_name)
     utils.message_info(message)
     now = utils.get_now()
     # チャンネルIDを照合
@@ -50,11 +50,10 @@ async def on_message(message):
         # モード情報を取得
         user_mode = utils.get_mode(user_id)
         # 20秒経過している場合normalへ遷移
-        time_passed = now - slv.get_value(user_slv, user_id, 'last_act_at')
-        print(str(time_passed))
+        time_passed = now - slv.get_value(user_slv, 'data', 'last_act_at')
         if time_passed > datetime.timedelta(0, 20):
             print('20秒以上経過')
-            slv.update_value(user_slv, user_id, 'mode', 'normal')
+            slv.update_value(user_slv, 'data', 'mode', 'normal')
             user_mode = 'normal'
         # じゃんけんモード判定
         if user_mode == 'janken':
@@ -66,7 +65,7 @@ async def on_message(message):
                 await utils.send_reply(message, 'あれ？　じゃんけんは？')
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
-                slv.update_value(user_slv, user_id, 'last_act_at', now)
+                slv.update_value(user_slv, 'data', 'last_act_at', now)
         # 通常モード
         elif user_mode == 'normal':
             # 鳴き声機能
@@ -78,8 +77,8 @@ async def on_message(message):
             elif commands['JANKEN'] in message.content:
                 # モード切替
                 slv.update_value(
-                    user_slv, user_id, 'mode', 'janken')
-                slv.update_value(user_slv, user_id, 'last_act_at', now)
+                    user_slv, 'data', 'mode', 'janken')
+                slv.update_value(user_slv, 'data', 'last_act_at', now)
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
                 await utils.send_reply(message, content)
@@ -88,7 +87,6 @@ async def on_message(message):
                 print('未設定メッセージ -> 反応なし')
     # チャンネルIDが不一致
     elif str(message.channel.id) not in BOT_CH_IDS:
-        print('message.channel.id が不一致 -> 反応なし')
         return
     print('=======================================')
 

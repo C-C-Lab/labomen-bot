@@ -1,3 +1,4 @@
+import glob
 import shelve
 
 from settings import init_user_states
@@ -67,34 +68,24 @@ def update_value(file_name, index_key, dict_key=None, value=None):
 
 
 def initialize_user(user):
-    """user_data.shelveにユーザーデータがなければ初期値を記録します。
+    """usersディレクトリ内にユーザーデータがなければ初期値を記録します。
 
     Args:
         user (user): discord.pyのユーザーモデル
     """
-    user_slv = './shelves/user_data.shelve'
-    index_key = str(user.id)
-    user_name = utils.get_user_name(user)
-    slv_dict = get_dict(user_slv)
-    if index_key not in slv_dict:
+    user_id = str(user.id)
+    slv_list = glob.glob('./shelves/users/*.slv')
+    replace_list = [s.replace('./shelves/users/', '') for s in slv_list]
+    id_list = [s.replace('.slv', '') for s in replace_list]
+    if user_id not in id_list:
+        user_slv = './shelves/users/' + user_id + '.slv'
+        slv_dict = get_dict(user_slv)
+        user_name = utils.get_user_name(user)
+        index_key = 'data'
         print(user_name + 'の一致データなし')
         print(user_name + 'の項目を作成')
         slv_dict[index_key] = init_user_states.initial_user_state
         now = utils.get_now()
         slv_dict[index_key]['created_at'] = now
+        slv_dict[index_key]['last_act_at'] = now
         merge_dict(slv_dict, user_slv)
-
-
-def initialize_user_mode():
-    """shelve内ユーザーのmode情報を初期化します。
-    """
-    user_slv = './shelves/user_data.shelve'
-    slv_dict = get_dict(user_slv)
-    for index_key in slv_dict:
-        current_mode = slv_dict[index_key]['mode']
-        if current_mode != 'normal':
-            update_value(user_slv, index_key, 'mode', 'normal')
-            user_name = slv_dict[index_key]['name']
-            print(user_name + ': mode -> normal')
-        else:
-            None

@@ -141,7 +141,8 @@ def get_mode(user_id):
     Returns:
         str: モード名
     """
-    user_mode = slv.get_value('./shelves/user_data.shelve', user_id, 'mode')
+    user_mode = slv.get_value(
+        './shelves/users/' + user_id + '.slv', 'data', 'mode')
     print('現在のモード：' + user_mode)
     return user_mode
 
