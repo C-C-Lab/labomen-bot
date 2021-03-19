@@ -23,9 +23,7 @@ def slv_save(file_name, user, key, content):
         s = shelve.open('./shelves/' + file_name + '.shelve')
         print(file_name + 'に記録')
         if user_id in s:
-            data = s[user_id]
-            data[key] = content
-            s[user_id] = data
+            update(s, user_id, key, content)
             print(user_name + 'の' + key + 'を変更 -> ' + str(content))
         else:
             s[user_id] = {key: content}
@@ -96,22 +94,49 @@ def slv_init(user):
         print(user_name + 'の一致データなし')
         print(user_name + 'の項目を作成')
         s[user_id] = init_states
+        now = util.get_now()
+        update(s, user_id, 'created_at', now)
         s.close()
 
 
-def slv_save_init(user, k):
+def slv_save_init(user_id, k):
     """user_data.shelveに初期値を記録します。
 
     Args:
         s (str): s
-        user (user): user
+        user_id (str): discordのユーザーID
         k (set): 記録したいkeyリスト
     """
-    user_id = user.id
     for key in k:
         s = shelve.open('./shelves/user_data.shelve')
         value = init_states[key]
-        data = s[user_id]
-        data[key] = value
-        s[user_id] = data
+        update(s, user_id, key, value)
         s.close()
+
+
+def update(s, s_key, key, value):
+    """shelve内のデータを上書きします。
+
+    Args:
+        s (DbfilenameShelf): shelveデータ
+        s_key (str or int): shelveのキー
+        key (str): 上書き項目のkey
+        value (str or int): 上書き内容
+    """
+    data = s[s_key]
+    data[key] = value
+    s[s_key] = data
+
+
+def initialize_mode():
+    """shelve内ユーザーのmode情報を初期化します。
+    """
+    s = shelve.open('./shelves/user_data.shelve')
+    for s_key in s:
+        current_mode = s[s_key]['mode']
+        if current_mode != 'normal':
+            update(s, s_key, 'mode', 'normal')
+            user_name = s[s_key]['name']
+            print(user_name + ': mode -> normal')
+        else:
+            None

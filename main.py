@@ -26,6 +26,7 @@ async def on_ready():
     util.version_check()
     # shelvesディレクトリがない場合は作成
     util.add_dir('shelves')
+    slv_utils.initialize_mode()
     print('---------------------------------------')
 
 
@@ -38,7 +39,9 @@ async def on_message(message):
         return
     # 送信者名を取得
     author = message.author
+    user_name = util.get_user_name(author)
     slv_utils.slv_init(author)
+    slv_utils.slv_save('user_data', author, 'name', user_name)
     util.message_info(message)
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
