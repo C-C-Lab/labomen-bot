@@ -69,11 +69,10 @@ def gen_result_mes(janken_mes, r, bot_hand, message):
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
         print('結果：botの' + r)
-        slv_utils.slv_save('user_data', util.get_user_name(
-            message.author), 'mode', 'normal')
+        slv_utils.slv_save('user_data', message.author, 'mode', 'normal')
     # あいこ処理
     else:
         print('結果：' + r)
-        slv_utils.slv_save('user_data', util.get_user_name(message.author),
-                           'last_update', str(util.get_now()))
+        user_id = str(message.author.id)
+        slv_utils.save_update_time(user_id)
     return result_mes
