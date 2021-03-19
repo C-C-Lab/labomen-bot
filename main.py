@@ -42,7 +42,7 @@ async def on_message(message):
     user_id = str(message.author.id)
     user_slv = './shelves/users/' + user_id + '.slv'
     slv.initialize_user(author)
-    slv.update_value(user_slv, 'data', 'name', user_name)
+    slv.update_user_value(user_slv, 'name', user_name)
     utils.message_info(message)
     now = utils.get_now()
     # チャンネルIDを照合
@@ -53,7 +53,7 @@ async def on_message(message):
         time_passed = now - slv.get_value(user_slv, 'data', 'last_act_at')
         if time_passed > datetime.timedelta(0, 20):
             print('20秒以上経過')
-            slv.update_value(user_slv, 'data', 'mode', 'normal')
+            slv.update_user_value(user_slv, 'mode', 'normal')
             user_mode = 'normal'
         # じゃんけんモード判定
         if user_mode == 'janken':
@@ -65,7 +65,7 @@ async def on_message(message):
                 await utils.send_reply(message, 'あれ？　じゃんけんは？')
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
-                slv.update_value(user_slv, 'data', 'last_act_at', now)
+                slv.update_user_value(user_slv, 'last_act_at', now)
         # 通常モード
         elif user_mode == 'normal':
             # 鳴き声機能
@@ -76,9 +76,9 @@ async def on_message(message):
             # じゃんけん起動
             elif commands['JANKEN'] in message.content:
                 # モード切替
-                slv.update_value(
-                    user_slv, 'data', 'mode', 'janken')
-                slv.update_value(user_slv, 'data', 'last_act_at', now)
+                slv.update_user_value(
+                    user_slv, 'mode', 'janken')
+                slv.update_user_value(user_slv, 'last_act_at', now)
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
                 await utils.send_reply(message, content)

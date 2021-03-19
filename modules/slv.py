@@ -67,6 +67,24 @@ def update_value(file_name, index_key, dict_key=None, value=None):
     merge_dict(slv_dict, file_name)
 
 
+def update_user_value(file_name, dict_key=None, value=None):
+    """shelve内のデータを上書きします。
+
+    Args:
+        file_name (str): shelveファイルの名前を相対パスで指定
+        dict_key (str or int): shelveのdict_key
+        value (str or int): 上書き内容
+    """
+    slv_dict = get_dict(file_name)
+    now = utils.get_now()
+    _dict = slv_dict['data']
+    _dict['updated_at'] = now
+    if dict_key and value:
+        _dict[dict_key] = value
+    slv_dict['data'] = _dict
+    merge_dict(slv_dict, file_name)
+
+
 def initialize_user(user):
     """usersディレクトリ内にユーザーデータがなければ初期値を記録します。
 

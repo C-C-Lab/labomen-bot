@@ -71,11 +71,11 @@ def gen_result_mes(janken_mes, r, bot_hand, message):
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
         print('結果：botの' + r)
-        slv.update_value(user_slv, 'data', 'mode', 'normal')
+        slv.update_user_value(user_slv, 'mode', 'normal')
     # あいこ処理
     else:
         print('結果：' + r)
         now = utils.get_now()
-        slv.update_value(user_slv, 'data', 'last_act_at', now)
+        slv.update_user_value(user_slv, 'last_act_at', now)
 
     return result_mes
