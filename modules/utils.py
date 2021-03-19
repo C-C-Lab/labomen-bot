@@ -101,7 +101,7 @@ def pkl_dump(file_name, content):
         with open('./pickles/' + file_name + '.pkl', 'wb') as pkl:
             pickle.dump(content, pkl)
     except Exception as e:
-        error_print(e)
+        print_error(e)
 
 
 def pkl_load(file_name):
@@ -120,10 +120,10 @@ def pkl_load(file_name):
         with open('./pickles/' + file_name + '.pkl', 'rb') as pkl:
             return pickle.load(pkl)
     except Exception as e:
-        error_print(e)
+        print_error(e)
 
 
-def error_print(e):
+def print_error(e):
     """Error内容を出力します。
     """
     print(type(e))
@@ -172,7 +172,7 @@ async def send_mention(message, content):
         await message.channel.send(message.author.mention + '\n' + content)
     except Exception as e:
         print('-----メンション送信に失敗-----')
-        error_print(e)
+        print_error(e)
 
 
 async def send_reply(message, content):
@@ -186,4 +186,4 @@ async def send_reply(message, content):
         await message.reply(content, mention_author=True)
     except Exception as e:
         print('-----リプライ送信に失敗-----')
-        error_print(e)
+        print_error(e)
