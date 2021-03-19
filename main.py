@@ -10,7 +10,6 @@ from utils import janken
 from utils import slv_utils
 from utils import util
 
-
 # discordの設定
 ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
 BOT_CH_IDS = discord_settings.CHANNEL_IDS
@@ -40,6 +39,7 @@ async def on_message(message):
     # 送信者名を取得
     author = message.author
     user_name = util.get_user_name(author)
+    user_id = str(message.author.id)
     slv_utils.slv_init(author)
     slv_utils.slv_save('user_data', author, 'name', user_name)
     util.message_info(message)
@@ -51,7 +51,7 @@ async def on_message(message):
         if user_mode == 'janken':
             # 20秒経過している場合normalへ遷移
             try:
-                if util.get_now() - slv_utils.slv_load('user_data', author, 'last_update') > datetime.timedelta(0, 20):
+                if util.get_now() - slv_utils.slv_load('user_data', author, 'updated_at') > datetime.timedelta(0, 20):
                     print('20秒以上経過')
                     slv_utils.slv_save('user_data', author, 'mode', 'normal')
             # mode情報がない場合は例外を無視
@@ -65,8 +65,7 @@ async def on_message(message):
                 await util.send_reply(message, 'あれ？　じゃんけんは？')
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
-                slv_utils.slv_save('user_data', author,
-                                   'last_update', str(util.get_now()))
+                slv_utils.save_update_time(user_id)
         # 通常モード
         else:
             # 鳴き声機能
@@ -79,9 +78,6 @@ async def on_message(message):
                 # モード切替
                 slv_utils.slv_save(
                     'user_data', author, 'mode', 'janken')
-                # 発言時刻記録
-                slv_utils.slv_save('user_data', author,
-                                   'last_update', util.get_now())
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
                 await util.send_reply(message, content)

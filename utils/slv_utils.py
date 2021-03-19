@@ -21,15 +21,16 @@ def slv_save(file_name, user, key, content):
     print('---------------------------------------')
     try:
         s = shelve.open('./shelves/' + file_name + '.shelve')
+        s_dict = dict(s)
+        s.close()
         print(file_name + 'に記録')
-        if user_id in s:
-            update(s, user_id, key, content)
+        if user_id in s_dict:
+            update('user_data', user_id, key, content)
             print(user_name + 'の' + key + 'を変更 -> ' + str(content))
         else:
             s[user_id] = {key: content}
             print(user_name + 'の項目を作成')
             print(key + ' -> ' + str(content))
-        s.close()
     except OSError as e:
         print('-----OSError-----')
         util.error_print(e)
@@ -110,11 +111,11 @@ def slv_save_init(user_id, k):
     for key in k:
         s = shelve.open('./shelves/user_data.shelve')
         value = init_states[key]
-        update(s, user_id, key, value)
         s.close()
+        update('user_data', user_id, key, value)
 
 
-def update(s, s_key, key, value):
+def update(s_name, s_key, key, value):
     """shelve内のデータを上書きします。
 
     Args:
@@ -123,20 +124,34 @@ def update(s, s_key, key, value):
         key (str): 上書き項目のkey
         value (str or int): 上書き内容
     """
+    s = shelve.open('./shelves/' + s_name + '.shelve')
     data = s[s_key]
     data[key] = value
     s[s_key] = data
+    s.close()
+    save_update_time(s_key)
+
+
+def save_update_time(user_id):
+    s = shelve.open('./shelves/user_data.shelve')
+    now = util.get_now()
+    update_time = s[user_id]
+    update_time['updated_at'] = now
+    s[user_id] = update_time
+    s.close()
 
 
 def initialize_mode():
     """shelve内ユーザーのmode情報を初期化します。
     """
     s = shelve.open('./shelves/user_data.shelve')
-    for s_key in s:
-        current_mode = s[s_key]['mode']
+    user_dict = dict(s)
+    s.close()
+    for s_key in user_dict:
+        current_mode = user_dict[s_key]['mode']
         if current_mode != 'normal':
-            update(s, s_key, 'mode', 'normal')
-            user_name = s[s_key]['name']
+            update('user_data', s_key, 'mode', 'normal')
+            user_name = user_dict[s_key]['name']
             print(user_name + ': mode -> normal')
         else:
             None
