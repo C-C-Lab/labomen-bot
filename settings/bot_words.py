@@ -2,7 +2,7 @@
     """
 
 # botが反応するコマンド一覧
-COMMANDS = {
+BOT_COMMANDS = {
     'NORMAL': 'にあちゃん',
     'JANKEN': 'じゃんけん',
     'OMIKUJI': 'おみくじ'

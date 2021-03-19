@@ -33,51 +33,72 @@ lose_mes = janken_words.JANKEN_LOSE_MES
 favour_mes = janken_words.JANKEN_FAVOUR_MES
 
 
-async def play_janken(message):
+async def play_janken(user=None, message=None, reaction=None):
     """じゃんけんを実行します。
     結果に応じてメッセージを送信します。
 
     Args:
-        message (any): discord.pyのmessageモデル
+        user_id (str or int): discordのuser_id
+        message (message): discord.pyのmessageモデル
+        reaction (reaction): discord.pyのreactionモデル
     """
     print('じゃんけんを実行')
     # 手に応じた整数をdictから取得
     bot_hand, bot_hand_num = random.choice(list(BOT_HANDS.items()))
-    hiragana_content = utils.get_hiragana(message.content)
-    command_word = utils.get_command(hiragana_content, USER_HANDS)
-    user_hand_num = USER_HANDS[command_word]
     emoji_hand = EMOJI_HANDS[bot_hand_num]
+    if message is not None:
+        user_id = str(message.author.id)
+        hiragana_content = utils.get_hiragana(message.content)
+        command_word = utils.get_command(hiragana_content, USER_HANDS)
+        user_hand_num = USER_HANDS[command_word]
+        result = bot_hand_num - user_hand_num
+    elif reaction is not None:
+        message = reaction.message
+        user_id = str(user.id)
+        user_hand_num = utils.get_key_from_value(EMOJI_HANDS, reaction.emoji)
+        result = bot_hand_num - user_hand_num
     # 取得した整数を比較
     # -1, 2なら勝利
     # 1, -2なら敗北
-    result = bot_hand_num - user_hand_num
     if result in [-1, 2]:
-        result_mes = get_result_mes(win_mes, '勝ち', emoji_hand, message)
+        result_mes = get_result_mes(win_mes, '勝ち', emoji_hand, user_id)
     elif result in [1, -2]:
-        result_mes = get_result_mes(lose_mes, '負け', emoji_hand, message)
+        result_mes = get_result_mes(lose_mes, '負け', emoji_hand, user_id)
     elif result == 0:
-        result_mes = get_result_mes(
-            favour_mes, 'あいこ', emoji_hand, message)
+        result_mes = get_result_mes(favour_mes, 'あいこ', emoji_hand, user_id)
     # 結果メッセージを送信
-    await utils.send_reply(message, emoji_hand)
-    await utils.send_reply(message, result_mes)
+        if reaction is not None:
+            reply_message = await message.channel.send(user.mention + '\n' + emoji_hand + '\n' + result_mes)
+        elif message is not None:
+            await utils.send_reply(message, emoji_hand)
+            reply_message = await utils.send_reply(message, result_mes)
+        emoji_hands = EMOJI_HANDS.values()
+        user_slv = slv.get_user_slv_path(user_id)
+        slv.update_value(user_slv, 'janken',
+                         'last_message_id', reply_message.id)
+        await utils.add_reaction_list(reply_message, emoji_hands)
+        return
+    if reaction is not None:
+        await message.channel.send(user.mention + '\n' + emoji_hand + '\n' + result_mes)
+    elif message is not None:
+        await utils.send_reply(message, emoji_hand)
+        await utils.send_reply(message, result_mes)
 
 
-def get_result_mes(janken_mes, result, emoji_hand, message):
+def get_result_mes(janken_mes, result, emoji_hand, user_id):
     """じゃんけんの結果に応じたメッセージを取得します。
 
     Args:
         janken_mes (list): 結果に応じたlist
         result (str): 勝敗
         emoji_hand (str): bot_hand
-        message (any): message
+        user_id (str or int): discordのuser_id
 
     Returns:
         str: じゃんけん結果メッセージ
     """
     bot_mes = random.choice(janken_mes)
     result_mes = bot_mes
-    user_id = str(message.author.id)
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
         print('結果：botの' + result)

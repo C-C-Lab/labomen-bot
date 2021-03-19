@@ -152,24 +152,10 @@ def get_mode(user_id):
     Returns:
         str: モード名
     """
-    slv_path = get_user_slv_path(user_id)
+    slv_path = slv.get_user_slv_path(user_id)
     user_mode = slv.get_value(slv_path, 'data', 'mode')
     print('現在のモード：' + user_mode)
     return user_mode
-
-
-def get_user_slv_path(user_id):
-    """userのslvパスを取得します。
-
-    Args:
-        user_id (str or int): user_id
-
-    Returns:
-        str: ファイルパス
-    """
-    str_id = str(user_id)
-    user_slv_path = './shelves/users/' + str_id + '.slv'
-    return user_slv_path
 
 
 async def send_mention(message, content):
@@ -178,26 +164,35 @@ async def send_mention(message, content):
     Args:
         message (Any): discord.pyのmessageモデル
         content (str): メッセージ文
+
+    Returns:
+        message: discord.pyのmessageモデル
     """
     try:
-        await message.channel.send(message.author.mention + '\n' + content)
+        response = await message.channel.send(message.author.mention + '\n' + content)
     except Exception as e:
         print('-----メンション送信に失敗-----')
         print_error(e)
+    return response
 
 
 async def send_reply(message, content):
     """リプライメッセージを送信します。
+    送信したメッセージのモデルを返します。
 
     Args:
         message (Any): discord.pyのmessageモデル
         content (str): メッセージ文
+
+    Returns:
+        message: discord.pyのmessageモデル
     """
     try:
-        await message.reply(content, mention_author=True)
+        response = await message.reply(content, mention_author=True)
     except Exception as e:
         print('-----リプライ送信に失敗-----')
         print_error(e)
+    return response
 
 
 async def send_message(channel, content):
@@ -206,12 +201,16 @@ async def send_message(channel, content):
     Args:
         channel (Any): discord.pyのchannelモデル
         content (str): メッセージ文
+
+    Returns:
+        message: discord.pyのmessageモデル
     """
     try:
-        await channel.send(content)
+        response = await channel.send(content)
     except Exception as e:
         print('-----メッセージ送信に失敗-----')
         print_error(e)
+    return response
 
 
 def get_hiragana(word):
@@ -225,3 +224,20 @@ def get_hiragana(word):
     """
     converted_word = jaconv.kata2hira(word)
     return converted_word
+
+
+async def add_reaction_list(message, emoji_list):
+    """リスト内のemojiをリアクションとして一括送信します。
+
+    Args:
+        message (message): discord.pyのmessageモデル
+        emoji_list (list): emojiのlist
+    """
+    for emoji in emoji_list:
+        await message.add_reaction(emoji)
+
+
+def get_key_from_value(dict_name, target_value):
+    for key, value in dict_name.items():
+        if value == target_value:
+            return key
