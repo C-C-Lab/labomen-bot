@@ -7,27 +7,44 @@ import pickle
 import traceback
 
 import discord
+import jaconv
 
 from settings import discord_settings
-from settings import bot_words
 from modules import slv
 
 
-def check_command(word):
+def check_command(word, command_words):
     """有効なコマンドが存在するかをチェックします。
 
     Args:
         word (str): チェックしたい文字列。
+        command_words (set): コマンド一覧を含むsetオブジェクト
 
     Returns:
         bool
     """
-    command_words = bot_words.COMMANDS.values()
     for command in command_words:
         if command in word:
             return True
     else:
         return False
+
+
+def get_command(word, command_words):
+    """文字列に有効なコマンドが含まれていれば該当コマンドを取得します。
+
+    Args:
+        word (str): チェックしたい文字列。
+        command_words (set): コマンド一覧を含むsetオブジェクト
+
+    Returns:
+        str: コマンド
+    """
+    for command in command_words:
+        if command in word:
+            return command
+    else:
+        return None
 
 
 def check_version():
@@ -195,3 +212,16 @@ async def send_message(channel, content):
     except Exception as e:
         print('-----メッセージ送信に失敗-----')
         print_error(e)
+
+
+def get_hiragana(word):
+    """文字列をひらがなに変換します。
+
+    Args:
+        word (str): 変換する文字列
+
+    Returns:
+        str: ひらがな文字列
+    """
+    converted_word = jaconv.kata2hira(word)
+    return converted_word
