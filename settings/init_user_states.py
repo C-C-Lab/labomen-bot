@@ -12,6 +12,8 @@ INITIAL_USER_STATES dict:
 INITIAL_USER_STATES = {
     'name': '',
     'mode': 'normal',
+    'omikuji_date': '',
+    'omikuji_result': '',
     'last_act_at': '',
     'updated_at': '',
     'created_at': '',

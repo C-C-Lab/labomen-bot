@@ -7,6 +7,7 @@ from settings import bot_words
 from settings import discord_settings
 from settings import janken_words
 from modules import janken
+from modules import omikuji
 from modules import slv
 from modules import utils
 
@@ -81,6 +82,9 @@ async def on_message(message):
                 # メッセージ送信
                 content = random.choice(janken_start_mes)
                 await utils.send_reply(message, content)
+            # おみくじ起動
+            elif commands['OMIKUJI'] in message.content:
+                await omikuji.play_omikuji(message)
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')
