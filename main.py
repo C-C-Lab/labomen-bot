@@ -46,6 +46,7 @@ async def on_message(message):
     slv.update_user_value(user_id, 'name', user_name)
     utils.print_message_info(message)
     now = utils.get_now()
+    hiragana_content = utils.get_hiragana(message.content)
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
         # モード情報を取得
@@ -59,7 +60,8 @@ async def on_message(message):
         # じゃんけんモード判定
         if user_mode == 'janken':
             # じゃんけん処理
-            if message.content in janken.USER_HANDS:
+            user_hands = janken.USER_HANDS
+            if utils.check_command(hiragana_content, user_hands):
                 await janken.play_janken(message)
             # USER_HANDSと不一致
             else:
@@ -70,12 +72,12 @@ async def on_message(message):
         # 通常モード
         elif user_mode == 'normal':
             # 鳴き声機能
-            if commands['NORMAL'] in message.content:
+            if commands['NORMAL'] in hiragana_content:
                 content = random.choice(random_contents)
                 await utils.send_message(message.channel, content)
                 print('message.channel.id が一致 -> 反応：' + content)
             # じゃんけん起動
-            elif commands['JANKEN'] in message.content:
+            elif commands['JANKEN'] in hiragana_content:
                 # モード切替
                 slv.update_user_value(user_id, 'mode', 'janken')
                 slv.update_user_value(user_id, 'last_act_at', now)
