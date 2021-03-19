@@ -22,7 +22,7 @@ client = discord.Client()
 # アプリスタート時に走るイベント
 @client.event
 async def on_ready():
-    utils.version_check()
+    utils.check_version()
     # shelvesディレクトリがない場合は作成
     utils.add_dir('shelves')
     utils.add_dir('shelves/users')
@@ -43,7 +43,7 @@ async def on_message(message):
     user_slv = utils.get_user_slv_path(user_id)
     slv.initialize_user(author)
     slv.update_user_value(user_id, 'name', user_name)
-    utils.message_info(message)
+    utils.print_message_info(message)
     now = utils.get_now()
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
@@ -59,7 +59,7 @@ async def on_message(message):
         if user_mode == 'janken':
             # じゃんけん処理
             if message.content in janken.USER_HANDS:
-                await janken.janken_battle(message)
+                await janken.play_janken(message)
             # USER_HANDSと不一致
             else:
                 await utils.send_reply(message, 'あれ？　じゃんけんは？')
@@ -71,7 +71,7 @@ async def on_message(message):
             # 鳴き声機能
             if commands['NORMAL'] in message.content:
                 content = random.choice(random_contents)
-                await message.channel.send(content)
+                await utils.send_message(message.channel, content)
                 print('message.channel.id が一致 -> 反応：' + content)
             # じゃんけん起動
             elif commands['JANKEN'] in message.content:

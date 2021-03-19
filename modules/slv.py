@@ -1,3 +1,6 @@
+"""
+slv関連のメソッドをまとめたモジュールです。
+"""
 import glob
 import shelve
 
@@ -25,8 +28,8 @@ def get_value(file_name, index_key, dict_key):
 
     Args:
         file_name (str): shelveファイルの名前を相対パスで指定
-        index_key (str): index_key
-        dict_key (str or int): dict_key
+        index_key (str): shelveのindex_key
+        dict_key (str or int): shelveのdict_key
 
     Returns:
         any: value
@@ -90,7 +93,7 @@ def initialize_user(user):
     """usersディレクトリ内にユーザーデータがなければ初期値を記録します。
 
     Args:
-        user (user): discord.pyのユーザーモデル
+        user (user): discord.pyのuserモデル
     """
     user_id = str(user.id)
     slv_list = glob.glob('./shelves/users/*.slv')
@@ -103,7 +106,7 @@ def initialize_user(user):
         index_key = 'data'
         print(user_name + 'の一致データなし')
         print(user_name + 'の項目を作成')
-        slv_dict[index_key] = init_user_states.initial_user_state
+        slv_dict[index_key] = init_user_states.INITIAL_USER_STATES
         now = utils.get_now()
         slv_dict[index_key]['created_at'] = now
         slv_dict[index_key]['last_act_at'] = now

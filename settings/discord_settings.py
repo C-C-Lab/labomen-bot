@@ -1,11 +1,12 @@
+"""
+ディスコードの設定に関わるメソッドをまとめたモジュールです。
+"""
 import os
 from dotenv import load_dotenv
 import dotenv
 
 from modules import utils
-"""
-discord_settings.py ディスコードの設定に関わるメソッドをまとめたモジュールです。
-"""
+
 
 # .envをロード
 dotenv_path = dotenv.find_dotenv()
