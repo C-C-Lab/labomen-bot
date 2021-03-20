@@ -1,0 +1,4 @@
+jaconv==0.2.4
+discord.py==1.6.0
+discord==1.0.1
+python-dotenv==0.15.0
