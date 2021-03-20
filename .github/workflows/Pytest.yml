@@ -1,44 +1,19 @@
-# This workflow will install Python dependencies, run tests and lint with a single version of Python
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
-name: PyTest
-
 on:
   push:
     branches: [development, master]
 
+name: Run Tox tests
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
+  tox_test:
+    name: Tox test
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+      - name: Run Tox tests
+        id: test
+        uses: fedora-python/tox-github-action@master
         with:
-          python-version: ${{ matrix.python-version }}
-      - uses: actions/setup-node@v1
-        with:
-          node-version: "12"
-      - run: npm install -g serverless
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ needs.merge-master.outputs.commit }}
-      - name: Install poetry
-        uses: abatilo/actions-poetry@v2.0.0
-        with:
-          poetry-version: 1.1.4
-      - name: Install project
-        run: |
-          poetry install --no-root
-          poetry run pip install pytest==6.2
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Run black
-        run: |
-          poetry run black --check
-      - name: Run pytest
-        run: |
-          poetry run pytest
+          tox_env: ${{ matrix.tox_env }}
+    strategy:
+      matrix:
+        tox_env: [py37, py38]
