@@ -1,11 +1,13 @@
 name: Test
+
+env:
+  DISCORD_ACCESS_TOKEN: ${{ secrets.DISCORD_ACCESS_TOKEN }}
+  DISCORD_CHANNEL_IDS: ${{ secrets.DISCORD_CHANNEL_IDS }}
+
 on: [push]
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      DISCORD_ACCESS_TOKEN: ${{ secrets.DISCORD_ACCESS_TOKEN }}
-      DISCORD_CHANNEL_IDS: ${{ secrets.DISCORD_CHANNEL_IDS }}
 
     steps:
       - uses: actions/checkout@v1
