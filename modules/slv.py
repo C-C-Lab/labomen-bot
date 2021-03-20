@@ -8,6 +8,20 @@ from settings import init_user_states
 from modules import utils
 
 
+def get_user_slv_path(user_id):
+    """userのslvパスを取得します。
+
+    Args:
+        user_id (str or int): user_id
+
+    Returns:
+        str: ファイルパス
+    """
+    str_id = str(user_id)
+    user_slv_path = './shelves/users/' + str_id + '.slv'
+    return user_slv_path
+
+
 def get_dict(file_name):
     """shelveファイル内容をdictとして取得します。
 
@@ -35,8 +49,9 @@ def get_value(file_name, index_key, dict_key):
         any: value
     """
     slv_dict = get_dict(file_name)
-    _dict = slv_dict[index_key]
-    return _dict[dict_key]
+    _dict = slv_dict.get(index_key, {})
+    value = _dict.get(dict_key)
+    return value
 
 
 def merge_dict(_dict, file_name):
@@ -62,7 +77,7 @@ def update_value(file_name, index_key, dict_key=None, value=None):
     """
     slv_dict = get_dict(file_name)
     now = utils.get_now()
-    _dict = slv_dict[index_key]
+    _dict = slv_dict.get(index_key, {})
     _dict['updated_at'] = now
     if dict_key and value:
         _dict[dict_key] = value
@@ -78,10 +93,10 @@ def update_user_value(user_id, dict_key=None, value=None):
         dict_key (str or int): shelveのdict_key
         value (str or int): 上書き内容
     """
-    file_name = utils.get_user_slv_path(user_id)
+    file_name = get_user_slv_path(user_id)
     slv_dict = get_dict(file_name)
     now = utils.get_now()
-    _dict = slv_dict['data']
+    _dict = slv_dict.get('data', {})
     _dict['updated_at'] = now
     if dict_key and value:
         _dict[dict_key] = value
@@ -100,17 +115,13 @@ def initialize_user(user):
     replace_list = [s.replace('./shelves/users/', '') for s in slv_list]
     id_list = [s.replace('.slv', '') for s in replace_list]
     if user_id not in id_list:
-        user_slv = utils.get_user_slv_path(user_id)
+        user_slv = get_user_slv_path(user_id)
         slv_dict = get_dict(user_slv)
         user_name = utils.get_user_name(user)
         print(user_name + 'の一致データなし')
         print(user_name + 'の項目を作成')
-        index_key = 'data'
-        slv_dict[index_key] = init_user_states.INITIAL_USER_STATES
+        slv_dict = init_user_states.INITIAL_STATES
         now = utils.get_now()
-        slv_dict[index_key]['created_at'] = now
-        slv_dict[index_key]['last_act_at'] = now
-        merge_dict(slv_dict, user_slv)
-        index_key = 'omikuji'
-        slv_dict[index_key] = init_user_states.INITIAL_OMIKUJI_STATES
+        slv_dict['data']['created_at'] = now
+        slv_dict['data']['last_act_at'] = now
         merge_dict(slv_dict, user_slv)
