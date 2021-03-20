@@ -49,8 +49,9 @@ def get_value(file_name, index_key, dict_key):
         any: value
     """
     slv_dict = get_dict(file_name)
-    _dict = slv_dict[index_key]
-    return _dict[dict_key]
+    _dict = slv_dict.get(index_key, {})
+    value = _dict.get(dict_key)
+    return value
 
 
 def merge_dict(_dict, file_name):
@@ -76,7 +77,7 @@ def update_value(file_name, index_key, dict_key=None, value=None):
     """
     slv_dict = get_dict(file_name)
     now = utils.get_now()
-    _dict = slv_dict[index_key]
+    _dict = slv_dict.get(index_key, {})
     _dict['updated_at'] = now
     if dict_key and value:
         _dict[dict_key] = value
@@ -95,7 +96,7 @@ def update_user_value(user_id, dict_key=None, value=None):
     file_name = get_user_slv_path(user_id)
     slv_dict = get_dict(file_name)
     now = utils.get_now()
-    _dict = slv_dict.get('data')
+    _dict = slv_dict.get('data', {})
     _dict['updated_at'] = now
     if dict_key and value:
         _dict[dict_key] = value
