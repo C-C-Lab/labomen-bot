@@ -70,9 +70,9 @@ async def play(user=None, message=None, reaction=None):
     print('じゃんけんを実行')
     # 手に応じた整数をdictから取得
     bot_hand, bot_hand_num = random.choice(list(BOT_HANDS.items()))
-    if message is not None:
+    if message:
         await play_with_mes(message, bot_hand_num)
-    elif reaction is not None:
+    else:
         await play_with_emoji(user, reaction, bot_hand_num)
 
 
