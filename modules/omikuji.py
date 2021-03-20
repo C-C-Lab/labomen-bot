@@ -16,7 +16,7 @@ async def play_omikuji(message):
     """
     user = message.author
     user_id = str(user.id)
-    user_slv = utils.get_user_slv_path(user_id)
+    user_slv = slv.get_user_slv_path(user_id)
     today = datetime.date.today()
     last_omikuji_date = slv.get_value(user_slv, 'omikuji', 'date')
 
@@ -27,7 +27,8 @@ async def play_omikuji(message):
         w = [20, 30, 40, 30, 10]
         omikuji_result_list = random.choices(results, k=1, weights=w)
         omikuji_result = omikuji_result_list[0]
-        omikuji_mes = random.choice(omikuji_words.OMIKUJI_RESULTS[omikuji_result])
+        omikuji_mes = random.choice(
+            omikuji_words.OMIKUJI_RESULTS[omikuji_result])
         head_message = random.choice(omikuji_words.HEADER_MES)
         await utils.send_reply(message, head_message)
         async with message.channel.typing():
@@ -42,7 +43,8 @@ async def play_omikuji(message):
         print('========= おみくじを実行不可 ==========')
         limit_mes = random.choice(omikuji_words.LIMIT_MES)
         last_omikuji_result = slv.get_value(user_slv, 'omikuji', 'result')
-        bot_message = limit_mes + '\n' + '一応今日の結果をもう一度お知らせしておくね！' + '\n' + 'あなたの今日の運勢は、' + last_omikuji_result
+        bot_message = limit_mes + '\n' + '一応今日の結果をもう一度お知らせしておくね！' + \
+            '\n' + 'あなたの今日の運勢は、' + last_omikuji_result
         await utils.send_reply(message, bot_message)
         print(bot_message)
 
@@ -55,7 +57,7 @@ def update_omikuji_slv(user, result):
         result (str): 省略版の結果メッセージ
     """
     user_id = str(user.id)
-    user_slv = utils.get_user_slv_path(user_id)
+    user_slv = slv.get_user_slv_path(user_id)
     today = datetime.date.today()
     slv.update_value(user_slv, 'omikuji', 'date', today)
     slv.update_value(user_slv, 'omikuji', 'result', result)
