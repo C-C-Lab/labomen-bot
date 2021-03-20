@@ -145,9 +145,12 @@ def calculate_result(result, user_id):
     """
     if result in [-1, 2]:
         result_mes = get_result_mes(win_mes, '勝ち', user_id)
+        record_count(user_id, 'win')
     elif result in [1, -2]:
         result_mes = get_result_mes(lose_mes, '負け', user_id)
+        record_count(user_id, 'lose')
     elif result == 0:
+        record_count(user_id, 'favour')
         result_mes = get_result_mes(favour_mes, 'あいこ', user_id)
     return result_mes
 
@@ -175,3 +178,20 @@ def get_result_mes(janken_mes, result, user_id):
         now = utils.get_now()
         slv.update_user_value(user_id, 'last_act_at', now)
     return result_mes
+
+
+def record_count(user_id, result):
+    """じゃんけんの履歴をslvに記録します。
+
+    Args:
+        user_id (str or int): discordのuser_id
+        result (str): じゃんけんの勝敗
+    """
+    user_slv = slv.get_user_slv_path(user_id)
+    key = result + '_count'
+    result_count = slv.get_value(user_slv, 'janken', key)
+    if not result_count:
+        result_count = 1
+    else:
+        result_count = result_count + 1
+    slv.update_value(user_slv, 'janken', key, result_count)
