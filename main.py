@@ -1,140 +1,99 @@
-from transitions import Machine
-import discord
-import random
 import datetime
-import pickle
-import settings
-import os
+import random
 
-states = settings.STATES
-transitions = settings.TRAMSITIONS
+import discord
 
-
-class Model(object):
-    pass
-
-
-mode = Model()
-machine = Machine(model=mode, states=states, transitions=transitions, initial=states[0],
-                  auto_transitions=False, ordered_transitions=False)
-
-# ここまでtransitionsの設定
+from settings import bot_words
+from settings import discord_settings
+from settings import janken_words
+from modules import janken
+from modules import omikuji
+from modules import slv
+from modules import utils
 
 # discordの設定
-ACCESS_TOKEN = settings.ACCESS_TOKEN
-BOT_CH_IDS = settings.CHANNEL_IDS
-commands = settings.COMMANDS
-janken_hands = settings.JANKEN_HANDS
-janken_hand_p = settings.JANKEN_HAND_P
-janken_hand_c = settings.JANKEN_HAND_C
-janken_hand_g = settings.JANKEN_HAND_G
-janken_start_mes = settings.JANKEN_START_MES
-janken_win_mes = settings.JANKEN_WIN_MES
-janken_lose_mes = settings.JANKEN_LOSE_MES
-janeken_favour_mes = settings.JANKEN_FAVOUR_MES
-ready_message = settings.READY_MESSAGE
-random_contents = settings.RANDOM_CONTENTS
-
+ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
+BOT_CH_IDS = discord_settings.CHANNEL_IDS
+commands = bot_words.COMMANDS
+janken_start_mes = janken_words.JANKEN_START_MES
+random_contents = bot_words.RANDOM_CONTENTS
 client = discord.Client()
-
-
-def command_check(word):
-    command_words = commands.values()
-    for command in command_words:
-        if command in word:
-            return True
-    else:
-        return False
 
 
 # アプリスタート時に走るイベント
 @client.event
 async def on_ready():
-    # 起動確認用バージョン情報
-    print(ready_message)
-    print(discord.__title__ + " ライブラリのバージョン：" + discord.__version__)
-    print(discord.__copyright__)
-    print('現在のモード: ' + mode.state)
-    PKL_DIR = 'pickles'
-    if not os.path.exists(PKL_DIR):
-        os.makedirs(PKL_DIR)
-    with open('./pickles/timeout.pkl', 'wb') as dt_pkl:
-        pickle.dump(datetime.datetime.now(), dt_pkl)
+    utils.check_version()
+    # shelvesディレクトリがない場合は作成
+    utils.add_dir('shelves')
+    utils.add_dir('shelves/users')
+    print('---------------------------------------')
 
 
 # メッセージ待受イベント
-@client.event
+@ client.event
 async def on_message(message):
-    print('現在のモード: ' + mode.state)
-    dt_now = datetime.datetime.now()
 
+    # botの発言を無視
     if message.author.bot:
         return
-    else:
-        author_name = message.author.name + '#' + message.author.discriminator
-        print('時刻：' + str(dt_now))
-        with open('./pickles/timeout.pkl', 'rb') as dt_pkl:
-            dt_recent = pickle.load(dt_pkl)
-            if dt_now - dt_recent > datetime.timedelta(0, 20):
-                print('20秒以上経過　NORMALへ遷移')
-                mode.to_NORMAL()
-        with open('./pickles/timeout.pkl', 'wb') as dt_pkl:
-            pickle.dump(dt_now, dt_pkl)
-        print('チャンネル名：' + str(message.channel))
-        print('チャンネルID: ' + str(message.channel.id))
-        print('ユーザー名:' + author_name)
-        print('メッセージ受信：' + message.content)
-        if str(message.channel.id) in BOT_CH_IDS:
-            # 通常モード
-            if mode.state == 'NORMAL':
-                if commands['NORMAL'] in message.content:
-                    content = random.choice(random_contents)
-                    await message.channel.send(content)
-                    print('message.channel.id が一致 -> 反応：' + content)
-                # じゃんけん起動
-                elif commands['JANKEN'] in message.content:
-                    mode.to_JANKEN()
-                    print('JANKENへ遷移')
-                    with open('./pickles/janken_userid.pkl', 'wb') as janken_userid:
-                        pickle.dump(author_name, janken_userid)
-                    print('ユーザーIDを取得')
-                    await message.channel.send(random.choice(janken_start_mes))
-                else:
-                    print('未設定メッセージ -> 反応なし')
-            # じゃんけんモード
-            elif mode.state == 'JANKEN':
-                bot_hand = random.choice(janken_hands)
-                with open('./pickles/janken_userid.pkl', 'rb') as janken_userid:
-                    recent_janken_userid = pickle.load(janken_userid)
-                if recent_janken_userid != author_name and command_check(message.content):
-                    await message.channel.send('今別の人と遊んでるの！　ちょっと待ってね！')
-                    print('ユーザーIDが不一致(JANKEN)')
-                # bot勝利ルート
-                elif message.content == "ぐー" and bot_hand == janken_hand_p \
-                        or message.content == "ぱー" and bot_hand == janken_hand_c \
-                        or message.content == "ちょき" and bot_hand == janken_hand_g:
-                    result_mes = random.choice(janken_win_mes)
-                    await message.channel.send(bot_hand + result_mes)
-                    print('結果：botの勝ち　NORMALへ遷移')
-                    mode.to_NORMAL()
-                # bot敗北ルート
-                elif message.content == "ぐー" and bot_hand == janken_hand_c \
-                        or message.content == "ぱー" and bot_hand == janken_hand_g \
-                        or message.content == "ちょき" and bot_hand == janken_hand_p:
-                    result_mes = random.choice(janken_lose_mes)
-                    await message.channel.send(bot_hand + result_mes)
-                    print('結果：botの負け　NORMALへ遷移')
-                    mode.to_NORMAL()
-                # あいこルート
-                elif message.content in bot_hand:
-                    result_mes = random.choice(janeken_favour_mes)
-                    await message.channel.send(bot_hand + result_mes)
-                    print('結果：あいこ　JANKEN継続')
-                elif recent_janken_userid == author_name:
-                    await message.channel.send('あれ？　じゃんけんは？')
-                    print('回答がJANKEN_HANDSと不一致')
-        elif str(message.channel.id) not in BOT_CH_IDS:
-            print('message.channel.id が不一致 -> 反応なし')
-            return
+    # 送信者名を取得
+    author = message.author
+    user_name = utils.get_user_name(author)
+    user_id = str(message.author.id)
+    user_slv = utils.get_user_slv_path(user_id)
+    slv.initialize_user(author)
+    slv.update_user_value(user_id, 'name', user_name)
+    utils.print_message_info(message)
+    now = utils.get_now()
+    hiragana_content = utils.get_hiragana(message.content)
+    # チャンネルIDを照合
+    if str(message.channel.id) in BOT_CH_IDS:
+        # モード情報を取得
+        user_mode = utils.get_mode(user_id)
+        # 20秒経過している場合normalへ遷移
+        time_passed = now - slv.get_value(user_slv, 'data', 'last_act_at')
+        if time_passed > datetime.timedelta(0, 20):
+            print('20秒以上経過')
+            slv.update_user_value(user_id, 'mode', 'normal')
+            user_mode = 'normal'
+        # じゃんけんモード判定
+        if user_mode == 'janken':
+            # じゃんけん処理
+            user_hands = janken.USER_HANDS
+            if utils.check_command(hiragana_content, user_hands):
+                await janken.play_janken(message)
+            # USER_HANDSと不一致
+            else:
+                await utils.send_reply(message, 'あれ？　じゃんけんは？')
+                print('回答がJANKEN_HANDSと不一致')
+                # 発言時刻記録
+                slv.update_user_value(user_id, 'last_act_at', now)
+        # 通常モード
+        elif user_mode == 'normal':
+            # 鳴き声機能
+            if commands['NORMAL'] in hiragana_content:
+                content = random.choice(random_contents)
+                await utils.send_message(message.channel, content)
+                print('message.channel.id が一致 -> 反応：' + content)
+            # じゃんけん起動
+            elif commands['JANKEN'] in hiragana_content:
+                # モード切替
+                slv.update_user_value(user_id, 'mode', 'janken')
+                slv.update_user_value(user_id, 'last_act_at', now)
+                # メッセージ送信
+                content = random.choice(janken_start_mes)
+                await utils.send_reply(message, content)
+            # おみくじ起動
+            elif commands['OMIKUJI'] in message.content:
+                await omikuji.play_omikuji(message)
+            # 未設定メッセージを受信時
+            else:
+                print('未設定メッセージ -> 反応なし')
+    # チャンネルIDが不一致
+    elif str(message.channel.id) not in BOT_CH_IDS:
+        return
+    print('=======================================')
+
 
 client.run(ACCESS_TOKEN)

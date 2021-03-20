@@ -1,0 +1,90 @@
+"""
+じゃんけん機能に関連するメソッドをまとめたモジュールです。
+"""
+import random
+
+from modules import slv
+from modules import utils
+from settings import janken_words
+
+
+# botの手
+BOT_HANDS = {
+    'ぐー！　': 1,
+    'ちょき！　': 2,
+    'ぱー！　': 3
+}
+
+# ユーザーの手
+USER_HANDS = {
+    'ぐー': 1,
+    'ちょき': 2,
+    'ぱー': 3
+}
+
+EMOJI_HANDS = {
+    1: "\N{RAISED FIST}",
+    2: "\N{VICTORY HAND}",
+    3: "\N{RAISED HAND}",
+}
+
+win_mes = janken_words.JANKEN_WIN_MES
+lose_mes = janken_words.JANKEN_LOSE_MES
+favour_mes = janken_words.JANKEN_FAVOUR_MES
+
+
+async def play_janken(message):
+    """じゃんけんを実行します。
+    結果に応じてメッセージを送信します。
+
+    Args:
+        message (any): discord.pyのmessageモデル
+    """
+    print('じゃんけんを実行')
+    # 手に応じた整数をdictから取得
+    bot_hand, bot_hand_num = random.choice(list(BOT_HANDS.items()))
+    hiragana_content = utils.get_hiragana(message.content)
+    command_word = utils.get_command(hiragana_content, USER_HANDS)
+    user_hand_num = USER_HANDS[command_word]
+    emoji_hand = EMOJI_HANDS[bot_hand_num]
+    # 取得した整数を比較
+    # -1, 2なら勝利
+    # 1, -2なら敗北
+    result = bot_hand_num - user_hand_num
+    if result in [-1, 2]:
+        result_mes = get_result_mes(win_mes, '勝ち', emoji_hand, message)
+    elif result in [1, -2]:
+        result_mes = get_result_mes(lose_mes, '負け', emoji_hand, message)
+    elif result == 0:
+        result_mes = get_result_mes(
+            favour_mes, 'あいこ', emoji_hand, message)
+    # 結果メッセージを送信
+    await utils.send_reply(message, emoji_hand)
+    await utils.send_reply(message, result_mes)
+
+
+def get_result_mes(janken_mes, result, emoji_hand, message):
+    """じゃんけんの結果に応じたメッセージを取得します。
+
+    Args:
+        janken_mes (list): 結果に応じたlist
+        result (str): 勝敗
+        emoji_hand (str): bot_hand
+        message (any): message
+
+    Returns:
+        str: じゃんけん結果メッセージ
+    """
+    bot_mes = random.choice(janken_mes)
+    result_mes = bot_mes
+    user_id = str(message.author.id)
+    # 勝利, 敗北処理
+    if janken_mes != favour_mes:
+        print('結果：botの' + result)
+        slv.update_user_value(user_id, 'mode', 'normal')
+    # あいこ処理
+    else:
+        print('結果：' + result)
+        now = utils.get_now()
+        slv.update_user_value(user_id, 'last_act_at', now)
+    return result_mes

@@ -1,4 +1,4 @@
-# practice-bot
+# labomen-bot
 
 discord.py を使った BOT アプリです。
 
