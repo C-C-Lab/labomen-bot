@@ -266,7 +266,8 @@ def get_text(file_name):
     try:
         with open(path, 'r') as txt:
             word_list = txt.read().split("\n")
-            return word_list
+            normalized_list = list(filter(None, word_list))
+            return normalized_list
     except OSError as e:
         print(e)
     except Exception as e:
