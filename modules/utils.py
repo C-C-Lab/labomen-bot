@@ -238,6 +238,15 @@ async def add_reaction_list(message, emoji_list):
 
 
 def get_key_from_value(dict_name, target_value):
+    """dictのvalueからkeyを取得します。
+
+    Args:
+        dict_name (str): dict名
+        target_value (Any): 鍵となるvalue
+
+    Returns:
+        Any: key
+    """
     for key, value in dict_name.items():
         if value == target_value:
             return key

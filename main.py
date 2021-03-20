@@ -5,7 +5,6 @@ import discord
 
 from settings import bot_words
 from settings import discord_settings
-from settings import janken_words
 from modules import janken
 from modules import omikuji
 from modules import slv
@@ -15,7 +14,6 @@ from modules import utils
 ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
 BOT_CH_IDS = discord_settings.CHANNEL_IDS
 bot_commands = bot_words.BOT_COMMANDS
-janken_start_mes = janken_words.JANKEN_START_MES
 random_contents = bot_words.RANDOM_CONTENTS
 client = discord.Client()
 
@@ -37,16 +35,18 @@ async def on_message(message):
     # botの発言を無視
     if message.author.bot:
         return
-    # 送信者名を取得
+    # 変数を定義
     author = message.author
     user_name = utils.get_user_name(author)
     user_id = str(message.author.id)
     user_slv = slv.get_user_slv_path(user_id)
+    now = utils.get_now()
+    hiragana_content = utils.get_hiragana(message.content)
+
+    # slvに初期項目がなければ追記
     slv.initialize_user(author)
     slv.update_user_value(user_id, 'name', user_name)
     utils.print_message_info(message)
-    now = utils.get_now()
-    hiragana_content = utils.get_hiragana(message.content)
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
         # モード情報を取得
@@ -62,7 +62,7 @@ async def on_message(message):
             # じゃんけん処理
             user_hands = janken.USER_HANDS
             if utils.check_command(hiragana_content, user_hands):
-                await janken.play_janken(message=message)
+                await janken.play(message=message)
             # USER_HANDSと不一致
             else:
                 await utils.send_reply(message, 'あれ？　じゃんけんは？')
@@ -78,16 +78,7 @@ async def on_message(message):
                 print('message.channel.id が一致 -> 反応：' + content)
             # じゃんけん起動
             elif bot_commands['JANKEN'] in hiragana_content:
-                # モード切替
-                slv.update_user_value(user_id, 'mode', 'janken')
-                slv.update_user_value(user_id, 'last_act_at', now)
-                # メッセージ送信
-                content = random.choice(janken_start_mes)
-                reply_message = await utils.send_reply(message, content)
-                emoji_hands = janken.EMOJI_HANDS.values()
-                await utils.add_reaction_list(reply_message, emoji_hands)
-                slv.update_value(user_slv, 'janken',
-                                 'last_message_id', reply_message.id)
+                await janken.start(user_id, message)
             # おみくじ起動
             elif bot_commands['OMIKUJI'] in message.content:
                 await omikuji.play_omikuji(message)
@@ -107,11 +98,11 @@ async def on_reaction_add(reaction, user):
     if user.bot:
         return
     user_mode = utils.get_mode(user_id)
-    slv_path = slv.get_user_slv_path(user_id)
+    user_slv = slv.get_user_slv_path(user_id)
     if user_mode == 'janken':
-        last_message_id = slv.get_value(slv_path, 'janken', 'last_message_id')
+        last_message_id = slv.get_value(user_slv, 'janken', 'last_message_id')
         if str(last_message_id) == str(reaction.message.id):
-            await janken.play_janken(user=user, reaction=reaction)
+            await janken.play(user=user, reaction=reaction)
 
 
 client.run(ACCESS_TOKEN)
