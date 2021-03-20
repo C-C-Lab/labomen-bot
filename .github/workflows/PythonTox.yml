@@ -1,0 +1,2 @@
+- name: Python Tox on Fedora
+  uses: fedora-python/tox-github-action@v0.4
