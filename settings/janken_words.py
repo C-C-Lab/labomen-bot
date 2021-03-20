@@ -1,25 +1,17 @@
 """じゃんけん関連の定数をまとめたモジュールです。
     """
 
+from modules import utils
+txt = utils.get_text
+
 # じゃんけん開始時のメッセージ
-JANKEN_START_MES = [
-    'じゃんけんするんだね？いくよー！じゃんけん……'
-]
+JANKEN_START_MES = txt('janken/start')
 
 # bot勝利メッセージ
-JANKEN_WIN_MES = [
-    '私の勝ち！',
-    'まだまだだね！'
-]
+JANKEN_WIN_MES = txt('janken/win')
 
 # bot敗北メッセージ
-JANKEN_LOSE_MES = [
-    '負けちゃった～',
-    'くっそー、もう一回！'
-]
+JANKEN_LOSE_MES = txt('janken/lose')
 
 # あいこメッセージ
-JANKEN_FAVOUR_MES = [
-    'やるね！　あーいこーで……',
-    'さすが！　あーいこーで……'
-]
+JANKEN_FAVOUR_MES = txt('janken/aiko')
