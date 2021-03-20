@@ -9,23 +9,36 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
     strategy:
-      max-parallel: 15
       matrix:
-        platform: [ubuntu-latest]
-        python-version: [3.7, 3.8]
-
+        python-version: [3.8]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "12"
+      - run: npm install -g serverless
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ needs.merge-master.outputs.commit }}
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2.0.0
+        with:
+          poetry-version: 1.1.4
+      - name: Install project
         run: |
-          python -m pip install --upgrade pip setuptools wheel
-          python -m pip install tox tox-gh-actions
+          poetry install --no-root
+          poetry run pip install pytest==6.2
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-      - name: Test with tox
-        run: tox
+      - name: Run black
+        run: |
+          poetry run black --check
+      - name: Run pytest
+        run: |
+          poetry run pytest
