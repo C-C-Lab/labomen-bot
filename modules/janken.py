@@ -48,6 +48,7 @@ async def start(user_id, message):
     now = utils.get_now()
     user_slv = slv.get_user_slv_path(user_id)
     START_MES = janken_words.START_MES
+    message_id = message.id
     # モード切替
     slv.update_user_value(user_id, 'mode', 'janken')
     slv.update_user_value(user_id, 'last_act_at', now)
@@ -58,6 +59,7 @@ async def start(user_id, message):
     await utils.add_reaction_list(reply_message, emoji_hands)
     slv.update_value(user_slv, 'janken',
                      'last_message_id', reply_message.id)
+    slv.update_value(user_slv, 'janken', 'start_mes_id', message_id)
 
 
 async def play(user=None, message=None, reaction=None):
@@ -77,13 +79,11 @@ async def play(user=None, message=None, reaction=None):
         if result in [1, -2]:
             await winning_achive(author, message)
     else:
+        user_slv = slv.get_user_slv_path(user.id)
+        mes_id = slv.get_value(user_slv, 'janken', 'start_mes_id')
         result = await play_with_emoji(user, reaction, bot_hand_num)
         if result in [1, -2]:
-            user = reaction.users()
-            message = reaction.message
-            async for user in reaction.users():
-                if not user.bot:
-                    await winning_achive(user, message)
+            await winning_achive(user, message)
 
 
 async def play_with_emoji(user, reaction, bot_hand_num):
@@ -115,7 +115,7 @@ async def play_with_mes(message, bot_hand_num):
     """メッセージによるじゃんけんを実行します。
 
     Args:
-        user (user): discord.pyのuserモデル
+        message (message): discord.pyのmessageモデル
         bot_hand_num (int): botの手を示す整数
 
     Return:
