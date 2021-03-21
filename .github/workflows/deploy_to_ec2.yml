@@ -18,5 +18,7 @@ jobs:
           cd /home/ubuntu/Repo/labomen-bot &&
           git checkout master &&
           git pull &&
-          screen kill labomen-bot &&
-          screen -S labomen-bot python3 main.py'
+          kill -9 `cat save_pid.txt` &&
+          rm save_pid.txt &&
+          nohup python3 main.py > out.log 2> error.log & &&
+          echo $! > save_pid.txt'
