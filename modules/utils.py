@@ -252,17 +252,17 @@ def get_key_from_value(dict_name, target_value):
             return key
 
 
-def get_text(file_name):
+def get_text(text_name):
     """指定したテキストファイルを改行で区切ってリストに変換して返します。
 
     Args:
-        text_name (str): 対象のファイル名
+        text_name (str): 対象の拡張子を除いたファイル名
 
     Returns:
         list: 改行で区切った文字列のリスト
     """
     text_directory = './texts'
-    path = text_directory + '/' + file_name + '.txt'
+    path = text_directory + '/' + text_name + '.txt'
     try:
         with open(path, 'r') as txt:
             word_list = txt.read().split("\n")
