@@ -33,9 +33,9 @@ EMOJI_HANDS = {
 win_mes = janken_words.WIN_MES
 lose_mes = janken_words.LOSE_MES
 favour_mes = janken_words.FAVOUR_MES
-won_once = achive_words.WON_JANKEN_ONCE
-won_many_times = achive_words.WON_JANKEN_MANY_TIMES
-won_1000_times = achive_words.WON_JANKEN_1000_TIMES
+win_1 = achive_words.JANKEN_WIN_1
+win_10_500 = achive_words.JANKEN_WIN_10_500
+win_1000 = achive_words.JANKEN_WIN_1000
 
 
 async def start(user_id, message):
@@ -79,9 +79,8 @@ async def play(user=None, message=None, reaction=None):
         if result in [1, -2]:
             await winning_achive(author, message)
     else:
-        user_slv = slv.get_user_slv_path(user.id)
-        mes_id = slv.get_value(user_slv, 'janken', 'start_mes_id')
         result = await play_with_emoji(user, reaction, bot_hand_num)
+        message = reaction.message
         if result in [1, -2]:
             await winning_achive(user, message)
 
@@ -227,8 +226,8 @@ async def winning_achive(user, message):
     win_count = str(slv.get_value(user_slv, 'janken', 'win_count'))
     achive_title = 'じゃんけんで' + win_count + '回　勝利！'
     if win_count == '1':
-        await achive.give(user, message, achive_title, won_once)
+        await achive.give(user, message, achive_title, win_1)
     elif win_count in ['10', '50', '100', '200', '500']:
-        await achive.give(user, message, achive_title, won_many_times)
+        await achive.give(user, message, achive_title, win_10_500)
     elif win_count == '1000':
-        await achive.give(user, message, achive_title, won_1000_times)
+        await achive.give(user, message, achive_title, win_1000)

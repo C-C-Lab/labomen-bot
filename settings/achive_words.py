@@ -5,8 +5,8 @@ from modules import utils
 txt = utils.get_text
 
 
-WON_JANKEN_ONCE = txt('achive/janken/won_once')
+JANKEN_WIN_1 = txt('achive/janken_win_1')
 
-WON_JANKEN_MANY_TIMES = txt('achive/janken/won_many_times')
+JANKEN_WIN_10_500 = txt('achive/janken_win_10_500')
 
-WON_JANKEN_1000_TIMES = txt('achive/janken/won_1000_times')
+JANKEN_WIN_1000 = txt('achive/janken_win_1000')
