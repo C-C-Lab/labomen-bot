@@ -8,11 +8,16 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      SECRET_KEY: ${{ secrets.EC2_SECRET_KEY }}
       EC2_USER: ${{ secrets.EC2_USER }}
       EC2_HOST: ${{ secrets.EC2_HOST }}
     steps:
       - name: deploy
-        run: echo "$SECRET_KEY" > secret_key
-          chmod 600 secret_key
-          ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} -i secret_key "cd ~/Repo/labomen-bot && git pull origin master && pip3 install -r requirements.txt && screen -S labomen-bot -X quit && screen -S labomen-bot && python3 main.py"
+        run: echo "$SECRET_KEY" > secret_key && chmod 600 secret_key &&
+          ssh -o StrictHostKeyChecking=no -i secret_key ${EC2_USER}@${EC2_HOST} '
+          cd /home/ubuntu/Repo/labomen-bot &&
+          sudo systemctl stop labomen-bot &&
+          git checkout master &&
+          git pull &&
+          pip3 install -r requirements.txt &&
+          sudo systemctl start labomen-bot' && exit
