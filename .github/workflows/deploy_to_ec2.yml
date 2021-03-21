@@ -19,4 +19,5 @@ jobs:
           sudo systemctl stop labomen-bot &&
           git checkout master &&
           git pull &&
+          pip3 install -r requirements.txt &&
           sudo systemctl start labomen-bot' && exit
