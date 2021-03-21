@@ -3,8 +3,10 @@
 """
 import random
 
+from modules import achive
 from modules import slv
 from modules import utils
+from settings import achive_words
 from settings import janken_words
 
 
@@ -31,6 +33,9 @@ EMOJI_HANDS = {
 win_mes = janken_words.WIN_MES
 lose_mes = janken_words.LOSE_MES
 favour_mes = janken_words.FAVOUR_MES
+won_once = achive_words.WON_JANKEN_ONCE
+won_many_times = achive_words.WON_JANKEN_MANY_TIMES
+won_1000_times = achive_words.WON_JANKEN_1000_TIMES
 
 
 async def start(user_id, message):
@@ -44,12 +49,8 @@ async def start(user_id, message):
     user_slv = slv.get_user_slv_path(user_id)
     START_MES = janken_words.START_MES
     # モード切替
-    new_dict = {'data': {
-        'mode': 'janken',
-        'last_act_at': now
-    }
-    }
-    slv.merge_dict(new_dict, user_slv)
+    slv.update_user_value(user_id, 'mode', 'janken')
+    slv.update_user_value(user_id, 'last_act_at', now)
     # メッセージ送信
     content = random.choice(START_MES)
     emoji_hands = EMOJI_HANDS.values()
@@ -63,7 +64,7 @@ async def play(user=None, message=None, reaction=None):
     """じゃんけんを実行します。
 
     Args:
-        user_id (str or int): discordのuser_id
+        user (str or int): discordのuser_id
         message (message): discord.pyのmessageモデル
         reaction (reaction): discord.pyのreactionモデル
     """
@@ -71,11 +72,18 @@ async def play(user=None, message=None, reaction=None):
     # 手に応じた整数をdictから取得
     bot_hand, bot_hand_num = random.choice(list(BOT_HANDS.items()))
     if message:
-        await play_with_mes(message, bot_hand_num)
-        await winning_award(message=message)
+        result = await play_with_mes(message, bot_hand_num)
+        author = message.author
+        if result in [1, -2]:
+            await winning_achive(author, message)
     else:
-        await play_with_emoji(user, reaction, bot_hand_num)
-        await winning_award(reaction=reaction)
+        result = await play_with_emoji(user, reaction, bot_hand_num)
+        if result in [1, -2]:
+            user = reaction.users()
+            message = reaction.message
+            async for user in reaction.users():
+                if not user.bot:
+                    await winning_achive(user, message)
 
 
 async def play_with_emoji(user, reaction, bot_hand_num):
@@ -85,6 +93,9 @@ async def play_with_emoji(user, reaction, bot_hand_num):
         user (user): discord.pyのuserモデル
         reaction (reaction): discord.pyのreactionモデル
         bot_hand_num (int): botの手を示す整数
+
+    Return:
+        int: 勝敗を示す整数
     """
     message = reaction.message
     user_id = str(user.id)
@@ -97,6 +108,7 @@ async def play_with_emoji(user, reaction, bot_hand_num):
         await send_aiko_mes(user_id, reply_message)
     else:
         await message.channel.send(user.mention + '\n' + emoji_hand + '\n' + result_mes)
+        return result
 
 
 async def play_with_mes(message, bot_hand_num):
@@ -105,14 +117,16 @@ async def play_with_mes(message, bot_hand_num):
     Args:
         user (user): discord.pyのuserモデル
         bot_hand_num (int): botの手を示す整数
+
+    Return:
+        int: 勝敗を示す整数
     """
     user_id = str(message.author.id)
-    user_slv = slv.get_user_slv_path(user_id)
     hiragana_content = utils.get_hiragana(message.content)
     command_word = utils.get_command(hiragana_content, USER_HANDS)
     user_hand_num = USER_HANDS[command_word]
     result = bot_hand_num - user_hand_num
-    result_mes = calculate_result(result, user_slv)
+    result_mes = calculate_result(result, user_id)
     emoji_hand = EMOJI_HANDS[bot_hand_num]
     if result == 0:
         reply_message = await utils.send_reply(message, result_mes)
@@ -120,6 +134,7 @@ async def play_with_mes(message, bot_hand_num):
     else:
         await utils.send_reply(message, emoji_hand)
         await utils.send_reply(message, result_mes)
+    return result
 
 
 async def send_aiko_mes(user_id, reply_message):
@@ -136,36 +151,36 @@ async def send_aiko_mes(user_id, reply_message):
     await utils.add_reaction_list(reply_message, emoji_hands)
 
 
-def calculate_result(result, user_slv):
+def calculate_result(result, user_id):
     """じゃんけんの結果を計算します。
 
     Args:
         result (int): じゃんけん結果を表す整数
-        user_slv (str): shelveファイルの名前を相対パスで指定
+        user_id (str or int): discordのuser_id
 
     Returns:
         str: 結果メッセージ文
     """
     if result in [-1, 2]:
-        result_mes = get_result_mes(win_mes, '勝ち', user_slv)
-        record_count(user_slv, 'win')
+        result_mes = get_result_mes(win_mes, '勝ち', user_id)
+        record_count(user_id, 'lose')
     elif result in [1, -2]:
-        result_mes = get_result_mes(lose_mes, '負け', user_slv)
-        record_count(user_slv, 'lose')
+        result_mes = get_result_mes(lose_mes, '負け', user_id)
+        record_count(user_id, 'win')
     elif result == 0:
-        result_mes = get_result_mes(favour_mes, 'あいこ', user_slv)
-        record_count(user_slv, 'favour')
+        result_mes = get_result_mes(favour_mes, 'あいこ', user_id)
+        record_count(user_id, 'favour')
     return result_mes
 
 
-def get_result_mes(janken_mes, result, user_slv):
+def get_result_mes(janken_mes, result, user_id):
     """じゃんけんの結果に応じたメッセージを取得します。
 
     Args:
         janken_mes (list): 結果に応じたlist
         result (str): 勝敗
         emoji_hand (str): bot_hand
-        user_slv (str): shelveファイルの名前を相対パスで指定
+        user_id (str or int): discordのuser_id
 
     Returns:
         str: じゃんけん結果メッセージ
@@ -174,16 +189,16 @@ def get_result_mes(janken_mes, result, user_slv):
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
         print('結果：botの' + result)
-        slv.update_user_value(user_slv, 'mode', 'normal')
+        slv.update_user_value(user_id, 'mode', 'normal')
     # あいこ処理
     else:
         print('結果：' + result)
         now = utils.get_now()
-        slv.update_user_value(user_slv, 'last_act_at', now)
+        slv.update_user_value(user_id, 'last_act_at', now)
     return result_mes
 
 
-def record_count(user_slv, result):
+def record_count(user_id, result):
     """じゃんけんの履歴をslvに記録します。
 
     Args:
@@ -191,6 +206,7 @@ def record_count(user_slv, result):
         result (str): じゃんけんの勝敗
     """
     key = result + '_count'
+    user_slv = slv.get_user_slv_path(user_id)
     result_count = slv.get_value(user_slv, 'janken', key)
     if not result_count:
         result_count = 1
@@ -199,21 +215,19 @@ def record_count(user_slv, result):
     slv.update_value(user_slv, 'janken', key, result_count)
 
 
-async def winning_award(message=None, reaction=None):
-    if reaction:
-        message = reaction.message
-    user_slv = slv.get_user_slv_path(message.author.id)
+async def winning_achive(user, message):
+    """勝利数に応じたアチーブメントメッセージを送信します
+
+    Args:
+        user (user): discord.pyのuserモデル
+        message (message): discord.pyのmessageモデル
+    """
+    user_slv = slv.get_user_slv_path(user.id)
     win_count = str(slv.get_value(user_slv, 'janken', 'win_count'))
-    award_title = 'じゃんけんで' + win_count + '回　勝利！'
-    system_message = ('```cs\n'
-                      '" ' + message.author.display_name + 'さんが' + '# ' + award_title + 'を獲得しました。\n'
-                      '```')
-    await utils.send_message(message.channel, system_message)
+    achive_title = 'じゃんけんで' + win_count + '回　勝利！'
     if win_count == '1':
-        await utils.send_mention(message, award_title)
-    elif win_count == '10':
-        await utils.send_mention(message, award_title)
-    elif win_count == '50' or '100' or '200' or '500':
-        await utils.send_mention(message, award_title)
+        await achive.give(user, message, achive_title, won_once)
+    elif win_count in ['10', '50', '100', '200', '500']:
+        await achive.give(user, message, achive_title, won_many_times)
     elif win_count == '1000':
-        await utils.send_mention(message, award_title)
+        await achive.give(user, message, achive_title, won_1000_times)

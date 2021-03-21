@@ -48,6 +48,7 @@ async def on_message(message):
     slv.initialize_user(author)
     slv.update_user_value(user_id, 'name', user_name)
     utils.print_message_info(message)
+    print(slv.get_value(user_slv, 'data', 'name'))
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
         # モード情報を取得
@@ -73,17 +74,17 @@ async def on_message(message):
                 slv.update_user_value(user_id, 'last_act_at', now)
         # 通常モード
         elif user_mode == 'normal':
+            # じゃんけん起動
+            if bot_commands['JANKEN'] in hiragana_content:
+                await janken.start(user_id, message)
+            # おみくじ起動
+            elif bot_commands['OMIKUJI'] in hiragana_content:
+                await omikuji.play_omikuji(message)
             # 鳴き声機能
-            if bot_commands['NORMAL'] in hiragana_content:
+            elif bot_commands['NORMAL'] in hiragana_content:
                 content = random.choice(random_contents)
                 await utils.send_message(message.channel, content)
                 print('message.channel.id が一致 -> 反応：' + content)
-            # じゃんけん起動
-            elif bot_commands['JANKEN'] in hiragana_content:
-                await janken.start(user_id, message)
-            # おみくじ起動
-            elif bot_commands['OMIKUJI'] in message.content:
-                await omikuji.play_omikuji(message)
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')
