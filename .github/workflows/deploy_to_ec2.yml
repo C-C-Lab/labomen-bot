@@ -13,6 +13,10 @@ jobs:
       EC2_HOST: ${{ secrets.EC2_HOST }}
     steps:
       - name: deploy
-        run: echo "$SECRET_KEY" > secret_key
-          chmod 600 secret_key
-          ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} -i secret_key "cd ~/Repo/labomen-bot && git pull && pip3 install -r requirements.txt && screen -S labomen-bot -X quit && screen -S labomen-bot python3 main.py"
+        run: echo "$SECRET_KEY" > secret_key && chmod 600 secret_key
+          ssh -o StrictHostKeyChecking=no -i secret_key ${EC2_USER}@${EC2_HOST} '
+          cd /home/ubuntu/Repo/labomen-bot &&
+          git checkout master &&
+          git pull &&
+          screen -S labomen-bot -X quit &&
+          screen -S labomen-bot python3 main.py'
