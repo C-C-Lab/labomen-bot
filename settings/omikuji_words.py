@@ -10,7 +10,7 @@ HEADER_MES = txt('omikuji/start')
 # おみくじを2回引こうとした時のメッセージ
 LIMIT_MES = txt('omikuji/limit')
 
-# 制限回数以上におみくじを引いた時、もう一度お知らせする前置き
+# 制限回数以上におみくじを引いた時、注意をお知らせする前置き
 WARNING_MES = txt('omikuji/warning')
 
 # 制限回数以上におみくじを引いた時、運勢を告げる直前に入るメッセージ
