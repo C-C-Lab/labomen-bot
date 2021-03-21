@@ -158,18 +158,21 @@ def get_mode(user_id):
     return user_mode
 
 
-async def send_mention(message, content):
+async def send_mention(message, content, user=None):
     """メンション付メッセージを送信します。
 
     Args:
-        message (Any): discord.pyのmessageモデル
+        message (message): discord.pyのmessageモデル
         content (str): メッセージ文
+        user (user): discordのuserモデル
 
     Returns:
         message: discord.pyのmessageモデル
     """
+    if not user:
+        user = message.author
     try:
-        response = await message.channel.send(message.author.mention + '\n' + content)
+        response = await message.channel.send(user.mention + '\n' + content)
     except Exception as e:
         print('-----メンション送信に失敗-----')
         print_error(e)

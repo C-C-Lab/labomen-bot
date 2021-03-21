@@ -23,6 +23,6 @@ INITIAL_STATES = {
     },
     'janken': {
         'last_message_id': '',
-        'result_log': ''
+        'start_mes_id': ''
     }
 }
