@@ -20,5 +20,5 @@ jobs:
           git pull &&
           kill -9 `cat save_pid.txt` &&
           rm save_pid.txt &&
-          nohup python3 main.py > out.log 2> error.log & &&
+          nohup python3 main.py > out.log 2> error.log &
           echo $! > save_pid.txt'
