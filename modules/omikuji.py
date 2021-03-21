@@ -42,9 +42,11 @@ async def play_omikuji(message):
     else:
         print('========= おみくじを実行不可 ==========')
         limit_mes = random.choice(omikuji_words.LIMIT_MES)
+        repeat_mes = random.choice(omikuji_words.REPEAT_MES)
+        repeat_intro_mes = random.choice(omikuji_words.REPEAT_INTRO_MES)
         last_omikuji_result = slv.get_value(user_slv, 'omikuji', 'result')
-        bot_message = limit_mes + '\n' + '一応今日の結果をもう一度お知らせしておくね！' + \
-            '\n' + 'あなたの今日の運勢は、' + last_omikuji_result
+        bot_message = limit_mes + '\n' + repeat_mes + \
+            '\n' + repeat_intro_mes + last_omikuji_result
         await utils.send_reply(message, bot_message)
         print(bot_message)
 
