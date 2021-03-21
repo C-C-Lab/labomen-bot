@@ -66,7 +66,7 @@ async def on_message(message):
                 await janken.play(message=message)
             # USER_HANDSと不一致
             else:
-                ignore_message = random.choice(janken_words.JANKEN_IGNORE_MES)
+                ignore_message = random.choice(janken_words.IGNORE_MES)
                 await utils.send_reply(message, ignore_message)
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
