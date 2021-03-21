@@ -250,3 +250,27 @@ def get_key_from_value(dict_name, target_value):
     for key, value in dict_name.items():
         if value == target_value:
             return key
+
+
+def get_text(file_name):
+    """指定したテキストファイルを改行で区切ってリストに変換して返します。
+
+    Args:
+        file_name (str): 対象の拡張子を除いたファイル名
+
+    Returns:
+        list: 改行で区切った文字列のリスト
+    """
+    text_directory = './texts'
+    path = text_directory + '/' + file_name + '.txt'
+    try:
+        with open(path, 'r') as txt:
+            word_list = txt.read().split("\n")
+            normalized_list = list(set(filter(None, word_list)))
+            comment_list = [s for s in normalized_list if s.startswith('#')]
+            _list = list(set(normalized_list) - set(comment_list))
+            return _list
+    except OSError as e:
+        print(e)
+    except Exception as e:
+        print(e)
