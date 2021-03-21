@@ -18,5 +18,5 @@ jobs:
           cd /home/ubuntu/Repo/labomen-bot &&
           git checkout master &&
           git pull &&
-          screen -S labomen-bot -X quit &&
+          screen kill labomen-bot &&
           screen -S labomen-bot python3 main.py'
