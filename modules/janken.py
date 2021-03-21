@@ -28,9 +28,9 @@ EMOJI_HANDS = {
     3: "\N{RAISED HAND}",
 }
 
-win_mes = janken_words.JANKEN_WIN_MES
-lose_mes = janken_words.JANKEN_LOSE_MES
-favour_mes = janken_words.JANKEN_FAVOUR_MES
+win_mes = janken_words.WIN_MES
+lose_mes = janken_words.LOSE_MES
+favour_mes = janken_words.FAVOUR_MES
 
 
 async def start(user_id, message):
@@ -42,7 +42,7 @@ async def start(user_id, message):
     """
     now = utils.get_now()
     user_slv = slv.get_user_slv_path(user_id)
-    janken_start_mes = janken_words.JANKEN_START_MES
+    START_MES = janken_words.START_MES
     # モード切替
     new_dict = {'data': {
         'mode': 'janken',
@@ -51,7 +51,7 @@ async def start(user_id, message):
     }
     slv.merge_dict(new_dict, user_slv)
     # メッセージ送信
-    content = random.choice(janken_start_mes)
+    content = random.choice(START_MES)
     emoji_hands = EMOJI_HANDS.values()
     reply_message = await utils.send_reply(message, content)
     await utils.add_reaction_list(reply_message, emoji_hands)

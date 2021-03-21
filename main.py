@@ -5,6 +5,7 @@ import discord
 
 from settings import bot_words
 from settings import discord_settings
+from settings import janken_words
 from modules import janken
 from modules import omikuji
 from modules import slv
@@ -65,7 +66,8 @@ async def on_message(message):
                 await janken.play(message=message)
             # USER_HANDSと不一致
             else:
-                await utils.send_reply(message, 'あれ？　じゃんけんは？')
+                ignore_message = random.choice(janken_words.IGNORE_MES)
+                await utils.send_reply(message, ignore_message)
                 print('回答がJANKEN_HANDSと不一致')
                 # 発言時刻記録
                 slv.update_user_value(user_id, 'last_act_at', now)
