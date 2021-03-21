@@ -269,7 +269,6 @@ def get_text(file_name):
             normalized_list = list(set(filter(None, word_list)))
             comment_list = [s for s in normalized_list if s.startswith('#')]
             _list = list(set(normalized_list) - set(comment_list))
-            print(_list)
             return _list
     except OSError as e:
         print(e)
