@@ -129,6 +129,7 @@ async def play_with_mes(message, bot_hand_num):
     result_mes = calculate_result(result, user_id)
     emoji_hand = EMOJI_HANDS[bot_hand_num]
     if result == 0:
+        await utils.send_reply(message, emoji_hand)
         reply_message = await utils.send_reply(message, result_mes)
         await send_aiko_mes(user_id, reply_message)
     else:
