@@ -6,7 +6,7 @@ txt = utils.get_text
 
 # botが反応するコマンド一覧
 BOT_COMMANDS = {
-    'NORMAL': 'らぶちゃん',
+    'NORMAL': 'らびちゃん',
     'JANKEN': 'じゃんけん',
     'OMIKUJI': 'おみくじ'
 }
