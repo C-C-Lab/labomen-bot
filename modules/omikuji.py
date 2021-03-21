@@ -9,6 +9,10 @@ import asyncio
 words = omikuji_words
 
 
+# おみくじサイコロの重み設定 大吉・中吉・小吉・吉・凶
+omikuji_weights = [30, 25, 25, 20, 15]
+
+
 async def play_omikuji(message):
     """おみくじを実行します。
     結果に応じてメッセージを送信します。
@@ -25,12 +29,9 @@ async def play_omikuji(message):
     if last_date != today:
         print('=========== おみくじを実行 ============')
         results = list(words.OMIKUJI_RESULTS.keys())
-        # サイコロの重み設定 大吉・中吉・小吉・吉・凶
-        w = [20, 30, 40, 30, 10]
-        result_list = random.choices(results, k=1, weights=w)
+        result_list = random.choices(results, k=1, weights=omikuji_weights)
         result = result_list[0]
-        omikuji_mes = random.choice(
-            words.OMIKUJI_RESULTS[result])
+        omikuji_mes = random.choice(words.OMIKUJI_RESULTS[result])
         head_message = random.choice(words.HEADER_MES)
         await utils.send_reply(message, head_message)
         async with message.channel.typing():
