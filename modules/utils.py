@@ -277,3 +277,40 @@ def get_text(file_name):
         print(e)
     except Exception as e:
         print(e)
+
+
+def update_user_flag(user_id, dict_key, flag_bit, _bool):
+    """フラグを更新します。
+
+    Args:
+        user_id (str or int)): discordのuser_id
+        flag_bit (str): フラグのビットフラグ
+        dict_key (str): shelveのdict_key
+        _bool (bool): 真偽値
+
+    Returns:
+        int: ビットフラグ
+    """
+    user_slv = slv.get_user_slv_path(user_id)
+    flag = int(slv.get_value(user_slv, 'flags', dict_key))
+    if _bool:
+        flag |= flag_bit
+    else:
+        flag -= flag & flag_bit
+    slv.update_value(user_slv, 'flags', dict_key, str(flag))
+    return int(flag)
+
+
+def get_user_flag(user_id, dict_key):
+    """フラグ情報を取得します。
+
+    Args:
+        user_id (str or int)): discordのuser_id
+        dict_key (str): shelveのdict_key
+
+    Returns:
+        int: ビットフラグ
+    """
+    user_slv = slv.get_user_slv_path(user_id)
+    flag = slv.get_value(user_slv, 'flags', dict_key)
+    return int(flag)

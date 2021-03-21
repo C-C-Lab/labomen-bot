@@ -3,11 +3,12 @@
 """
 import random
 
-from modules import achive
+from modules import achieve
 from modules import slv
 from modules import utils
-from settings import achive_words
+from settings import achieve_words
 from settings import janken_words
+from settings.flags import achievements
 
 
 # botの手
@@ -33,9 +34,9 @@ EMOJI_HANDS = {
 win_mes = janken_words.WIN_MES
 lose_mes = janken_words.LOSE_MES
 favour_mes = janken_words.FAVOUR_MES
-win_1 = achive_words.JANKEN_WIN_1
-win_10_500 = achive_words.JANKEN_WIN_10_500
-win_1000 = achive_words.JANKEN_WIN_1000
+win_1 = achieve_words.JANKEN_WIN_1
+win_10_500 = achieve_words.JANKEN_WIN_10_500
+win_1000 = achieve_words.JANKEN_WIN_1000
 
 
 async def start(user_id, message):
@@ -77,12 +78,12 @@ async def play(user=None, message=None, reaction=None):
         result = await play_with_mes(message, bot_hand_num)
         author = message.author
         if result in [1, -2]:
-            await winning_achive(author, message)
+            await winning_achieve(author, message)
     else:
         result = await play_with_emoji(user, reaction, bot_hand_num)
         message = reaction.message
         if result in [1, -2]:
-            await winning_achive(user, message)
+            await winning_achieve(user, message)
 
 
 async def play_with_emoji(user, reaction, bot_hand_num):
@@ -215,19 +216,28 @@ def record_count(user_id, result):
     slv.update_value(user_slv, 'janken', key, result_count)
 
 
-async def winning_achive(user, message):
+async def winning_achieve(user, message):
     """勝利数に応じたアチーブメントメッセージを送信します
 
     Args:
         user (user): discord.pyのuserモデル
         message (message): discord.pyのmessageモデル
+
+    return:
+        str: 累計勝利数
     """
-    user_slv = slv.get_user_slv_path(user.id)
+    user_id = user.id
+    user_slv = slv.get_user_slv_path(user_id)
     win_count = str(slv.get_value(user_slv, 'janken', 'win_count'))
-    achive_title = 'じゃんけんで' + win_count + '回　勝利！'
-    if win_count == '1':
-        await achive.give(user, message, achive_title, win_1)
-    elif win_count in ['10', '50', '100', '200', '500']:
-        await achive.give(user, message, achive_title, win_10_500)
-    elif win_count == '1000':
-        await achive.give(user, message, achive_title, win_1000)
+    achieve_title = 'JANKEN_WIN_' + win_count
+    achieve_dict = achievements.get(achieve_title)
+    if achieve:
+        if win_count == '1':
+            flag_bit = await achieve.give(user, message, achieve_dict, win_1)
+        if win_count in ['10', '50', '100', '200', '500']:
+            flag_bit = await achieve.give(user, message, achieve_dict, win_10_500)
+        elif win_count == '1000':
+            flag_bit = await achieve.give(user, message, achieve_dict, win_1000)
+        else:
+            return win_count
+        utils.update_user_flag(user_id, 'achieve', flag_bit, True)
