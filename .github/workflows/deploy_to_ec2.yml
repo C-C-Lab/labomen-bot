@@ -15,4 +15,4 @@ jobs:
       - name: deploy
         run: echo "$SECRET_KEY" > secret_key
           chmod 600 secret_key
-          ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} -i secret_key "cd ~/Repo/labomen-bot && git pull origin master && pip3 install -r requirements.txt && screen -S labomen-bot -X quit && screen -S labomen-bot python3 main.py"
+          ssh -oStrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} -i secret_key "cd ~/Repo/labomen-bot && git pull && pip3 install -r requirements.txt && screen -S labomen-bot -X quit && screen -S labomen-bot python3 main.py"
