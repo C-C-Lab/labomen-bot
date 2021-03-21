@@ -15,3 +15,6 @@ JANKEN_LOSE_MES = txt('janken/lose')
 
 # あいこメッセージ
 JANKEN_FAVOUR_MES = txt('janken/aiko')
+
+# じゃんけん中に他のキーワードを言った場合の反応
+JANKEN_IGNORE_MES = txt('janken/ignore')
