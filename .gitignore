@@ -17,3 +17,4 @@ __pycache__
 pickles/
 shelves/
 launch_bot.sh
+test.py
