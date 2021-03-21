@@ -13,12 +13,11 @@ jobs:
       EC2_HOST: ${{ secrets.EC2_HOST }}
     steps:
       - name: deploy
-        run:
-          echo "$SECRET_KEY" > secret_key && chmod 600 secret_key &&
+        run: echo "$SECRET_KEY" > secret_key && chmod 600 secret_key &&
           ssh -o StrictHostKeyChecking=no -i secret_key ${EC2_USER}@${EC2_HOST} '
           cd /home/ubuntu/Repo/labomen-bot &&
+          sudo systemctl stop labomen-bot &&
           git checkout master &&
-          git pull '
-          # sudo kill -9 `cat save_pid.txt` &&
-          # sudo rm save_pid.txt &&
-          # nohup sudo python3 main.py > out.log 2> error.log & echo $! > save_pid.txt'
+          git pull &&
+          pip3 install -r requirements.txt &&
+          sudo systemctl start labomen-bot' && exit
