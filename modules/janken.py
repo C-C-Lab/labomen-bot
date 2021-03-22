@@ -67,7 +67,7 @@ async def start(user_id: Union[str, int], message: discord.Message):
     slv.update_value(user_slv, 'janken', 'start_mes_id', message_id)
 
 
-async def play(user: discord.User = None, message: discord.User = None, reaction: discord.Reaction = None):
+async def play(user: discord.User = None, message: discord.Message = None, reaction: discord.Reaction = None):
     """じゃんけんを実行します。
 
     Args:
@@ -81,13 +81,11 @@ async def play(user: discord.User = None, message: discord.User = None, reaction
     if message:
         result = await play_with_mes(message, bot_hand_num)
         author = message.author
-        if result in [1, -2]:
-            await winning_achieve(author, message)
+        await check_achieve(author, message, result)
     else:
         result = await play_with_emoji(user, reaction, bot_hand_num)
         message = reaction.message
-        if result in [1, -2]:
-            await winning_achieve(user, message)
+        await check_achieve(user, message, result)
 
 
 async def play_with_emoji(user: discord.User, reaction: discord.Reaction, bot_hand_num: int) -> int:
@@ -220,6 +218,22 @@ def record_count(user_id: Union[str, int], result: str):
     slv.update_value(user_slv, 'janken', key, result_count)
 
 
+async def check_achieve(author: discord.User, message: discord.Message, result: int):
+    """勝敗に応じたアチーブメント処理を実行します。
+
+    Args:
+        user (user): discord.pyのuserモデル
+        message (message): discord.pyのmessageモデル
+        result (int): じゃんけん結果を表す整数
+    """
+    if result in [1, -2]:
+        await winning_achieve(author, message)
+    elif result in [-1, 2]:
+        await losing_achieve(author, message)
+    elif result == 0:
+        await favour_achieve(author, message)
+
+
 async def winning_achieve(user: discord.User, message: discord.Message) -> int:
     """勝利数に応じたアチーブメントメッセージを送信します
 
@@ -267,12 +281,39 @@ async def losing_achieve(user: discord.User, message: discord.Message) -> int:
     if achieve:
         if lose_count == '1':
             flag_bit = await achieve.give(user, message, achieve_dict, easy)
-        if lose_count in ['10', '50', '100']:
+        if lose_count in ['10', '100']:
             flag_bit = await achieve.give(user, message, achieve_dict, normal)
-        if lose_count in ['200', '500']:
-            flag_bit = await achieve.give(user, message, achieve_dict, hard)
         elif lose_count == '1000':
             flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
         else:
             return int(lose_count)
+        utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+
+
+async def favour_achieve(user: discord.User, message: discord.Message) -> int:
+    """あいこ数に応じたアチーブメントメッセージを送信します
+
+    Args:
+        user (user): discord.pyのuserモデル
+        message (message): discord.pyのmessageモデル
+
+    return:
+        int: 累計あいこ数
+    """
+    user_id = user.id
+    user_slv = slv.get_user_slv_path(user_id)
+    favour_count = str(slv.get_value(user_slv, 'janken', 'favour_count'))
+    achieve_title = 'JANKEN_FAVOUR_' + favour_count
+    achieve_dict = achievements.get(achieve_title)
+    print('あいこチェック')
+    print(favour_count)
+    if achieve:
+        if favour_count == '1':
+            flag_bit = await achieve.give(user, message, achieve_dict, easy)
+        if favour_count in ['10', '100']:
+            flag_bit = await achieve.give(user, message, achieve_dict, normal)
+        elif favour_count == '1000':
+            flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+        else:
+            return int(favour_count)
         utils.update_user_flag(user_id, 'achieve', flag_bit, True)

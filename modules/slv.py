@@ -41,7 +41,7 @@ def get_dict(file_name: str) -> dict:
     return slv_dict
 
 
-def get_value(file_name: str, index_key: str, dict_key: Union[str, int]) -> Any:
+def get_value(file_name: str, index_key: str, dict_key: Union[str, int], _default: Any = None) -> Any:
     """shelveからvalueを取得します。
 
     Args:
@@ -54,7 +54,7 @@ def get_value(file_name: str, index_key: str, dict_key: Union[str, int]) -> Any:
     """
     slv_dict = get_dict(file_name)
     _dict = slv_dict.get(index_key, {})
-    value = _dict.get(dict_key)
+    value = _dict.get(dict_key, _default)
     return value
 
 

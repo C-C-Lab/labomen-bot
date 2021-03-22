@@ -299,7 +299,7 @@ def update_user_flag(user_id: Union[str, int], dict_key: str, flag_bit: int, _bo
         flag |= flag_bit
     else:
         flag -= flag & flag_bit
-    slv.update_value(user_slv, 'flags', dict_key, str(flag))
+    slv.update_value(user_slv, 'flags', dict_key, flag)
     return int(flag)
 
 

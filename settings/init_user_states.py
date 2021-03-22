@@ -26,6 +26,6 @@ INITIAL_STATES = {
         'start_mes_id': ''
     },
     'flags': {
-        'achieve': ''
+        'achieve': 0
     }
 }
