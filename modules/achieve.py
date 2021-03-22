@@ -1,19 +1,23 @@
 import random
 
+import discord
+
 from modules import utils
 from settings import achieve_words
 
 congrat = achieve_words.CONGRAT
 
 
-async def give(user, message, achieve_dict, difficulty):
+async def give(user: discord.User, message: discord.Message, achieve_dict: dict, difficulty: list) -> int:
     """アチーブメントを付与します。
 
     Args:
         user (user): discord.pyのuserモデル
         message (message): discord.pyのmessageモデル
-        achieve_dict (str): アチーブメントの辞書
+        achieve_dict (dict): アチーブメントの辞書
         difficulty (list): 難易度に応じたコメントリスト
+    Returns:
+        int: ビットフラグ
     """
     user_name = user.display_name
     achieve_mes = get_achieve_mes(user_name, achieve_dict)
@@ -28,12 +32,12 @@ async def give(user, message, achieve_dict, difficulty):
     return flag_bit
 
 
-def get_achieve_mes(user_name, achieve_dict):
+def get_achieve_mes(user_name: str, achieve_dict: dict) -> str:
     """アチーブメントシステムメッセージを取得します。
 
     Args:
         user_name (str): discordのユーザー名
-        achieve_dict (str): アチーブメントの辞書
+        achieve_dict (dict): アチーブメントの辞書
 
     Returns:
         str: アチーブメントシステムメッセージ
@@ -44,7 +48,15 @@ def get_achieve_mes(user_name, achieve_dict):
     return achieve_mes
 
 
-def get_description_mes(achieve_dict):
+def get_description_mes(achieve_dict: dict) -> str:
+    """アチーブメントの説明メッセージを取得します。
+
+    Args:
+        achieve_dict (str): アチーブメントの辞書
+
+    Returns:
+        str: アチーブメント説明メッセージ
+    """
     name = achieve_dict['name']
     description = achieve_dict['description']
     requirement = achieve_dict['requirement']

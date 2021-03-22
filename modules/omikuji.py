@@ -1,6 +1,8 @@
 import random
 import datetime
 
+import discord
+
 from modules import utils
 from settings import omikuji_words
 from modules import slv
@@ -13,12 +15,12 @@ words = omikuji_words
 omikuji_weights = [30, 25, 25, 20, 15]
 
 
-async def play_omikuji(message):
+async def play_omikuji(message: discord.Message):
     """おみくじを実行します。
     結果に応じてメッセージを送信します。
 
     Args:
-        message (any): discord.pyのmessageモデル
+        message (message): discord.pyのmessageモデル
     """
     user = message.author
     user_id = str(user.id)
@@ -54,11 +56,11 @@ async def play_omikuji(message):
         print(bot_message)
 
 
-def update_omikuji_slv(user, result):
+def update_omikuji_slv(user: discord.User, result: str):
     """おみくじの日付をslvに保存します。
 
     Args:
-        message (any): discord.pyのuserモデル
+        user (user): discord.pyのuserモデル
         result (str): 省略版の結果メッセージ
     """
     user_id = str(user.id)

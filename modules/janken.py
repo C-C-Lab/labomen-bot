@@ -2,6 +2,9 @@
 じゃんけん機能に関連するメソッドをまとめたモジュールです。
 """
 import random
+from typing import Union
+
+import discord
 
 from modules import achieve
 from modules import slv
@@ -40,7 +43,7 @@ hard = achieve_words.HARD
 very_hard = achieve_words.VERY_HARD
 
 
-async def start(user_id, message):
+async def start(user_id: Union[str, int], message: discord.Message):
     """jankenを開始します。
 
     Args:
@@ -64,7 +67,7 @@ async def start(user_id, message):
     slv.update_value(user_slv, 'janken', 'start_mes_id', message_id)
 
 
-async def play(user=None, message=None, reaction=None):
+async def play(user: discord.User = None, message: discord.User = None, reaction: discord.Reaction = None):
     """じゃんけんを実行します。
 
     Args:
@@ -87,7 +90,7 @@ async def play(user=None, message=None, reaction=None):
             await winning_achieve(user, message)
 
 
-async def play_with_emoji(user, reaction, bot_hand_num):
+async def play_with_emoji(user: discord.User, reaction: discord.Reaction, bot_hand_num: int) -> int:
     """emojiによるじゃんけんを実行します。
 
     Args:
@@ -112,7 +115,7 @@ async def play_with_emoji(user, reaction, bot_hand_num):
         return result
 
 
-async def play_with_mes(message, bot_hand_num):
+async def play_with_mes(message: discord.Message, bot_hand_num: int) -> int:
     """メッセージによるじゃんけんを実行します。
 
     Args:
@@ -139,7 +142,7 @@ async def play_with_mes(message, bot_hand_num):
     return result
 
 
-async def send_aiko_mes(user_id, reply_message):
+async def send_aiko_mes(user_id: Union[str, int], reply_message: discord.message):
     """あいこになった際のメッセージを送信します。
 
     Args:
@@ -153,7 +156,7 @@ async def send_aiko_mes(user_id, reply_message):
     await utils.add_reaction_list(reply_message, emoji_hands)
 
 
-def calculate_result(result, user_id):
+def calculate_result(result: int, user_id: Union[str, int]) -> str:
     """じゃんけんの結果を計算します。
 
     Args:
@@ -175,7 +178,7 @@ def calculate_result(result, user_id):
     return result_mes
 
 
-def get_result_mes(janken_mes, result, user_id):
+def get_result_mes(janken_mes: list, result: str, user_id: Union[str, int]) -> str:
     """じゃんけんの結果に応じたメッセージを取得します。
 
     Args:
@@ -200,7 +203,7 @@ def get_result_mes(janken_mes, result, user_id):
     return result_mes
 
 
-def record_count(user_id, result):
+def record_count(user_id: Union[str, int], result: str):
     """じゃんけんの履歴をslvに記録します。
 
     Args:
@@ -217,7 +220,7 @@ def record_count(user_id, result):
     slv.update_value(user_slv, 'janken', key, result_count)
 
 
-async def winning_achieve(user, message):
+async def winning_achieve(user: discord.User, message: discord.Message) -> int:
     """勝利数に応じたアチーブメントメッセージを送信します
 
     Args:
@@ -242,5 +245,34 @@ async def winning_achieve(user, message):
         elif win_count == '1000':
             flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
         else:
-            return win_count
+            return int(win_count)
+        utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+
+
+async def losing_achieve(user: discord.User, message: discord.Message) -> int:
+    """敗北数に応じたアチーブメントメッセージを送信します
+
+    Args:
+        user (user): discord.pyのuserモデル
+        message (message): discord.pyのmessageモデル
+
+    return:
+        int: 累計敗北数
+    """
+    user_id = user.id
+    user_slv = slv.get_user_slv_path(user_id)
+    lose_count = str(slv.get_value(user_slv, 'janken', 'lose_count'))
+    achieve_title = 'JANKEN_LOSE_' + lose_count
+    achieve_dict = achievements.get(achieve_title)
+    if achieve:
+        if lose_count == '1':
+            flag_bit = await achieve.give(user, message, achieve_dict, easy)
+        if lose_count in ['10', '50', '100']:
+            flag_bit = await achieve.give(user, message, achieve_dict, normal)
+        if lose_count in ['200', '500']:
+            flag_bit = await achieve.give(user, message, achieve_dict, hard)
+        elif lose_count == '1000':
+            flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+        else:
+            return int(lose_count)
         utils.update_user_flag(user_id, 'achieve', flag_bit, True)

@@ -3,12 +3,16 @@ slv関連のメソッドをまとめたモジュールです。
 """
 import glob
 import shelve
+from typing import Any
+from typing import Union
+
+import discord
 
 from settings import init_user_states
 from modules import utils
 
 
-def get_user_slv_path(user_id):
+def get_user_slv_path(user_id: Union[str, int]) -> str:
     """userのslvパスを取得します。
 
     Args:
@@ -22,7 +26,7 @@ def get_user_slv_path(user_id):
     return user_slv_path
 
 
-def get_dict(file_name):
+def get_dict(file_name: str) -> dict:
     """shelveファイル内容をdictとして取得します。
 
     Args:
@@ -37,7 +41,7 @@ def get_dict(file_name):
     return slv_dict
 
 
-def get_value(file_name, index_key, dict_key):
+def get_value(file_name: str, index_key: str, dict_key: Union[str, int]) -> Any:
     """shelveからvalueを取得します。
 
     Args:
@@ -54,7 +58,7 @@ def get_value(file_name, index_key, dict_key):
     return value
 
 
-def merge_dict(_dict, file_name):
+def merge_dict(_dict: dict, file_name: str):
     """shelveファイルにdictをマージします。
 
     Args:
@@ -66,7 +70,7 @@ def merge_dict(_dict, file_name):
     slv.close()
 
 
-def update_value(file_name, index_key, dict_key=None, value=None):
+def update_value(file_name: str, index_key: str, dict_key: Union[str, int] = None, value: Any = None):
     """shelve内のデータを上書きします。
 
     Args:
@@ -85,13 +89,13 @@ def update_value(file_name, index_key, dict_key=None, value=None):
     merge_dict(slv_dict, file_name)
 
 
-def update_user_value(user_id, dict_key=None, value=None):
+def update_user_value(user_id: Union[str, int], dict_key: Union[str, int] = None, value: Any = None):
     """shelve内のデータを上書きします。
 
     Args:
-        user_id (str): discordのuser_id
+        user_id (str or int): discordのuser_id
         dict_key (str or int): shelveのdict_key
-        value (str or int): 上書き内容
+        value (Any): 上書き内容
     """
     file_name = get_user_slv_path(user_id)
     slv_dict = get_dict(file_name)
@@ -104,7 +108,7 @@ def update_user_value(user_id, dict_key=None, value=None):
     merge_dict(slv_dict, file_name)
 
 
-def initialize_user(user):
+def initialize_user(user: discord.User):
     """usersディレクトリ内にユーザーデータがなければ初期値を記録します。
 
     Args:

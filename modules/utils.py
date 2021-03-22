@@ -5,6 +5,8 @@ import datetime
 import os
 import pickle
 import traceback
+from typing import Union
+from typing import Any
 
 import discord
 import jaconv
@@ -13,7 +15,7 @@ from settings import discord_settings
 from modules import slv
 
 
-def check_command(word, command_words):
+def check_command(word: str, command_words: set) -> bool:
     """有効なコマンドが存在するかをチェックします。
 
     Args:
@@ -30,7 +32,7 @@ def check_command(word, command_words):
         return False
 
 
-def get_command(word, command_words):
+def get_command(word: str, command_words: set) -> None:
     """文字列に有効なコマンドが含まれていれば該当コマンドを取得します。
 
     Args:
@@ -57,7 +59,7 @@ def check_version():
     print('---------------------------------------')
 
 
-def add_dir(dir_name):
+def add_dir(dir_name: str):
     """ディレクトリを作成します。
 
     Args:
@@ -68,11 +70,11 @@ def add_dir(dir_name):
         print(dir_name + "ディレクトリを作成")
 
 
-def print_message_info(message):
+def print_message_info(message: discord.Message):
     """受信メッセージの情報を出力します。
 
     Args:
-      message(Any): discord.pyのmessageモデル
+      message(message): discord.pyのmessageモデル
     """
     print('時刻:' + str(get_now()))
     print('チャンネル名:' + str(message.channel))
@@ -82,7 +84,7 @@ def print_message_info(message):
     print('メッセージ受信:' + message.content)
 
 
-def get_user_name(user):
+def get_user_name(user: discord.User) -> str:
     """discord内のユーザー名を取得します。
 
     Args:
@@ -94,7 +96,7 @@ def get_user_name(user):
     return str(user.name + '_' + user.discriminator)
 
 
-def get_now():
+def get_now() -> datetime.datetime:
     """現在時刻を取得します。
 
     Returns:
@@ -104,7 +106,7 @@ def get_now():
     return now
 
 
-def save_pkl(file_name, content):
+def save_pkl(file_name: str, content: any):
     """pklへ記録します。
 
     Args:
@@ -118,7 +120,7 @@ def save_pkl(file_name, content):
         print_error(e)
 
 
-def get_pkl(file_name):
+def get_pkl(file_name: str) -> Any:
     """pklから内容を取得します。
 
     Args:
@@ -134,31 +136,31 @@ def get_pkl(file_name):
         print_error(e)
 
 
-def print_error(e):
+def print_error(error):
     """Error内容を出力します。
     """
-    print(type(e))
-    print(e.args)
-    print(e)
+    print(type(error))
+    print(error.args)
+    print(error)
     print('トレースバック：' + traceback.format_exc())
 
 
-def get_mode(user_id):
+def get_mode(user_id: Union[str, int]) -> str:
     """現在のモードをslvから取得します。
 
     Args:
-        user_id (str): user_id
+        user_id (str or int): user_id
 
     Returns:
         str: モード名
     """
-    slv_path = slv.get_user_slv_path(user_id)
+    slv_path = slv.get_user_slv_path(str(user_id))
     user_mode = slv.get_value(slv_path, 'data', 'mode')
     print('現在のモード：' + user_mode)
     return user_mode
 
 
-async def send_mention(message, content, user=None):
+async def send_mention(message: discord.Message, content: str, user: discord.User = None) -> discord.Message:
     """メンション付メッセージを送信します。
 
     Args:
@@ -179,12 +181,12 @@ async def send_mention(message, content, user=None):
     return response
 
 
-async def send_reply(message, content):
+async def send_reply(message: discord.Message, content: str) -> discord.Message:
     """リプライメッセージを送信します。
     送信したメッセージのモデルを返します。
 
     Args:
-        message (Any): discord.pyのmessageモデル
+        message (message): discord.pyのmessageモデル
         content (str): メッセージ文
 
     Returns:
@@ -198,11 +200,11 @@ async def send_reply(message, content):
     return response
 
 
-async def send_message(channel, content):
+async def send_message(channel: discord.TextChannel, content: str) -> discord.Message:
     """メッセージを送信します。
 
     Args:
-        channel (Any): discord.pyのchannelモデル
+        channel (TextChannel): discord.pyのchannelモデル
         content (str): メッセージ文
 
     Returns:
@@ -216,7 +218,7 @@ async def send_message(channel, content):
     return response
 
 
-def get_hiragana(word):
+def get_hiragana(word: str) -> str:
     """文字列をひらがなに変換します。
 
     Args:
@@ -229,7 +231,7 @@ def get_hiragana(word):
     return converted_word
 
 
-async def add_reaction_list(message, emoji_list):
+async def add_reaction_list(message: discord.Message, emoji_list: list):
     """リスト内のemojiをリアクションとして一括送信します。
 
     Args:
@@ -240,7 +242,7 @@ async def add_reaction_list(message, emoji_list):
         await message.add_reaction(emoji)
 
 
-def get_key_from_value(dict_name, target_value):
+def get_key_from_value(dict_name: str, target_value: Any) -> Union[str, int]:
     """dictのvalueからkeyを取得します。
 
     Args:
@@ -255,7 +257,7 @@ def get_key_from_value(dict_name, target_value):
             return key
 
 
-def get_text(file_name):
+def get_text(file_name: str) -> list:
     """指定したテキストファイルを改行で区切ってリストに変換して返します。
 
     Args:
@@ -279,19 +281,19 @@ def get_text(file_name):
         print(e)
 
 
-def update_user_flag(user_id, dict_key, flag_bit, _bool):
+def update_user_flag(user_id: Union[str, int], dict_key: str, flag_bit: int, _bool: bool) -> int:
     """フラグを更新します。
 
     Args:
         user_id (str or int)): discordのuser_id
-        flag_bit (str): フラグのビットフラグ
         dict_key (str): shelveのdict_key
+        flag_bit (int): ビットフラグ
         _bool (bool): 真偽値
 
     Returns:
         int: ビットフラグ
     """
-    user_slv = slv.get_user_slv_path(user_id)
+    user_slv = slv.get_user_slv_path(str(user_id))
     flag = int(slv.get_value(user_slv, 'flags', dict_key))
     if _bool:
         flag |= flag_bit
@@ -301,7 +303,7 @@ def update_user_flag(user_id, dict_key, flag_bit, _bool):
     return int(flag)
 
 
-def get_user_flag(user_id, dict_key):
+def get_user_flag(user_id: Union[str, int], dict_key: str) -> int:
     """フラグ情報を取得します。
 
     Args:
@@ -311,6 +313,6 @@ def get_user_flag(user_id, dict_key):
     Returns:
         int: ビットフラグ
     """
-    user_slv = slv.get_user_slv_path(user_id)
+    user_slv = slv.get_user_slv_path(str(user_id))
     flag = slv.get_value(user_slv, 'flags', dict_key)
     return int(flag)
