@@ -17,7 +17,7 @@ achievements = {
                       'description': '誰でも初めは初心者だ！ここから強くなればいい！', 'requirement': 'じゃんけんで1回敗北する。'},
     'JANKEN_LOSE_10': {'bit': 0b1 << 18, 'name': '床の味',
                        'description': '戦いは常に、死と隣り合わせなのだ。', 'requirement': 'じゃんけんで10回敗北する。'},
-    'JANKEN_LOSE_100': {'bit': 0b1 << 19, 'name': '逆に選ばれし存在',
+    'JANKEN_LOSE_100': {'bit': 0b1 << 19, 'name': '逆にすごい',
                         'description': 'そろそろ本気を出してもいいのでは？', 'requirement': 'じゃんけんで100回敗北する。'},
     'JANKEN_LOSE_1000': {'bit': 0b1 << 20, 'name': 'Oh My God.',
                          'description': 'じゃんけんの神よ。かの者を導き給え。', 'requirement': 'じゃんけんで1000回敗北する。'},
@@ -28,5 +28,17 @@ achievements = {
     'JANKEN_FAVOUR_100': {'bit': 0b1 << 19, 'name': 'もはや恋人',
                           'description': 'カップル誕生！ひゅーひゅー！', 'requirement': 'じゃんけんで100回あいこになる。'},
     'JANKEN_FAVOUR_1000': {'bit': 0b1 << 20, 'name': 'もう結婚しろ',
-                           'description': '心が通じ合っているとしか思えない。', 'requirement': 'じゃんけんで1000回あいこになる。'}
+                           'description': '心が通じ合っているとしか思えない。', 'requirement': 'じゃんけんで1000回あいこになる。'},
+    'WIN_5_STRAIGHT': {'bit': 0b1 << 21, 'name': 'ビクトリーロード',
+                       'description': '', 'requirement': 'じゃんけんで5連勝する。'},
+    'WIN_10_STRAIGHT': {'bit': 0b1 << 22, 'name': '覇道',
+                        'description': '', 'requirement': 'じゃんけんで10連勝する。'},
+    'LOSE_5_STRAIGHT': {'bit': 0b1 << 23, 'name': 'とんでもなく不運',
+                        'description': '', 'requirement': 'じゃんけんで5連敗する。'},
+    'LOSE_10_STRAIGHT': {'bit': 0b1 << 24, 'name': 'かける言葉が見つからない',
+                         'description': '', 'requirement': 'じゃんけんで10連敗する。'},
+    'FAVOUR_5_STRAIGHT': {'bit': 0b1 << 25, 'name': '以心伝心',
+                          'description': '', 'requirement': 'じゃんけんで5連続あいこになる。'},
+    'FAVOUR_10_STRAIGHT': {'bit': 0b1 << 26, 'name': 'ドッペルゲンガー',
+                           'description': '', 'requirement': 'じゃんけんで10連続あいこになる。'}
 }

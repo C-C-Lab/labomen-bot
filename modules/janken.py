@@ -107,7 +107,7 @@ async def play_with_emoji(user: discord.User, reaction: discord.Reaction, bot_ha
     emoji_hand = EMOJI_HANDS[bot_hand_num]
     if result == 0:
         reply_message = await message.channel.send(user.mention + '\n' + emoji_hand + '\n' + result_mes)
-        await send_aiko_mes(user_id, reply_message)
+        await send_favour_mes(user_id, reply_message)
     else:
         await message.channel.send(user.mention + '\n' + emoji_hand + '\n' + result_mes)
         return result
@@ -133,14 +133,14 @@ async def play_with_mes(message: discord.Message, bot_hand_num: int) -> int:
     if result == 0:
         await utils.send_reply(message, emoji_hand)
         reply_message = await utils.send_reply(message, result_mes)
-        await send_aiko_mes(user_id, reply_message)
+        await send_favour_mes(user_id, reply_message)
     else:
         await utils.send_reply(message, emoji_hand)
         await utils.send_reply(message, result_mes)
     return result
 
 
-async def send_aiko_mes(user_id: Union[str, int], reply_message: discord.message):
+async def send_favour_mes(user_id: Union[str, int], reply_message: discord.message):
     """あいこになった際のメッセージを送信します。
 
     Args:
@@ -201,7 +201,7 @@ def get_result_mes(janken_mes: list, result: str, user_id: Union[str, int]) -> s
     return result_mes
 
 
-def record_count(user_id: Union[str, int], result: str):
+def record_count(user_id: Union[str, int], result: str) -> int:
     """じゃんけんの履歴をslvに記録します。
 
     Args:
@@ -226,15 +226,29 @@ async def check_achieve(author: discord.User, message: discord.Message, result: 
         message (message): discord.pyのmessageモデル
         result (int): じゃんけん結果を表す整数
     """
+    user_slv = slv.get_user_slv_path(author.id)
+    streak_counts = slv.get_value(user_slv, 'janken', 'streak_counts', {})
     if result in [1, -2]:
-        await winning_achieve(author, message)
+        winning_streak = streak_counts.get('winning_streak', 0) + 1
+        streak_count_dict = {'winning_streak': winning_streak,
+                             'losing_streak': 0, 'favour_streak': 0}
+        await winning_achieve(author, message, winning_streak)
     elif result in [-1, 2]:
-        await losing_achieve(author, message)
+        losing_streak = streak_counts.get('losing_streak', 0) + 1
+        streak_count_dict = {'losing_streak': losing_streak,
+                             'winning_streak': 0, 'favour_streak': 0}
+        await losing_achieve(author, message, losing_streak)
     elif result == 0:
-        await favour_achieve(author, message)
+        favour_streak = streak_counts.get('favour_streak', 0) + 1
+        streak_count_dict = {'favour_streak': favour_streak}
+        await favour_achieve(author, message, favour_streak)
+    print('連続記録 -> ')
+    print(streak_count_dict)
+    streak_counts.update(streak_count_dict)
+    slv.update_value(user_slv, 'janken', 'streak_counts', streak_counts)
 
 
-async def winning_achieve(user: discord.User, message: discord.Message) -> int:
+async def winning_achieve(user: discord.User, message: discord.Message, winning_streak: int) -> int:
     """勝利数に応じたアチーブメントメッセージを送信します
 
     Args:
@@ -242,28 +256,35 @@ async def winning_achieve(user: discord.User, message: discord.Message) -> int:
         message (message): discord.pyのmessageモデル
 
     return:
-        str: 累計勝利数
+        int: 累計勝利数
     """
     user_id = user.id
+    flag_bit = 0
     user_slv = slv.get_user_slv_path(user_id)
     win_count = str(slv.get_value(user_slv, 'janken', 'win_count'))
     achieve_title = 'JANKEN_WIN_' + win_count
     achieve_dict = achievements.get(achieve_title)
-    if achieve:
-        if win_count == '1':
-            flag_bit = await achieve.give(user, message, achieve_dict, easy)
-        if win_count in ['10', '50', '100']:
-            flag_bit = await achieve.give(user, message, achieve_dict, normal)
-        if win_count in ['200', '500']:
-            flag_bit = await achieve.give(user, message, achieve_dict, hard)
-        elif win_count == '1000':
-            flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
-        else:
-            return int(win_count)
-        utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+    if win_count == '1':
+        flag_bit = await achieve.give(user, message, achieve_dict, easy)
+    elif win_count in ['10', '50', '100']:
+        flag_bit = await achieve.give(user, message, achieve_dict, normal)
+    elif win_count in ['200', '500']:
+        flag_bit = await achieve.give(user, message, achieve_dict, hard)
+    elif win_count == '1000':
+        flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+    if winning_streak == 5:
+        achieve_dict = achievements.get('WIN_5_STRAIGHT')
+        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+    elif winning_streak == 10:
+        achieve_dict = achievements.get('WIN_10_STRAIGHT')
+        flag_bit |= await achieve.give(user, message, achieve_dict, very_hard)
+    else:
+        return int(win_count)
+    utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+    return int(win_count)
 
 
-async def losing_achieve(user: discord.User, message: discord.Message) -> int:
+async def losing_achieve(user: discord.User, message: discord.Message, losing_streak: dict) -> int:
     """敗北数に応じたアチーブメントメッセージを送信します
 
     Args:
@@ -274,23 +295,30 @@ async def losing_achieve(user: discord.User, message: discord.Message) -> int:
         int: 累計敗北数
     """
     user_id = user.id
+    flag_bit = 0
     user_slv = slv.get_user_slv_path(user_id)
     lose_count = str(slv.get_value(user_slv, 'janken', 'lose_count'))
     achieve_title = 'JANKEN_LOSE_' + lose_count
     achieve_dict = achievements.get(achieve_title)
-    if achieve:
-        if lose_count == '1':
-            flag_bit = await achieve.give(user, message, achieve_dict, easy)
-        if lose_count in ['10', '100']:
-            flag_bit = await achieve.give(user, message, achieve_dict, normal)
-        elif lose_count == '1000':
-            flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
-        else:
-            return int(lose_count)
-        utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+    if lose_count == '1':
+        flag_bit = await achieve.give(user, message, achieve_dict, easy)
+    if lose_count in ['10', '100']:
+        flag_bit = await achieve.give(user, message, achieve_dict, normal)
+    elif lose_count == '1000':
+        flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+    if losing_streak == 5:
+        achieve_dict = achievements.get('LOSE_5_STRAIGHT')
+        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+    elif losing_streak == 10:
+        achieve_dict = achievements.get('LOSE_10_STRAIGHT')
+        flag_bit |= await achieve.give(user, message, achieve_dict, very_hard)
+    else:
+        return int(lose_count)
+    utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+    return int(lose_count)
 
 
-async def favour_achieve(user: discord.User, message: discord.Message) -> int:
+async def favour_achieve(user: discord.User, message: discord.Message, favour_streak: dict) -> int:
     """あいこ数に応じたアチーブメントメッセージを送信します
 
     Args:
@@ -301,19 +329,24 @@ async def favour_achieve(user: discord.User, message: discord.Message) -> int:
         int: 累計あいこ数
     """
     user_id = user.id
+    flag_bit = 0
     user_slv = slv.get_user_slv_path(user_id)
     favour_count = str(slv.get_value(user_slv, 'janken', 'favour_count'))
     achieve_title = 'JANKEN_FAVOUR_' + favour_count
     achieve_dict = achievements.get(achieve_title)
-    print('あいこチェック')
-    print(favour_count)
-    if achieve:
-        if favour_count == '1':
-            flag_bit = await achieve.give(user, message, achieve_dict, easy)
-        if favour_count in ['10', '100']:
-            flag_bit = await achieve.give(user, message, achieve_dict, normal)
-        elif favour_count == '1000':
-            flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
-        else:
-            return int(favour_count)
-        utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+    if favour_count == '1':
+        flag_bit = await achieve.give(user, message, achieve_dict, easy)
+    if favour_count in ['10', '100']:
+        flag_bit = await achieve.give(user, message, achieve_dict, normal)
+    elif favour_count == '1000':
+        flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+    if favour_streak == 5:
+        achieve_dict = achievements.get('FAVOUR_5_STRAIGHT')
+        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+    elif favour_streak == 10:
+        achieve_dict = achievements.get('FAVOUR_10_STRAIGHT')
+        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+    else:
+        return int(favour_count)
+    utils.update_user_flag(user_id, 'achieve', flag_bit, True)
+    return int(favour_count)
