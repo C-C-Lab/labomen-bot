@@ -34,9 +34,10 @@ EMOJI_HANDS = {
 win_mes = janken_words.WIN_MES
 lose_mes = janken_words.LOSE_MES
 favour_mes = janken_words.FAVOUR_MES
-win_1 = achieve_words.JANKEN_WIN_1
-win_10_500 = achieve_words.JANKEN_WIN_10_500
-win_1000 = achieve_words.JANKEN_WIN_1000
+easy = achieve_words.EASY
+normal = achieve_words.NORMAL
+hard = achieve_words.HARD
+very_hard = achieve_words.VERY_HARD
 
 
 async def start(user_id, message):
@@ -233,11 +234,13 @@ async def winning_achieve(user, message):
     achieve_dict = achievements.get(achieve_title)
     if achieve:
         if win_count == '1':
-            flag_bit = await achieve.give(user, message, achieve_dict, win_1)
-        if win_count in ['10', '50', '100', '200', '500']:
-            flag_bit = await achieve.give(user, message, achieve_dict, win_10_500)
+            flag_bit = await achieve.give(user, message, achieve_dict, easy)
+        if win_count in ['10', '50', '100']:
+            flag_bit = await achieve.give(user, message, achieve_dict, normal)
+        if win_count in ['200', '500']:
+            flag_bit = await achieve.give(user, message, achieve_dict, hard)
         elif win_count == '1000':
-            flag_bit = await achieve.give(user, message, achieve_dict, win_1000)
+            flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
         else:
             return win_count
         utils.update_user_flag(user_id, 'achieve', flag_bit, True)
