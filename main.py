@@ -1,5 +1,6 @@
 import datetime
 import random
+from typing import Any
 
 import discord
 
@@ -31,7 +32,7 @@ async def on_ready():
 
 # メッセージ待受イベント
 @ client.event
-async def on_message(message):
+async def on_message(message: Any):
 
     # botの発言を無視
     if message.author.bot:

@@ -1,4 +1,5 @@
 import random
+from typing import Any, Union
 
 import discord
 
@@ -8,7 +9,7 @@ from settings import achieve_words
 congrat = achieve_words.CONGRAT
 
 
-async def give(user: discord.User, message: discord.Message, achieve_dict: dict, difficulty: list) -> int:
+async def give(user: Union[discord.User, None], message: Any, achieve_dict: Union[dict, None], difficulty: list) -> int:
     """アチーブメントを付与します。
 
     Args:
@@ -32,7 +33,7 @@ async def give(user: discord.User, message: discord.Message, achieve_dict: dict,
     return flag_bit
 
 
-def get_achieve_mes(user_name: str, achieve_dict: dict) -> str:
+def get_achieve_mes(user_name: str, achieve_dict: Union[dict, None]) -> str:
     """アチーブメントシステムメッセージを取得します。
 
     Args:
@@ -48,7 +49,7 @@ def get_achieve_mes(user_name: str, achieve_dict: dict) -> str:
     return achieve_mes
 
 
-def get_description_mes(achieve_dict: dict) -> str:
+def get_description_mes(achieve_dict: Union[dict, None]) -> str:
     """アチーブメントの説明メッセージを取得します。
 
     Args:

@@ -15,7 +15,7 @@ from settings import discord_settings
 from modules import slv
 
 
-def check_command(word: str, command_words: set) -> bool:
+def check_command(word: str, command_words: Union[list, dict]) -> bool:
     """有効なコマンドが存在するかをチェックします。
 
     Args:
@@ -32,7 +32,7 @@ def check_command(word: str, command_words: set) -> bool:
         return False
 
 
-def get_command(word: str, command_words: set) -> None:
+def get_command(word: str, command_words: Union[dict, list]) -> Union[str, None]:
     """文字列に有効なコマンドが含まれていれば該当コマンドを取得します。
 
     Args:
@@ -70,7 +70,7 @@ def add_dir(dir_name: str):
         print(dir_name + "ディレクトリを作成")
 
 
-def print_message_info(message: discord.Message):
+def print_message_info(message: Any):
     """受信メッセージの情報を出力します。
 
     Args:
@@ -106,7 +106,7 @@ def get_now() -> datetime.datetime:
     return now
 
 
-def save_pkl(file_name: str, content: any):
+def save_pkl(file_name: str, content: Any):
     """pklへ記録します。
 
     Args:
@@ -160,7 +160,7 @@ def get_mode(user_id: Union[str, int]) -> str:
     return user_mode
 
 
-async def send_mention(message: discord.Message, content: str, user: discord.User = None) -> discord.Message:
+async def send_mention(message: Any, content: str, user: Union[discord.User, discord.Member] = None):
     """メンション付メッセージを送信します。
 
     Args:
@@ -175,13 +175,13 @@ async def send_mention(message: discord.Message, content: str, user: discord.Use
         user = message.author
     try:
         response = await message.channel.send(user.mention + '\n' + content)
+        return response
     except Exception as e:
         print('-----メンション送信に失敗-----')
         print_error(e)
-    return response
 
 
-async def send_reply(message: discord.Message, content: str) -> discord.Message:
+async def send_reply(message: Any, content: str):
     """リプライメッセージを送信します。
     送信したメッセージのモデルを返します。
 
@@ -194,13 +194,13 @@ async def send_reply(message: discord.Message, content: str) -> discord.Message:
     """
     try:
         response = await message.reply(content, mention_author=True)
+        return response
     except Exception as e:
         print('-----リプライ送信に失敗-----')
         print_error(e)
-    return response
 
 
-async def send_message(channel: discord.TextChannel, content: str) -> discord.Message:
+async def send_message(channel: discord.TextChannel, content: str):
     """メッセージを送信します。
 
     Args:
@@ -212,10 +212,10 @@ async def send_message(channel: discord.TextChannel, content: str) -> discord.Me
     """
     try:
         response = await channel.send(content)
+        return response
     except Exception as e:
         print('-----メッセージ送信に失敗-----')
         print_error(e)
-    return response
 
 
 def get_hiragana(word: str) -> str:
@@ -231,7 +231,7 @@ def get_hiragana(word: str) -> str:
     return converted_word
 
 
-async def add_reaction_list(message: discord.Message, emoji_list: list):
+async def add_reaction_list(message: Any, emoji_list: list):
     """リスト内のemojiをリアクションとして一括送信します。
 
     Args:
@@ -242,19 +242,20 @@ async def add_reaction_list(message: discord.Message, emoji_list: list):
         await message.add_reaction(emoji)
 
 
-def get_key_from_value(dict_name: str, target_value: Any) -> Union[str, int]:
+def get_key_from_value(dict_name: dict, target_value: Any) -> Union[str, int]:
     """dictのvalueからkeyを取得します。
 
     Args:
-        dict_name (str): dict名
+        dict_name (dict): dict
         target_value (Any): 鍵となるvalue
 
     Returns:
-        Any: key
+        str or int: key()
     """
     for key, value in dict_name.items():
         if value == target_value:
             return key
+    return ''
 
 
 def get_text(file_name: str) -> list:
@@ -268,17 +269,19 @@ def get_text(file_name: str) -> list:
     """
     text_directory = './texts'
     path = text_directory + '/' + file_name + '.txt'
+    _list = []
     try:
         with open(path, 'r') as txt:
             word_list = txt.read().split("\n")
             normalized_list = list(set(filter(None, word_list)))
             comment_list = [s for s in normalized_list if s.startswith('#')]
             _list = list(set(normalized_list) - set(comment_list))
-            return _list
     except OSError as e:
         print(e)
     except Exception as e:
         print(e)
+    finally:
+        return _list
 
 
 def update_user_flag(user_id: Union[str, int], dict_key: str, flag_bit: int, _bool: bool) -> int:

@@ -2,7 +2,7 @@
 じゃんけん機能に関連するメソッドをまとめたモジュールです。
 """
 import random
-from typing import Union
+from typing import Any, Union
 
 import discord
 
@@ -43,7 +43,7 @@ hard = achieve_words.HARD
 very_hard = achieve_words.VERY_HARD
 
 
-async def start(user_id: Union[str, int], message: discord.Message):
+async def start(user_id: Union[str, int], message: Any):
     """jankenを開始します。
 
     Args:
@@ -59,7 +59,7 @@ async def start(user_id: Union[str, int], message: discord.Message):
     slv.update_user_value(user_id, 'last_act_at', now)
     # メッセージ送信
     content = random.choice(START_MES)
-    emoji_hands = EMOJI_HANDS.values()
+    emoji_hands = list(EMOJI_HANDS.values())
     reply_message = await utils.send_reply(message, content)
     await utils.add_reaction_list(reply_message, emoji_hands)
     slv.update_value(user_slv, 'janken',
@@ -67,7 +67,7 @@ async def start(user_id: Union[str, int], message: discord.Message):
     slv.update_value(user_slv, 'janken', 'start_mes_id', message_id)
 
 
-async def play(user: discord.User = None, message: discord.Message = None, reaction: discord.Reaction = None):
+async def play(user: discord.User = None, message: Any = None, reaction: discord.Reaction = None):
     """じゃんけんを実行します。
 
     Args:
@@ -82,13 +82,15 @@ async def play(user: discord.User = None, message: discord.Message = None, react
         result = await play_with_mes(message, bot_hand_num)
         author = message.author
         await check_achieve(author, message, result)
-    else:
+    elif reaction:
         result = await play_with_emoji(user, reaction, bot_hand_num)
         message = reaction.message
         await check_achieve(user, message, result)
+    else:
+        pass
 
 
-async def play_with_emoji(user: discord.User, reaction: discord.Reaction, bot_hand_num: int) -> int:
+async def play_with_emoji(user: Union[discord.User, None], reaction: discord.Reaction, bot_hand_num: int) -> Union[int, None]:
     """emojiによるじゃんけんを実行します。
 
     Args:
@@ -102,7 +104,7 @@ async def play_with_emoji(user: discord.User, reaction: discord.Reaction, bot_ha
     message = reaction.message
     user_id = str(user.id)
     user_hand_num = utils.get_key_from_value(EMOJI_HANDS, reaction.emoji)
-    result = bot_hand_num - user_hand_num
+    result = bot_hand_num - int(user_hand_num)
     result_mes = calculate_result(result, user_id)
     emoji_hand = EMOJI_HANDS[bot_hand_num]
     if result == 0:
@@ -113,7 +115,7 @@ async def play_with_emoji(user: discord.User, reaction: discord.Reaction, bot_ha
         return result
 
 
-async def play_with_mes(message: discord.Message, bot_hand_num: int) -> int:
+async def play_with_mes(message: Any, bot_hand_num: int) -> Union[int, None]:
     """メッセージによるじゃんけんを実行します。
 
     Args:
@@ -126,28 +128,29 @@ async def play_with_mes(message: discord.Message, bot_hand_num: int) -> int:
     user_id = str(message.author.id)
     hiragana_content = utils.get_hiragana(message.content)
     command_word = utils.get_command(hiragana_content, USER_HANDS)
-    user_hand_num = USER_HANDS[command_word]
-    result = bot_hand_num - user_hand_num
-    result_mes = calculate_result(result, user_id)
-    emoji_hand = EMOJI_HANDS[bot_hand_num]
-    if result == 0:
-        await utils.send_reply(message, emoji_hand)
-        reply_message = await utils.send_reply(message, result_mes)
-        await send_favour_mes(user_id, reply_message)
-    else:
-        await utils.send_reply(message, emoji_hand)
-        await utils.send_reply(message, result_mes)
-    return result
+    if command_word:
+        user_hand_num = int(USER_HANDS[command_word])
+        result = bot_hand_num - user_hand_num
+        result_mes = calculate_result(result, user_id)
+        emoji_hand = EMOJI_HANDS[bot_hand_num]
+        if result == 0:
+            await utils.send_reply(message, emoji_hand)
+            reply_message = await utils.send_reply(message, result_mes)
+            await send_favour_mes(user_id, reply_message)
+        else:
+            await utils.send_reply(message, emoji_hand)
+            await utils.send_reply(message, result_mes)
+        return result
 
 
-async def send_favour_mes(user_id: Union[str, int], reply_message: discord.message):
+async def send_favour_mes(user_id: Union[str, int], reply_message: Any):
     """あいこになった際のメッセージを送信します。
 
     Args:
         user_id (str or int): discordのuser_id
         reply_message (reply): discord.pyのreplyモデル
     """
-    emoji_hands = EMOJI_HANDS.values()
+    emoji_hands = list(EMOJI_HANDS.values())
     user_slv = slv.get_user_slv_path(user_id)
     slv.update_value(user_slv, 'janken',
                      'last_message_id', reply_message.id)
@@ -170,7 +173,7 @@ def calculate_result(result: int, user_id: Union[str, int]) -> str:
     elif result in [1, -2]:
         result_mes = get_result_mes(lose_mes, '負け', user_id)
         record_count(user_id, 'win')
-    elif result == 0:
+    else:
         result_mes = get_result_mes(favour_mes, 'あいこ', user_id)
         record_count(user_id, 'favour')
     return result_mes
@@ -201,7 +204,7 @@ def get_result_mes(janken_mes: list, result: str, user_id: Union[str, int]) -> s
     return result_mes
 
 
-def record_count(user_id: Union[str, int], result: str) -> int:
+def record_count(user_id: Union[str, int], result: str):
     """じゃんけんの履歴をslvに記録します。
 
     Args:
@@ -218,7 +221,7 @@ def record_count(user_id: Union[str, int], result: str) -> int:
     slv.update_value(user_slv, 'janken', key, result_count)
 
 
-async def check_achieve(author: discord.User, message: discord.Message, result: int):
+async def check_achieve(author: Union[discord.User, None], message: Any, result: Union[int, None]):
     """勝敗に応じたアチーブメント処理を実行します。
 
     Args:
@@ -238,17 +241,15 @@ async def check_achieve(author: discord.User, message: discord.Message, result: 
         streak_count_dict = {'losing_streak': losing_streak,
                              'winning_streak': 0, 'favour_streak': 0}
         await losing_achieve(author, message, losing_streak)
-    elif result == 0:
+    else:
         favour_streak = streak_counts.get('favour_streak', 0) + 1
         streak_count_dict = {'favour_streak': favour_streak}
         await favour_achieve(author, message, favour_streak)
-    print('連続記録 -> ')
-    print(streak_count_dict)
     streak_counts.update(streak_count_dict)
     slv.update_value(user_slv, 'janken', 'streak_counts', streak_counts)
 
 
-async def winning_achieve(user: discord.User, message: discord.Message, winning_streak: int) -> int:
+async def winning_achieve(user: Union[discord.User, None], message: Any, winning_streak: int) -> int:
     """勝利数に応じたアチーブメントメッセージを送信します
 
     Args:
@@ -284,7 +285,7 @@ async def winning_achieve(user: discord.User, message: discord.Message, winning_
     return int(win_count)
 
 
-async def losing_achieve(user: discord.User, message: discord.Message, losing_streak: dict) -> int:
+async def losing_achieve(user: Union[discord.User, None], message: Any, losing_streak: dict) -> int:
     """敗北数に応じたアチーブメントメッセージを送信します
 
     Args:
@@ -318,7 +319,7 @@ async def losing_achieve(user: discord.User, message: discord.Message, losing_st
     return int(lose_count)
 
 
-async def favour_achieve(user: discord.User, message: discord.Message, favour_streak: dict) -> int:
+async def favour_achieve(user: Union[discord.User, None], message: Any, favour_streak: dict) -> int:
     """あいこ数に応じたアチーブメントメッセージを送信します
 
     Args:

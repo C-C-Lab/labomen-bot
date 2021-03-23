@@ -1,5 +1,6 @@
 import random
 import datetime
+from typing import Any
 
 import discord
 
@@ -15,7 +16,7 @@ words = omikuji_words
 omikuji_weights = [30, 25, 25, 20, 15]
 
 
-async def play_omikuji(message: discord.Message):
+async def play_omikuji(message: Any):
     """おみくじを実行します。
     結果に応じてメッセージを送信します。
 
