@@ -27,8 +27,8 @@ async def give(user: Union[discord.User, None], message: Any, achieve_dict: Unio
     bot_comment = random.choice(difficulty)
     bot_mes = '{0}\n{1}'.format(congrat_mes, bot_comment)
     flag_bit = achieve_dict['bit']
-    await utils.send_message(message.channel, achieve_mes)
-    await utils.send_message(message.channel, description_mes)
+    bot_system_mes = achieve_mes + '\n' + description_mes
+    await utils.send_message(message.channel, bot_system_mes)
     await utils.send_mention(message, bot_mes, user=user)
     return flag_bit
 

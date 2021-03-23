@@ -30,15 +30,15 @@ achievements = {
     'JANKEN_FAVOUR_1000': {'bit': 0b1 << 20, 'name': 'もう結婚しろ',
                            'description': '心が通じ合っているとしか思えない。', 'requirement': 'じゃんけんで1000回あいこになる。'},
     'WIN_5_STRAIGHT': {'bit': 0b1 << 21, 'name': 'ビクトリーロード',
-                       'description': '運とは紛れもなく実力である', 'requirement': 'じゃんけんで5連勝する。'},
+                       'description': '運とは紛れもなく実力である。', 'requirement': 'じゃんけんで5連勝する。'},
     'WIN_10_STRAIGHT': {'bit': 0b1 << 22, 'name': '覇道',
-                        'description': 'あなたは超能力者かもしれない', 'requirement': 'じゃんけんで10連勝する。'},
+                        'description': 'あなたは超能力者かもしれない。', 'requirement': 'じゃんけんで10連勝する。'},
     'LOSE_5_STRAIGHT': {'bit': 0b1 << 23, 'name': 'アンラッキー',
-                        'description': 'とんでもなく不運', 'requirement': 'じゃんけんで5連敗する。'},
+                        'description': 'とんでもなく不運。', 'requirement': 'じゃんけんで5連敗する。'},
     'LOSE_10_STRAIGHT': {'bit': 0b1 << 24, 'name': '不幸の呪い',
-                         'description': 'かける言葉が見つからない', 'requirement': 'じゃんけんで10連敗する。'},
+                         'description': 'かける言葉が見つからない。', 'requirement': 'じゃんけんで10連敗する。'},
     'FAVOUR_5_STRAIGHT': {'bit': 0b1 << 25, 'name': '以心伝心',
-                          'description': 'テニスのラリーより難しいぞ', 'requirement': 'じゃんけんで5連続あいこになる。'},
+                          'description': 'テニスのラリーより難しいぞ。', 'requirement': 'じゃんけんで5連続あいこになる。'},
     'FAVOUR_10_STRAIGHT': {'bit': 0b1 << 26, 'name': 'ドッペルゲンガー',
-                           'description': '前世はAIだったのかもしれない', 'requirement': 'じゃんけんで10連続あいこになる。'}
+                           'description': '前世はAIだったのかもしれない。', 'requirement': 'じゃんけんで10連続あいこになる。'}
 }

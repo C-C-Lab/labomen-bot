@@ -77,7 +77,7 @@ async def play(user: discord.User = None, message: Any = None, reaction: discord
     """
     print('じゃんけんを実行')
     # 手に応じた整数をdictから取得
-    bot_hand, bot_hand_num = random.choice(list(BOT_HANDS.items()))
+    bot_hand_num = random.choice(list(BOT_HANDS.values()))
     if message:
         result = await play_with_mes(message, bot_hand_num)
         author = message.author
