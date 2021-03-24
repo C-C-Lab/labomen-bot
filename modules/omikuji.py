@@ -1,6 +1,7 @@
 import random
 import datetime
 from typing import Any
+
 from modules import utils
 from modules import achieve
 from settings.flags import achievements
@@ -10,6 +11,7 @@ import asyncio
 
 words = omikuji_words
 today = datetime.date.today()
+init_omikuji_dict = init_user_states.INITIAL_STATES['omikuji']
 
 
 # おみくじサイコロの重み設定 大吉・中吉・小吉・吉・凶
@@ -27,7 +29,8 @@ async def play_omikuji(user_dict: dict, message: Any) -> dict:
     Returns:
         user_dict (dict): 更新済みuser_dict
     """
-    omikuji_dict: dict = user_dict.get('omikuji', init_user_states.INITIAL_STATES['omikuji'])
+    user_dict = initialize_omikuji_dict(user_dict)
+    omikuji_dict: dict = user_dict['omikuji']
 
     if omikuji_dict['date'] != today:
         print('=========== おみくじを実行 ============')
@@ -143,3 +146,17 @@ async def give_achievement(flag: int, message: Any, target_achievement: dict) ->
     else:
         flag |= await achieve.give(message.author, message, target_achievement)
     return flag
+
+
+def initialize_omikuji_dict(user_dict: dict) -> dict:
+    omikuji_dict = user_dict.get('omikuji', {})
+    omikuji_dict = {
+        'date': omikuji_dict.get('date', init_omikuji_dict['date']),
+        'result': omikuji_dict.get('result', init_omikuji_dict['result']),
+        'count': omikuji_dict.get('count', init_omikuji_dict['count']),
+        'daikichi_count': omikuji_dict.get('daikichi_count', init_omikuji_dict['daikichi_count']),
+        'kyo_count': omikuji_dict.get('kyo_count', init_omikuji_dict['kyo_count']),
+        'attention_count': omikuji_dict.get('attention_count', init_omikuji_dict['attention_count'])
+    }
+    user_dict = {**user_dict, **{'omikuji': omikuji_dict}}
+    return user_dict
