@@ -1,5 +1,6 @@
 import datetime
 import random
+import re
 from typing import Any
 
 import discord
@@ -58,8 +59,8 @@ async def on_message(message: Any):
         # 20秒経過している場合normalへ遷移
         last_act_at = slv.get_dict_value(user_dict, 'data', 'last_act_at')
         time_passed = now - last_act_at
-        if time_passed > datetime.timedelta(0, 20):
-            print('20秒以上経過')
+        if time_passed > datetime.timedelta(0, 20) and user_mode != 'normal':
+            print('20秒以上経過 -> normalモードへ遷移')
             user_dict = slv.update_slv_dict(
                 user_dict, 'data', {'mode': 'normal'})
             user_mode = 'normal'
@@ -85,6 +86,9 @@ async def on_message(message: Any):
             # おみくじ起動
             elif bot_commands['OMIKUJI'] in hiragana_content:
                 user_dict = await omikuji.play_omikuji(user_dict, message)
+            # コマンドヘルプ
+            elif re.search(bot_commands['HELP'], hiragana_content):
+                await utils.send_command_help(message)
             # 鳴き声機能
             elif bot_commands['NORMAL'] in hiragana_content:
                 content = random.choice(random_contents)
@@ -110,6 +114,13 @@ async def on_message(message: Any):
                 user_dict['data']['created_at'] = now
                 user_dict['data']['last_act_at'] = now
             # ----------------- デバッグコマンド ----------------- #
+            # メンションされたとき
+            elif message.mentions:
+                if message.mentions[0].id == client.user.id:
+                    random_mes = random.choice(random_contents)
+                    hint_mes = bot_words.HINT_MESSAGE
+                    content = '{0}\n{1}'.format(random_mes, hint_mes)
+                    await utils.send_reply(message, content)
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')

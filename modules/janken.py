@@ -48,6 +48,7 @@ async def start(user_dict: dict, message: Any) -> dict:
     Returns:
         user_dict (dict): 更新済みuser_dict
     """
+    print('========== じゃんけんを開始 ===========')
     now = utils.get_now()
     START_MES = janken_words.START_MES
     message_id = message.id
@@ -58,7 +59,10 @@ async def start(user_dict: dict, message: Any) -> dict:
     content = random.choice(START_MES)
     emoji_hands = list(EMOJI_HANDS.values())
     reply_message = await utils.send_reply(message, content)
+    print(content)
+    # リアクション送信
     await utils.add_reaction_list(reply_message, emoji_hands)
+    print('じゃんけん用リアクション送信')
     new_janken_dict = {'last_message_id': reply_message.id,
                        'start_mes_id': message_id}
     user_dict = slv.update_slv_dict(user_dict, 'janken', new_janken_dict)
@@ -77,7 +81,7 @@ async def play(user_dict, user: discord.User = None, message: Any = None, reacti
     Returns:
         user_dict (dict): 更新済みuser_dict
     """
-    print('じゃんけんを実行')
+    print('========== じゃんけんを実行 ===========')
     # 手に応じた整数をdictから取得
     bot_hand_num = random.choice(list(BOT_HANDS.values()))
     if message:
@@ -117,6 +121,7 @@ async def play_with_emoji(user_dict: dict, user: Union[discord.User, None], reac
         user_dict = await send_favour_mes(user_dict, reply_message)
     else:
         await message.channel.send(user.mention + '\n' + emoji_hand + '\n' + result_mes)
+    print(result_mes)
     return user_dict, result
 
 
@@ -148,6 +153,7 @@ async def play_with_mes(user_dict: dict, message: Any, bot_hand_num: int) -> Tup
         else:
             await utils.send_reply(message, emoji_hand)
             await utils.send_reply(message, result_mes)
+        print(result_mes)
     return user_dict, result
 
 
@@ -207,7 +213,7 @@ def get_result_mes(user_dict: dict, janken_mes: list, result: str) -> Tuple[dict
     result_mes = random.choice(janken_mes)
     # 勝利, 敗北処理
     if janken_mes != favour_mes:
-        print('結果：botの' + result)
+        print('じゃんけんの結果：botの' + result)
         user_dict = slv.update_slv_dict(user_dict, 'data', {'mode': 'normal'})
     # あいこ処理
     else:

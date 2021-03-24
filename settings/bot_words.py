@@ -8,8 +8,13 @@ txt = utils.get_text
 BOT_COMMANDS = {
     'NORMAL': 'らびちゃん',
     'JANKEN': 'じゃんけん',
-    'OMIKUJI': 'おみくじ'
+    'OMIKUJI': 'おみくじ',
+    'HELP': r'へるぷ|教えて|おしえて',
 }
 
 # ランダムに返すメッセージ
 RANDOM_CONTENTS = txt('default')
+
+
+# メンションされた際のヒントメッセージ
+HINT_MESSAGE = 'もし私ができることを知りたいのなら「ヘルプ」とか「教えて」って話しかけてもらえれば教えてあげられるわ'
