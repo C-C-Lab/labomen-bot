@@ -75,6 +75,17 @@ def get_description_mes(achieve_dict: Union[dict, None]) -> str:
     name = achieve_dict['name']
     description = achieve_dict['description']
     requirement = achieve_dict['requirement']
+    difficulty = achieve_dict['difficulty']
+    if difficulty == 1:
+        star = '★☆☆☆'
+    elif difficulty == 2:
+        star = '★★☆☆'
+    elif difficulty == 3:
+        star = '★★★☆'
+    elif difficulty == 4:
+        star = '★★★★'
+    else:
+        star = '？？？？'
     description_mes = (
-        '*```xl\n\'『{0}』\'\n～～{1}～～\n獲得条件：{2}\n```*'.format(name, description, requirement))
+        '*```xl\n\'『{0}』\'\n～～{1}～～\n獲得条件：{2}　獲得難易度：{3}\n```*'.format(name, description, requirement, star))
     return description_mes
