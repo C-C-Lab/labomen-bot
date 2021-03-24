@@ -45,13 +45,13 @@ async def on_message(message: Any):
     now = utils.get_now()
     hiragana_content = utils.get_hiragana(message.content)
 
-    # slvに初期項目がなければ追記
-    user_dict = slv.initialize_user(author)
-    user_dict = slv.get_dict(user_slv_path) if not user_dict else user_dict
-    user_dict = slv.update_slv_dict(user_dict, 'data', {'name': user_name})
     utils.print_message_info(message)
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
+        # slvに初期項目がなければ追記
+        user_dict = slv.initialize_user(author)
+        user_dict = slv.get_dict(user_slv_path) if not user_dict else user_dict
+        user_dict = slv.update_slv_dict(user_dict, 'data', {'name': user_name})
         # モード情報を取得
         user_mode = utils.get_mode(user_dict)
         # 20秒経過している場合normalへ遷移
@@ -92,10 +92,11 @@ async def on_message(message: Any):
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')
+        user_dict = slv.update_slv_dict(user_dict, 'data', {'updated_at': now})
+        slv.merge_dict(user_dict, user_slv_path)
     # チャンネルIDが不一致
     elif str(message.channel.id) not in BOT_CH_IDS:
         return
-    slv.merge_dict(user_dict, user_slv_path)
     print('=======================================')
 
 
@@ -103,6 +104,7 @@ async def on_message(message: Any):
 async def on_reaction_add(reaction, user):
 
     user_id = str(user.id)
+    now = utils.get_now()
     if user.bot:
         return
     user_slv_path = slv.get_user_slv_path(user.id)
@@ -113,6 +115,7 @@ async def on_reaction_add(reaction, user):
         last_message_id = slv.get_value(user_slv, 'janken', 'last_message_id')
         if str(last_message_id) == str(reaction.message.id):
             user_dict = await janken.play(user_dict, user=user, reaction=reaction)
+    user_dict = slv.update_slv_dict(user_dict, 'data', {'updated_at': now})
     slv.merge_dict(user_dict, user_slv_path)
 
 

@@ -23,7 +23,16 @@ INITIAL_STATES = {
     },
     'janken': {
         'last_message_id': '',
-        'start_mes_id': ''
+        'start_mes_id': '',
+        'win_count': 0,
+        'lose_count': 0,
+        'favour_count': 0,
+        'streak_counts': {
+            'winning_streak': 0,
+            'losing_streak': 0,
+            'favour_streak': 0,
+        }
+
     },
     'flags': {
         'achieve': 0

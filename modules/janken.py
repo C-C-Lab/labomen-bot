@@ -57,7 +57,7 @@ async def start(user_dict: dict, message: Any) -> dict:
     START_MES = janken_words.START_MES
     message_id = message.id
     # モード切替
-    new_data_dict = {'mode': 'janken', 'last_act_at': now, 'updated_at': now}
+    new_data_dict = {'mode': 'janken', 'last_act_at': now}
     user_dict = slv.update_slv_dict(user_dict, 'data', new_data_dict)
     # メッセージ送信
     content = random.choice(START_MES)
