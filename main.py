@@ -107,11 +107,13 @@ async def on_message(message: Any):
                 content = 'ユーザー情報をリセットしました'
                 await utils.send_message(message.channel, content)
                 user_dict = init_user_states.INITIAL_STATES
+                user_dict['data']['created_at'] = now
+                user_dict['data']['last_act_at'] = now
             # ----------------- デバッグコマンド ----------------- #
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')
-        user_dict = slv.update_slv_dict(user_dict, 'data', {'updated_at': now})
+        user_dict['data']['updated_at'] = now
         slv.merge_dict(user_dict, user_slv_path)
     # チャンネルIDが不一致
     elif str(message.channel.id) not in BOT_CH_IDS:
