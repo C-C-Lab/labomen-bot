@@ -1,13 +1,12 @@
 import random
 import datetime
+import asyncio
 from typing import Any
-
 from modules import utils
 from modules import achieve
-from settings.flags import achievements
 from settings import omikuji_words
 from settings import init_user_states
-import asyncio
+from settings.flags import achievements
 
 words = omikuji_words
 today = datetime.date.today()
