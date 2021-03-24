@@ -89,7 +89,8 @@ def update_slv_dict(slv_dict: dict, index_key: str, new_index_dict: dict) -> dic
     """
     index_dict = slv_dict.get(index_key, {})
     index_dict.update(new_index_dict)
-    slv_dict.update(index_dict)
+    new_dict = {index_key: index_dict}
+    slv_dict = {**slv_dict, **new_dict}
     return slv_dict
 
 
