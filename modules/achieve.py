@@ -7,9 +7,13 @@ from modules import utils
 from settings import achieve_words
 
 congrat = achieve_words.CONGRAT
+easy = achieve_words.EASY
+normal = achieve_words.NORMAL
+hard = achieve_words.HARD
+very_hard = achieve_words.VERY_HARD
 
 
-async def give(user: Union[discord.User, None], message: Any, achieve_dict: Union[dict, None], difficulty: list) -> int:
+async def give(user: Union[discord.User, None], message: Any, achieve_dict: Union[dict, None]) -> int:
     """アチーブメントを付与します。
 
     Args:
@@ -21,6 +25,16 @@ async def give(user: Union[discord.User, None], message: Any, achieve_dict: Unio
         int: ビットフラグ
     """
     user_name = user.display_name
+    if achieve_dict['difficulty'] == 1:
+        difficulty = easy
+    elif achieve_dict['difficulty'] == 2:
+        difficulty = normal
+    elif achieve_dict['difficulty'] == 3:
+        difficulty = hard
+    elif achieve_dict['difficulty'] == 4:
+        difficulty = very_hard
+    else:
+        difficulty = []
     achieve_mes = get_achieve_mes(user_name, achieve_dict)
     description_mes = get_description_mes(achieve_dict)
     congrat_mes = random.choice(congrat)
@@ -61,6 +75,17 @@ def get_description_mes(achieve_dict: Union[dict, None]) -> str:
     name = achieve_dict['name']
     description = achieve_dict['description']
     requirement = achieve_dict['requirement']
+    difficulty = achieve_dict['difficulty']
+    if difficulty == 1:
+        star = '★☆☆☆'
+    elif difficulty == 2:
+        star = '★★☆☆'
+    elif difficulty == 3:
+        star = '★★★☆'
+    elif difficulty == 4:
+        star = '★★★★'
+    else:
+        star = '？？？？'
     description_mes = (
-        '*```xl\n\'『{0}』\'\n～～{1}～～\n獲得条件：{2}\n```*'.format(name, description, requirement))
+        '*```xl\n\'『{0}』\'\n～～{1}～～\n獲得条件：{2}　獲得難易度：{3}\n```*'.format(name, description, requirement, star))
     return description_mes

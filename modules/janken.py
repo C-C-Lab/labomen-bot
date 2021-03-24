@@ -9,7 +9,6 @@ import discord
 from modules import achieve
 from modules import slv
 from modules import utils
-from settings import achieve_words
 from settings import janken_words
 from settings.flags import achievements
 
@@ -37,10 +36,6 @@ EMOJI_HANDS = {
 win_mes = janken_words.WIN_MES
 lose_mes = janken_words.LOSE_MES
 favour_mes = janken_words.FAVOUR_MES
-easy = achieve_words.EASY
-normal = achieve_words.NORMAL
-hard = achieve_words.HARD
-very_hard = achieve_words.VERY_HARD
 
 
 async def start(user_dict: dict, message: Any) -> dict:
@@ -299,19 +294,19 @@ async def winning_achieve(user_dict: dict, user: Union[discord.User, None], mess
     achieve_title = 'JANKEN_WIN_' + win_count
     achieve_dict = achievements.get(achieve_title)
     if win_count == '1':
-        flag_bit = await achieve.give(user, message, achieve_dict, easy)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     elif win_count in ['10', '50', '100']:
-        flag_bit = await achieve.give(user, message, achieve_dict, normal)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     elif win_count in ['200', '500']:
-        flag_bit = await achieve.give(user, message, achieve_dict, hard)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     elif win_count == '1000':
-        flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     if winning_streak == 5:
         achieve_dict = achievements.get('WIN_5_STRAIGHT')
-        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+        flag_bit |= await achieve.give(user, message, achieve_dict)
     elif winning_streak == 10:
         achieve_dict = achievements.get('WIN_10_STRAIGHT')
-        flag_bit |= await achieve.give(user, message, achieve_dict, very_hard)
+        flag_bit |= await achieve.give(user, message, achieve_dict)
     else:
         return user_dict
     returned_tuple = utils.update_user_flag(
@@ -336,17 +331,17 @@ async def losing_achieve(user_dict: dict, user: Union[discord.User, None], messa
     achieve_title = 'JANKEN_LOSE_' + lose_count
     achieve_dict = achievements.get(achieve_title)
     if lose_count == '1':
-        flag_bit = await achieve.give(user, message, achieve_dict, easy)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     if lose_count in ['10', '100']:
-        flag_bit = await achieve.give(user, message, achieve_dict, normal)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     elif lose_count == '1000':
-        flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     if losing_streak == 5:
         achieve_dict = achievements.get('LOSE_5_STRAIGHT')
-        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+        flag_bit |= await achieve.give(user, message, achieve_dict)
     elif losing_streak == 10:
         achieve_dict = achievements.get('LOSE_10_STRAIGHT')
-        flag_bit |= await achieve.give(user, message, achieve_dict, very_hard)
+        flag_bit |= await achieve.give(user, message, achieve_dict)
     else:
         return user_dict
     returned_tuple = utils.update_user_flag(
@@ -371,17 +366,17 @@ async def favour_achieve(user_dict: dict, user: Union[discord.User, None], messa
     achieve_title = 'JANKEN_FAVOUR_' + favour_count
     achieve_dict = achievements.get(achieve_title)
     if favour_count == '1':
-        flag_bit = await achieve.give(user, message, achieve_dict, easy)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     if favour_count in ['10', '100']:
-        flag_bit = await achieve.give(user, message, achieve_dict, normal)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     elif favour_count == '1000':
-        flag_bit = await achieve.give(user, message, achieve_dict, very_hard)
+        flag_bit = await achieve.give(user, message, achieve_dict)
     if favour_streak == 5:
         achieve_dict = achievements.get('FAVOUR_5_STRAIGHT')
-        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+        flag_bit |= await achieve.give(user, message, achieve_dict)
     elif favour_streak == 10:
         achieve_dict = achievements.get('FAVOUR_10_STRAIGHT')
-        flag_bit |= await achieve.give(user, message, achieve_dict, hard)
+        flag_bit |= await achieve.give(user, message, achieve_dict)
     else:
         return user_dict
     returned_tuple = utils.update_user_flag(

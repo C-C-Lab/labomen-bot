@@ -8,6 +8,7 @@ import discord
 from settings import bot_words
 from settings import discord_settings
 from settings import janken_words
+from settings import init_user_states
 from modules import janken
 from modules import omikuji
 from modules import slv
@@ -93,6 +94,26 @@ async def on_message(message: Any):
                 content = random.choice(random_contents)
                 await utils.send_message(message.channel, content)
                 print('message.channel.id が一致 -> 反応：' + content)
+            # ----------------- デバッグコマンド ----------------- #
+            # SLV閲覧
+            elif message.content == '!slv':
+                content = str(user_dict)
+                await utils.send_message(message.channel, content)
+            # おみくじリセット
+            elif message.content == '!omikuji':
+                content = 'おみくじの日付をリセットしました'
+                await utils.send_message(message.channel, content)
+                omikuji_dict = user_dict.get('omikuji', {})
+                omikuji_dict = {**omikuji_dict, **{'date': ''}}
+                user_dict = {**user_dict, **{'omikuji': omikuji_dict}}
+            # slvリセット
+            elif message.content == '!init_slv':
+                content = 'ユーザー情報をリセットしました'
+                await utils.send_message(message.channel, content)
+                user_dict = init_user_states.INITIAL_STATES
+                user_dict['data']['created_at'] = now
+                user_dict['data']['last_act_at'] = now
+            # ----------------- デバッグコマンド ----------------- #
             # メンションされたとき
             elif message.mentions:
                 if message.mentions[0].id == client.user.id:
@@ -103,7 +124,7 @@ async def on_message(message: Any):
             # 未設定メッセージを受信時
             else:
                 print('未設定メッセージ -> 反応なし')
-        user_dict = slv.update_slv_dict(user_dict, 'data', {'updated_at': now})
+        user_dict['data']['updated_at'] = now
         slv.merge_dict(user_dict, user_slv_path)
     # チャンネルIDが不一致
     elif str(message.channel.id) not in BOT_CH_IDS:
