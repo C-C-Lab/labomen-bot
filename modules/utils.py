@@ -5,7 +5,7 @@ import datetime
 import os
 import pickle
 import traceback
-from typing import Union
+from typing import Tuple, Union
 from typing import Any
 
 import discord
@@ -145,17 +145,16 @@ def print_error(error):
     print('トレースバック：' + traceback.format_exc())
 
 
-def get_mode(user_id: Union[str, int]) -> str:
+def get_mode(user_dict: dict) -> str:
     """現在のモードをslvから取得します。
 
     Args:
-        user_id (str or int): user_id
+        user_dict (dict): user_slvから取り出したdict
 
     Returns:
         str: モード名
     """
-    slv_path = slv.get_user_slv_path(str(user_id))
-    user_mode = slv.get_value(slv_path, 'data', 'mode')
+    user_mode = slv.get_dict_value(user_dict, 'data', 'mode')
     print('現在のモード：' + user_mode)
     return user_mode
 
@@ -284,38 +283,37 @@ def get_text(file_name: str) -> list:
         return _list
 
 
-def update_user_flag(user_id: Union[str, int], dict_key: str, flag_bit: int, _bool: bool) -> int:
+def update_user_flag(user_dict: dict, dict_key: str, flag_bit: int, _bool: bool) -> Tuple[dict, int]:
     """フラグを更新します。
 
     Args:
-        user_id (str or int)): discordのuser_id
+        user_dict (dict): user_slvから取り出したdict
         dict_key (str): shelveのdict_key
         flag_bit (int): ビットフラグ
         _bool (bool): 真偽値
 
     Returns:
+        user_dict (dict): 更新済みuser_dict
         int: ビットフラグ
     """
-    user_slv = slv.get_user_slv_path(str(user_id))
-    flag = int(slv.get_value(user_slv, 'flags', dict_key))
+    flag = int(slv.get_dict_value(user_dict, 'flags', dict_key))
     if _bool:
         flag |= flag_bit
     else:
         flag -= flag & flag_bit
-    slv.update_value(user_slv, 'flags', dict_key, flag)
-    return int(flag)
+    user_dict = slv.update_slv_dict(user_dict, 'flags', {dict_key: flag})
+    return user_dict, int(flag)
 
 
-def get_user_flag(user_id: Union[str, int], dict_key: str) -> int:
+def get_user_flag(user_dict: dict, dict_key: str) -> int:
     """フラグ情報を取得します。
 
     Args:
-        user_id (str or int)): discordのuser_id
+        user_dict (dict): user_slvから取り出したdict
         dict_key (str): shelveのdict_key
 
     Returns:
         int: ビットフラグ
     """
-    user_slv = slv.get_user_slv_path(str(user_id))
-    flag = slv.get_value(user_slv, 'flags', dict_key)
+    flag = slv.get_dict_value(user_dict, 'flags', dict_key)
     return int(flag)
