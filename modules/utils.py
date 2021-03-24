@@ -217,6 +217,17 @@ async def send_message(channel: discord.TextChannel, content: str):
         print_error(e)
 
 
+async def send_command_help(message):
+    try:
+        with open('./texts/help.txt', 'r') as txt:
+            help_txt = txt.read()
+        await send_message(message.channel, help_txt)
+    except OSError as e:
+        print(e)
+    except Exception as e:
+        print(e)
+
+
 def get_hiragana(word: str) -> str:
     """文字列をひらがなに変換します。
 
