@@ -3,12 +3,16 @@ slv関連のメソッドをまとめたモジュールです。
 """
 import glob
 import shelve
+from typing import Any
+from typing import Union
+
+import discord
 
 from settings import init_user_states
 from modules import utils
 
 
-def get_user_slv_path(user_id):
+def get_user_slv_path(user_id: Union[str, int]) -> str:
     """userのslvパスを取得します。
 
     Args:
@@ -22,7 +26,7 @@ def get_user_slv_path(user_id):
     return user_slv_path
 
 
-def get_dict(file_name):
+def get_dict(file_name: str) -> dict:
     """shelveファイル内容をdictとして取得します。
 
     Args:
@@ -37,7 +41,13 @@ def get_dict(file_name):
     return slv_dict
 
 
-def get_value(file_name, index_key, dict_key):
+def get_dict_value(slv_dict: dict, index_key: str, dict_key: Union[str, int], _default: Any = None) -> Any:
+    _dict = slv_dict.get(index_key, {})
+    value = _dict.get(dict_key, _default)
+    return value
+
+
+def get_value(file_name: str, index_key: str, dict_key: Union[str, int], _default: Any = None) -> Any:
     """shelveからvalueを取得します。
 
     Args:
@@ -50,11 +60,11 @@ def get_value(file_name, index_key, dict_key):
     """
     slv_dict = get_dict(file_name)
     _dict = slv_dict.get(index_key, {})
-    value = _dict.get(dict_key)
+    value = _dict.get(dict_key, _default)
     return value
 
 
-def merge_dict(_dict, file_name):
+def merge_dict(_dict: dict, file_name: str):
     """shelveファイルにdictをマージします。
 
     Args:
@@ -66,7 +76,25 @@ def merge_dict(_dict, file_name):
     slv.close()
 
 
-def update_value(file_name, index_key, dict_key=None, value=None):
+def update_slv_dict(slv_dict: dict, index_key: str, new_index_dict: dict) -> dict:
+    """slv_dictを上書きします。
+
+    Args:
+        slv_dict (dict): slvから取り出したdict
+        index_key (str): slv_dictのindex_key
+        new_index_dict (dict): 上書き内容
+
+    Returns:
+        dict: 上書き済のslv_dict
+    """
+    index_dict = slv_dict.get(index_key, {})
+    index_dict.update(new_index_dict)
+    new_dict = {index_key: index_dict}
+    slv_dict = {**slv_dict, **new_dict}
+    return slv_dict
+
+
+def update_value(file_name: str, index_key: str, dict_key: Union[str, int] = None, value: Any = None):
     """shelve内のデータを上書きします。
 
     Args:
@@ -85,13 +113,13 @@ def update_value(file_name, index_key, dict_key=None, value=None):
     merge_dict(slv_dict, file_name)
 
 
-def update_user_value(user_id, dict_key=None, value=None):
+def update_user_value(user_id: Union[str, int], dict_key: Union[str, int] = None, value: Any = None):
     """shelve内のデータを上書きします。
 
     Args:
-        user_id (str): discordのuser_id
+        user_id (str or int): discordのuser_id
         dict_key (str or int): shelveのdict_key
-        value (str or int): 上書き内容
+        value (Any): 上書き内容
     """
     file_name = get_user_slv_path(user_id)
     slv_dict = get_dict(file_name)
@@ -104,7 +132,7 @@ def update_user_value(user_id, dict_key=None, value=None):
     merge_dict(slv_dict, file_name)
 
 
-def initialize_user(user):
+def initialize_user(user: discord.User) -> Union[dict, None]:
     """usersディレクトリ内にユーザーデータがなければ初期値を記録します。
 
     Args:
@@ -116,12 +144,12 @@ def initialize_user(user):
     id_list = [s.replace('.slv', '') for s in replace_list]
     if user_id not in id_list:
         user_slv = get_user_slv_path(user_id)
-        slv_dict = get_dict(user_slv)
+        user_dict = get_dict(user_slv)
         user_name = utils.get_user_name(user)
         print(user_name + 'の一致データなし')
         print(user_name + 'の項目を作成')
-        slv_dict = init_user_states.INITIAL_STATES
+        user_dict = init_user_states.INITIAL_STATES
         now = utils.get_now()
-        slv_dict['data']['created_at'] = now
-        slv_dict['data']['last_act_at'] = now
-        merge_dict(slv_dict, user_slv)
+        user_dict['data']['created_at'] = now
+        user_dict['data']['last_act_at'] = now
+        return user_dict

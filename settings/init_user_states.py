@@ -19,10 +19,26 @@ INITIAL_STATES = {
     },
     'omikuji': {
         'date': '',
-        'result': ''
+        'result': '',
+        'count': 0,
+        'daikichi_count': 0,
+        'kyo_count': 0,
+        'attention_count': 0
     },
     'janken': {
         'last_message_id': '',
-        'result_log': ''
+        'start_mes_id': '',
+        'win_count': 0,
+        'lose_count': 0,
+        'favour_count': 0,
+        'streak_counts': {
+            'winning_streak': 0,
+            'losing_streak': 0,
+            'favour_streak': 0,
+        }
+
+    },
+    'flags': {
+        'achieve': 0
     }
 }
