@@ -19,7 +19,11 @@ INITIAL_STATES = {
     },
     'omikuji': {
         'date': '',
-        'result': ''
+        'result': '',
+        'count': 0,
+        'daikichi_count': 0,
+        'kyo_count': 0,
+        'attention_count': 0
     },
     'janken': {
         'last_message_id': '',
