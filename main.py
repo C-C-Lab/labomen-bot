@@ -93,6 +93,7 @@ async def on_message(message: Any):
                 content = random.choice(random_contents)
                 await utils.send_message(message.channel, content)
                 print('message.channel.id が一致 -> 反応：' + content)
+            # メンションされたとき
             elif message.mentions:
                 if message.mentions[0].id == client.user.id:
                     random_mes = random.choice(random_contents)
