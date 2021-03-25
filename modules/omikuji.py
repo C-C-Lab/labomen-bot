@@ -8,12 +8,6 @@ from settings import omikuji_words
 from settings import init_user_states
 from settings.flags import achievements
 
-words = omikuji_words
-today = str(datetime.date.today())
-init_omikuji_dict = init_user_states.INITIAL_STATES['omikuji']
-# おみくじサイコロの重み設定 大吉・中吉・小吉・吉・凶
-omikuji_weights = [27, 20, 20, 20, 10]
-
 
 async def play_omikuji(user_dict: dict, message: Any) -> dict:
     """おみくじを実行します。
@@ -28,6 +22,10 @@ async def play_omikuji(user_dict: dict, message: Any) -> dict:
     """
     user_dict = initialize_omikuji_dict(user_dict)
     omikuji_dict: dict = user_dict['omikuji']
+    words = omikuji_words
+    today = str(datetime.date.today())
+    # おみくじサイコロの重み設定 大吉・中吉・小吉・吉・凶
+    omikuji_weights = [27, 20, 20, 20, 10]
 
     if omikuji_dict['date'] != today:
         print('=========== おみくじを実行 ============')
@@ -146,6 +144,7 @@ async def give_achievement(flag: int, message: Any, target_achievement: dict) ->
 
 
 def initialize_omikuji_dict(user_dict: dict) -> dict:
+    init_omikuji_dict = init_user_states.INITIAL_STATES['omikuji']
     omikuji_dict = user_dict.get('omikuji', {})
     omikuji_dict = {
         'date': omikuji_dict.get('date', init_omikuji_dict['date']),
