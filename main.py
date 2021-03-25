@@ -113,6 +113,11 @@ async def on_message(message: Any):
                 user_dict = init_user_states.INITIAL_STATES
                 user_dict['data']['created_at'] = now
                 user_dict['data']['last_act_at'] = now
+            # datetimeの日付を確認
+            elif message.content == '!date':
+                today = datetime.date.today()
+                content = str(today)
+                await utils.send_message(message.channel, content)
             # ----------------- デバッグコマンド ----------------- #
             # メンションされたとき
             elif message.mentions:
