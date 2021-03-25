@@ -9,7 +9,7 @@ from settings import init_user_states
 from settings.flags import achievements
 
 words = omikuji_words
-today = datetime.date.today()
+today = str(datetime.date.today())
 init_omikuji_dict = init_user_states.INITIAL_STATES['omikuji']
 # おみくじサイコロの重み設定 大吉・中吉・小吉・吉・凶
 omikuji_weights = [27, 20, 20, 20, 10]
