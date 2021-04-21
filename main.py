@@ -1,6 +1,7 @@
 import datetime
 import random
 import re
+import pprint
 from typing import Any
 
 import discord
@@ -97,7 +98,8 @@ async def on_message(message: Any):
             # ----------------- デバッグコマンド ----------------- #
             # SLV閲覧
             elif message.content == '!slv':
-                content = str(user_dict)
+                p_dict = pprint.pformat(user_dict)
+                content = '*```xl\n{}```*'.format(p_dict)
                 await utils.send_message(message.channel, content)
             # おみくじリセット
             elif message.content == '!omikuji':
@@ -117,6 +119,10 @@ async def on_message(message: Any):
             elif message.content == '!date':
                 today = datetime.date.today()
                 content = str(today)
+                await utils.send_message(message.channel, content)
+            # チャンネルの情報を確認
+            elif message.content == '!ch':
+                content = '*```xl\nチャンネル名：{0}\nチャンネルID：{1}```*'.format(str(message.channel.name), str(message.channel.id))
                 await utils.send_message(message.channel, content)
             # ----------------- デバッグコマンド ----------------- #
             # メンションされたとき
