@@ -1,7 +1,6 @@
 import datetime
 import random
 import re
-import pprint
 from typing import Any
 
 import discord
@@ -9,11 +8,11 @@ import discord
 from settings import bot_words
 from settings import discord_settings
 from settings import janken_words
-from settings import init_user_states
 from modules import janken
 from modules import omikuji
 from modules import slv
 from modules import utils
+from modules import debug
 
 # discordの設定
 ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
@@ -49,12 +48,21 @@ async def on_message(message: Any):
     hiragana_content = utils.get_hiragana(message.content)
 
     utils.print_message_info(message)
+
+    # slvに初期項目がなければ追記
+    user_dict = slv.initialize_user(author)
+    user_dict = slv.get_dict(user_slv_path) if not user_dict else user_dict
+    user_dict = slv.update_slv_dict(user_dict, 'data', {'name': user_name})
+
+    # デバッグコマンド
+    debug_response = debug.command_check(user_dict, message)
+    user_dict = debug_response['user_dict']
+    debug_content = debug_response['content']
+    if debug_content:
+        await utils.send_reply(message, debug_content)
+
     # チャンネルIDを照合
     if str(message.channel.id) in BOT_CH_IDS:
-        # slvに初期項目がなければ追記
-        user_dict = slv.initialize_user(author)
-        user_dict = slv.get_dict(user_slv_path) if not user_dict else user_dict
-        user_dict = slv.update_slv_dict(user_dict, 'data', {'name': user_name})
         # モード情報を取得
         user_mode = utils.get_mode(user_dict)
         # 20秒経過している場合normalへ遷移
@@ -95,36 +103,6 @@ async def on_message(message: Any):
                 content = random.choice(random_contents)
                 await utils.send_message(message.channel, content)
                 print('message.channel.id が一致 -> 反応：' + content)
-            # ----------------- デバッグコマンド ----------------- #
-            # SLV閲覧
-            elif message.content == '!slv':
-                p_dict = pprint.pformat(user_dict)
-                content = '*```xl\n{}```*'.format(p_dict)
-                await utils.send_message(message.channel, content)
-            # おみくじリセット
-            elif message.content == '!omikuji':
-                content = 'おみくじの日付をリセットしました'
-                await utils.send_message(message.channel, content)
-                omikuji_dict = user_dict.get('omikuji', {})
-                omikuji_dict = {**omikuji_dict, **{'date': ''}}
-                user_dict = {**user_dict, **{'omikuji': omikuji_dict}}
-            # slvリセット
-            elif message.content == '!init_slv':
-                content = 'ユーザー情報をリセットしました'
-                await utils.send_message(message.channel, content)
-                user_dict = init_user_states.INITIAL_STATES
-                user_dict['data']['created_at'] = now
-                user_dict['data']['last_act_at'] = now
-            # datetimeの日付を確認
-            elif message.content == '!date':
-                today = datetime.date.today()
-                content = str(today)
-                await utils.send_message(message.channel, content)
-            # チャンネルの情報を確認
-            elif message.content == '!ch':
-                content = '*```xl\nチャンネル名：{0}\nチャンネルID：{1}```*'.format(str(message.channel.name), str(message.channel.id))
-                await utils.send_message(message.channel, content)
-            # ----------------- デバッグコマンド ----------------- #
             # メンションされたとき
             elif message.mentions:
                 if message.mentions[0].id == client.user.id:
