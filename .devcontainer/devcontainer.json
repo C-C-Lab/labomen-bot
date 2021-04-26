@@ -1,0 +1,62 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.166.1/containers/python-3
+{
+	"name": "labomen-bot",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": "..",
+		"args": {
+			"VARIANT": "3.8",
+			"INSTALL_NODE": "true",
+			"NODE_VERSION": "lts/*"
+		}
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.shell.linux": "/bin/bash",
+		"python.pythonPath": "/usr/local/bin/python",
+		"python.linting.enabled": true,
+		"python.formatting.autopep8Path": "/usr/local/py-utils/bin/autopep8",
+		"python.formatting.blackPath": "/usr/local/py-utils/bin/black",
+		"python.formatting.yapfPath": "/usr/local/py-utils/bin/yapf",
+		"python.linting.banditPath": "/usr/local/py-utils/bin/bandit",
+		"python.linting.flake8Path": "/usr/local/py-utils/bin/flake8",
+		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
+		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
+		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
+		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+		"python.languageServer": "Pylance",
+    	"python.linting.pylintEnabled": false,
+    	"python.linting.flake8Enabled": true,
+   		"python.linting.flake8Args": ["--ignore=E501"],
+   	 	"python.analysis.typeCheckingMode": "basic",
+    	"editor.formatOnSave": true,
+    	"editor.formatOnPaste": true,
+    	"editor.defaultFormatter": "esbenp.prettier-vscode",
+    	"editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?、。　",
+    	"vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue",
+    	"cSpell.allowCompoundWords": true,
+    	"cSpell.enabledLanguageIds": ["python"],
+    	"cSpell.language": "en"
+	},
+  	"postCreateCommand": "pip3 install -r requirements.txt",
+ 	"extensions": [
+    "ms-python.python",
+    "esbenp.prettier-vscode",
+    "ms-python.vscode-pylance",
+    "njpwerner.autodocstring",
+    "visualstudioexptteam.vscodeintellicode",
+    "streetsidesoftware.code-spell-checker",
+    "eamodio.gitlens"
+  	]
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "pip3 install --user -r requirements.txt",
+
+	// Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	// "remoteUser": "vscode"
+}
