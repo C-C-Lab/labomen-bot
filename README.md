@@ -33,7 +33,7 @@ discord.py を使った BOT アプリです。
 
 ## 使い方
 
-`discord-test.py`と同じ階層に下記のような環境変数設定用ファイル`.env`を作ってください。`DISCORD_ACCESS_TOKEN=`の後に DiscordAPP 用のアクセストークン、`DISCORD_CHANNEL_IDS=`の後にターゲットとなるチャンネル ID を[,](カンマ)で区切って入力してください。
+`discord-test.py`と同じ階層に下記のような環境変数設定用ファイル`.env`を作ってください。`DISCORD_ACCESS_TOKEN=`の後に DiscordAPP 用のアクセストークン、`DISCORD_CHANNEL_IDS=`の後にターゲットとなるチャンネル ID を`,(カンマ)`で区切って入力してください。
 
 ```env
 DISCORD_ACCESS_TOKEN=
