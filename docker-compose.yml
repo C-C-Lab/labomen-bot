@@ -7,4 +7,4 @@ services:
     container_name: labomen-bot
     tty: true
     volumes:
-      - ./:/app/labomen-bot
+      - .:/app/labomen-bot

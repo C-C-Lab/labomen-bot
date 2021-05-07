@@ -16,4 +16,5 @@ WORKDIR /app/labomen-bot
 RUN pip3 install --upgrade pip
 RUN pip3 install --upgrade setuptools
 RUN pip3 install -r requirements.txt
-RUN python3 main.py
+
+CMD python3 -m labomen_bot
