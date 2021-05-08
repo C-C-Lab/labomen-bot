@@ -1,0 +1,9 @@
+version: "3.8"
+services:
+  labomen-bot:
+    build: ./
+    tty: true
+    working_dir: /app/labomen-bot/
+    container_name: labomen-bot
+    volumes:
+      - ..:/app/labomen-bot:delegated

@@ -154,7 +154,7 @@ def get_mode(user_dict: dict) -> str:
     Returns:
         str: モード名
     """
-    user_mode = slv.get_dict_value(user_dict, 'data', 'mode')
+    user_mode = slv.get_dict_value(user_dict, 'data', 'mode', 'normal')
     print('現在のモード：' + user_mode)
     return user_mode
 
