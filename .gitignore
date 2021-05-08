@@ -143,8 +143,5 @@ shelves/
 *.shelves
 *.slv
 
-# Sh
-launch_bot.sh
-
 # Py
 test.py

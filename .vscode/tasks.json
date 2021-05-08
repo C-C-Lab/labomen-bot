@@ -3,30 +3,9 @@
   "options": {
     "env": {}
   },
-  "inputs": [
-    // Heroku用インプット //
-    {
-      "id": "heroku-app",
-      "description": "Enter app name",
-      "type": "promptString"
-    },
-    {
-      "id": "heroku-process-name",
-      "description": "Enter the process name",
-      "type": "promptString"
-    }
-  ],
+  "inputs": [],
   "tasks": [
     // pip関連
-    {
-      "label": "PIP: Install pipreqs",
-      "detail": "pipreqs をインストール",
-      "type": "shell",
-      "presentation": {
-        "clear": true
-      },
-      "command": ["pip3 install pipreqs"]
-    },
     {
       "label": "PIP: make requirements.txt using pipreqs",
       "detail": "pipreqs を使用して requirements.txt を作成",
@@ -37,59 +16,15 @@
       },
       "command": ["pipreqs ."]
     },
-    // herokuデプロイ関連
+    // 実行関連
     {
-      "label": "NPM: Install heroku",
-      "detail": "NPMを使って heroku-cli をインストール",
+      "label": "Python: Run labomen-bot",
+      "detail": "labomen-botを実行",
       "type": "shell",
       "presentation": {
         "clear": true
       },
-      "command": ["npm install -g heroku", "&& heroku --version"]
-    },
-    {
-      "label": "Heroku: Get apps list from heroku",
-      "detail": "herokuからアプリの一覧を取得する",
-      "type": "shell",
-      "presentation": {
-        "clear": true
-      },
-      "command": ["heroku login", "&& heroku list", "&& heroku logout"]
-    },
-    {
-      "label": "Heroku: Install  heroku-config",
-      "detail": "Herokuに heroku-config をインストールする",
-      "type": "shell",
-      "presentation": {
-        "clear": true
-      },
-      "command": ["heroku plugins:install heroku-config"]
-    },
-    {
-      "label": "Heroku: push .env to heroku app using heroku-config",
-      "detail": "heroku-config を使い、herokuのアプリケーションにローカルの .env を送信する",
-      "type": "shell",
-      "presentation": {
-        "clear": true
-      },
-      "command": [
-        "heroku login",
-        "&& heroku config:push --app=${input:heroku-app}",
-        "&& heroku logout"
-      ]
-    },
-    {
-      "label": "Heroku: Restart target process",
-      "detail": "Heroku のアプリケーションを再起動する",
-      "type": "shell",
-      "presentation": {
-        "clear": true
-      },
-      "command": [
-        "heroku login",
-        "&& heroku restart ${input:heroku-process-name} --app=${input:heroku-app}",
-        "&& heroku logout"
-      ]
+      "command": ["python3 -m labomen_bot"]
     }
   ]
 }

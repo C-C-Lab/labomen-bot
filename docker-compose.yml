@@ -1,0 +1,10 @@
+version: "3"
+services:
+  python3:
+    restart: always
+    build: .
+    working_dir: /app/labomen-bot/
+    container_name: labomen-bot
+    tty: true
+    volumes:
+      - .:/app/labomen-bot

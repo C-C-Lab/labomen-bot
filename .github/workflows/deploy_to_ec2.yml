@@ -15,9 +15,10 @@ jobs:
       - name: deploy
         run: echo "$SECRET_KEY" > secret_key && chmod 600 secret_key &&
           ssh -o StrictHostKeyChecking=no -i secret_key ${EC2_USER}@${EC2_HOST} '
-          cd /home/ubuntu/Repo/labomen-bot &&
-          sudo systemctl stop labomen-bot &&
+          cd /app/labomen-bot &&
+          sudo docker-compose down &&
           git checkout master &&
           git pull &&
-          pip3 install -r requirements.txt &&
-          sudo systemctl start labomen-bot' && exit
+          sudo docker-compose up
+          '
+          && exit
