@@ -7,3 +7,4 @@ services:
     container_name: labomen-bot
     volumes:
       - ..:/app/labomen-bot:delegated
+      - ~/.ssh:/root/.ssh:delegated
