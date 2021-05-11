@@ -2,11 +2,12 @@
 デバッグコマンドに関するメソッドをまとめたモジュールです。
 """
 import datetime
+import os
 import pprint
 from typing import Any
 from modules import utils
 from settings import init_user_states
-from settings import discord_settings
+txt = utils.get_text
 
 """デバッグコマンドを判定するための接頭文字"""
 debug_prefix = '!'
@@ -22,9 +23,6 @@ command_dict = {
     'initialize_slv': {'command': 'init_slv', 'description': '発言ユーザーのSLVを初期化'},
     'reset_omikuji': {'command': 'omikuji', 'description': '発言ユーザーのおみくじ日付をリセット'},
 }
-
-version = discord_settings.GITHUB_SHA
-
 
 def command_check(user_dict: dict, message: Any = None) -> dict:
     """デバッグコマンドを実行して結果を返します
@@ -103,7 +101,13 @@ def command_check(user_dict: dict, message: Any = None) -> dict:
             description = command_dict['check_voice_channels']['description']
         # バージョンを確認
         elif command == command_dict['check_version']['command']:
-            content = '現在のバージョン情報です\n```xl\n{}```'.format(version)
+            if os.path.isfile('./.version'):
+                version_file = open('.version', 'r', encoding='UTF-8')
+                version = version_file.readline() or 'Version file is blank.'
+                version_file.close
+            else:
+                version = 'Version file does not exist.'
+            content = '現在のバージョン情報です\n```\n{}```'.format(version)
             description = command_dict['check_version']['description']
         else:
             description = '無効なデバッグコマンド'

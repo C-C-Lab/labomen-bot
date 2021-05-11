@@ -25,11 +25,5 @@ except Exception as e:
     utils.print_error(e)
     print('CHANNEL_IDSの取得に失敗')
 
-try:
-    GITHUB_SHA = os.environ.get('GITHUB_SHA') or 'test'
-except Exception as e:
-    utils.print_error(e)
-    print('GITHUB_SHAの取得に失敗')
-
 # 接続時のコンソール用メッセージ
 READY_MESSAGE = '接続し、準備ができました'
