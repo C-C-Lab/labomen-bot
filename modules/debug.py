@@ -6,20 +6,24 @@ import pprint
 from typing import Any
 from modules import utils
 from settings import init_user_states
+from settings import discord_settings
 
 """デバッグコマンドを判定するための接頭文字"""
 debug_prefix = '!'
 
 command_dict = {
-    'debug_command_list': {'command': 'debug_help', 'description': 'デバッグコマンドのリストを表示'},
-    'check_slv': {'command': 'slv', 'description': '発言ユーザーのSLVを表示'},
-    'reset_omikuji': {'command': 'omikuji', 'description': '発言ユーザーのおみくじ日付をリセット'},
-    'initialize_slv': {'command': 'init_slv', 'description': '発言ユーザーのSLVを初期化'},
-    'check_datetime': {'command': 'date', 'description': 'BOTが動いているサーバー時間を表示'},
     'check_channel_info': {'command': 'ch', 'description': '発言されたチャンネルの情報を表示'},
+    'check_datetime': {'command': 'date', 'description': 'BOTが動いているサーバー時間を表示'},
+    'check_slv': {'command': 'slv', 'description': '発言ユーザーのSLVを表示'},
     'check_text_channels': {'command': 'text_ch', 'description': 'サーバー内のテキストチャンネル情報を表示'},
-    'check_voice_channels': {'command': 'voice_ch', 'description': 'サーバー内のボイスチャンネル情報を表示'}
+    'check_version': {'command': 'version', 'description': '現在のバージョンを確認(GithubのコミットID)'},
+    'check_voice_channels': {'command': 'voice_ch', 'description': 'サーバー内のボイスチャンネル情報を表示'},
+    'debug_command_list': {'command': 'debug_help', 'description': 'デバッグコマンドのリストを表示'},
+    'initialize_slv': {'command': 'init_slv', 'description': '発言ユーザーのSLVを初期化'},
+    'reset_omikuji': {'command': 'omikuji', 'description': '発言ユーザーのおみくじ日付をリセット'},
 }
+
+version = discord_settings.GITHUB_SHA
 
 
 def command_check(user_dict: dict, message: Any = None) -> dict:
@@ -97,6 +101,10 @@ def command_check(user_dict: dict, message: Any = None) -> dict:
                 content = content + add_content
             content = content + '```'
             description = command_dict['check_voice_channels']['description']
+        # バージョンを確認
+        elif command == command_dict['check_version']['command']:
+            content = '現在のバージョン情報です\n```xl\n{}```'.format(version)
+            description = command_dict['check_version']['description']
         else:
             description = '無効なデバッグコマンド'
     print('コマンド内容： {0}'.format(description))
