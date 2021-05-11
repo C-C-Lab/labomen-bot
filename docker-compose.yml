@@ -8,3 +8,4 @@ services:
     tty: true
     volumes:
       - .:/app/labomen-bot
+      - ~/.ssh:/root/.ssh:delegated
