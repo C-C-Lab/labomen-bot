@@ -11,7 +11,6 @@ jobs:
       SECRET_KEY: ${{ secrets.EC2_SECRET_KEY }}
       EC2_USER: ${{ secrets.EC2_USER }}
       EC2_HOST: ${{ secrets.EC2_HOST }}
-      GITHUB_SHA: ${{ github.sha }}
     steps:
       - name: deploy
         run: echo "$SECRET_KEY" > secret_key && chmod 600 secret_key &&
@@ -20,7 +19,7 @@ jobs:
           sudo docker-compose down &&
           git checkout master &&
           git pull &&
-          echo GITHUB_SHA=${GITHUB_SHA} > .version &&
+          echo ${{ github.sha }} > .version &&
           sudo docker-compose up -d
           '
           && exit
