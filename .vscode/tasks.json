@@ -14,7 +14,7 @@
         "reveal": "silent",
         "clear": true
       },
-      "command": ["pipreqs ."]
+      "command": ["pipreqs --force ."]
     },
     {
       "label": "PIP: Initialize the required Python libraries.",
