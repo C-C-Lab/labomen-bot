@@ -3,15 +3,18 @@ from modules import janken
 from modules import omikuji
 from modules import slv
 from modules import utils
-from settings import dotenv
 from settings import bot_words
 from settings import discord_settings
+from settings import dotenv
 from settings import janken_words
-from typing import Any
 
 import datetime
 import random
 import re
+
+from datetime import datetime as datetime_type
+from discord import User
+from typing import Any
 
 ACCESS_TOKEN = dotenv.ACCESS_TOKEN
 BOT_CH_IDS = dotenv.CHANNEL_IDS
@@ -39,17 +42,18 @@ async def on_message(message: Any):
         return
     else:
         # 変数を定義
-        author = message.author
-        user_name = utils.get_user_name(author)
-        user_id = str(message.author.id)
+        user: User = message.author
+        user_name: str = utils.get_user_name(user)
+        user_id = str(user.id)
         user_slv_path = slv.get_user_slv_path(user_id)
-        now = utils.get_now()
+        now: datetime_type = utils.get_now()
         hiragana_content = utils.get_hiragana(message.content)
 
+        # メッセージ内容をコンソールに表示
         utils.print_message_info(message)
 
         # slvに初期項目がなければ追記
-        user_dict = slv.initialize_user(author)
+        user_dict = slv.initialize_user(user)
         user_dict = slv.get_dict(user_slv_path) if not user_dict else user_dict
         user_dict = slv.update_slv_dict(user_dict, 'data', {'name': user_name})
 
