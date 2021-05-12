@@ -1,10 +1,10 @@
 version: "3.8"
 services:
-  labomen-bot:
+  labomen-bot-dev:
     build: ./
     tty: true
     working_dir: /app/labomen-bot/
-    container_name: labomen-bot
+    container_name: labomen-bot-dev
     volumes:
       - ..:/app/labomen-bot:delegated
       - ~/.ssh:/root/.ssh:delegated

@@ -1,39 +1,47 @@
 {
-  "name": "labomen-bot",
   "dockerComposeFile": ["docker-compose.yml"],
-  "service": "labomen-bot",
-  "workspaceFolder": "/app/labomen-bot",
-  "settings": {
-    "cSpell.allowCompoundWords": true,
-    "cSpell.enabledLanguageIds": ["python"],
-    "cSpell.language": "en",
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?、。　",
-    "python.analysis.typeCheckingMode": "basic",
-    "python.formatting.provider": "autopep8",
-    "python.languageServer": "Pylance",
-    "python.linting.enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.flake8Enabled": true,
-    "python.linting.flake8Args": ["--ignore=E501"],
-    "python.pythonPath": "/usr/local/bin/python",
-    "terminal.integrated.defaultProfile.linux": "/bin/bash",
-    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue"
-  },
-  "remoteEnv": {
-    "EDITOR": "code --wait"
-  },
   "extensions": [
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
     "ms-python.python",
     "ms-python.vscode-pylance",
+    "mikestead.dotenv",
     "njpwerner.autodocstring",
+    "richie5um2.vscode-sort-json",
     "streetsidesoftware.code-spell-checker",
-    "visualstudioexptteam.vscodeintellicode"
+    "tyriar.sort-lines",
+    "visualstudioexptteam.vscodeintellicode",
+    "codezombiech.gitignore",
+    "shd101wyy.markdown-preview-enhanced",
+    "davidanson.vscode-markdownlint",
+    "sanaajani.taskrunnercode",
+    "redhat.vscode-yaml"
   ],
+  "name": "labomen-bot-dev",
   "postCreateCommand": "pip3 install -r requirements.txt && pip3 install -r ./.devcontainer/dev_requirements.txt",
-  "shutdownAction": "stopCompose"
+  "remoteEnv": {
+    "EDITOR": "code --wait"
+  },
+  "service": "labomen-bot-dev",
+  "settings": {
+    "cSpell.allowCompoundWords": true,
+    "cSpell.enabledLanguageIds": ["python"],
+    "cSpell.language": "en",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true,
+    "editor.wordSeparators": "`~!@#$%^&*()=+[{]}\\|;:'\",.<>/?、。　",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.formatting.provider": "autopep8",
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": true,
+    "python.linting.flake8Args": ["--ignore=E501"],
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": false,
+    "python.pythonPath": "/usr/local/bin/python",
+    "terminal.integrated.defaultProfile.linux": "/bin/bash",
+    "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue"
+  },
+  "shutdownAction": "stopCompose",
+  "workspaceFolder": "/app/labomen-bot"
 }
