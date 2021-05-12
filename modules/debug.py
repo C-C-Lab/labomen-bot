@@ -15,6 +15,7 @@ debug_prefix = '!'
 command_dict = {
     'check_channel_info': {'command': 'ch', 'description': '発言されたチャンネルの情報を表示'},
     'check_datetime': {'command': 'date', 'description': 'BOTが動いているサーバー時間を表示'},
+    'check_guild': {'command': 'guild', 'description': 'サーバー情報を表示'},
     'check_slv': {'command': 'slv', 'description': '発言ユーザーのSLVを表示'},
     'check_text_channels': {'command': 'text_ch', 'description': 'サーバー内のテキストチャンネル情報を表示'},
     'check_version': {'command': 'version', 'description': '現在のバージョンを確認(GithubのコミットID)'},
@@ -81,6 +82,14 @@ def command_check(user_dict: dict, message: Any = None) -> dict:
         elif command == command_dict['check_channel_info']['command']:
             content = '*```xl\nチャンネル名：{0}\nチャンネルID：{1}```*'.format(str(message.channel.name), str(message.channel.id))
             description = command_dict['check_channel_info']['description']
+        # サーバー情報を確認
+        elif command == command_dict['check_guild']['command']:
+            content = 'このサーバーは以下の通りです\n```xl\n'
+            [guild_id, guild_name] = [message.guild.id, str(message.guild.name)]
+            add_content = '{0} [{1}]\n'.format(guild_name, guild_id)
+            content = content + add_content
+            content = content + '```'
+            description = command_dict['check_guild']['description']
         # サーバーのテキストチャンネルリストを確認
         elif command == command_dict['check_text_channels']['command']:
             content = 'このサーバーのテキストチャンネルは以下の通りです\n```xl\n'
