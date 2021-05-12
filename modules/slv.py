@@ -74,7 +74,6 @@ def merge_dict(_dict: dict, file_name: str):
     slv = shelve.open(file_name)
     slv.update(_dict)
     slv.close()
-    print('Slv更新: {}'.format(file_name))
 
 
 def update_slv_dict(slv_dict: dict, index_key: str, new_index_dict: dict) -> dict:
