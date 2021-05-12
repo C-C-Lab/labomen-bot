@@ -16,6 +16,23 @@
       },
       "command": ["pipreqs ."]
     },
+    {
+      "label": "PIP: Initialize the required Python libraries.",
+      "detail": "必要なPythonライブラリを初期化する",
+      "type": "shell",
+      "presentation": {
+        "clear": true
+      },
+      "command": [
+        "pip3 freeze > uninstall.txt ;",
+        "pip3 uninstall -r uninstall.txt -y ;",
+        "rm -f uninstall.txt ;",
+        "pip3 install --upgrade pip &&",
+        "pip3 install --upgrade setuptools &&",
+        "pip3 install -r requirements.txt &&",
+        "pip3 install -r ./.devcontainer/dev_requirements.txt"
+      ]
+    },
     // 実行関連
     {
       "label": "Python: Run labomen-bot",
