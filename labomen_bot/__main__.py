@@ -1,25 +1,23 @@
-import datetime
-import random
-import re
-from typing import Any
-
-import discord
-
-from settings import bot_words
-from settings import discord_settings
-from settings import janken_words
+from modules import debug
 from modules import janken
 from modules import omikuji
 from modules import slv
 from modules import utils
-from modules import debug
+from settings import dotenv
+from settings import bot_words
+from settings import discord_settings
+from settings import janken_words
+from typing import Any
 
-# discordの設定
-ACCESS_TOKEN = discord_settings.ACCESS_TOKEN
-BOT_CH_IDS = discord_settings.CHANNEL_IDS
+import datetime
+import random
+import re
+
+ACCESS_TOKEN = dotenv.ACCESS_TOKEN
+BOT_CH_IDS = dotenv.CHANNEL_IDS
 bot_commands = bot_words.BOT_COMMANDS
+client = discord_settings.client
 random_contents = bot_words.RANDOM_CONTENTS
-client = discord.Client()
 
 
 # アプリスタート時に走るイベント
