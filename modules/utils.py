@@ -52,11 +52,10 @@ def get_command(word: str, command_words: Union[dict, list]) -> Union[str, None]
 def check_version():
     """起動確認用のバージョン情報を出力します。
     """
-    print('---------------------------------------')
+    print('=======================================')
     print(discord_settings.READY_MESSAGE)
     print(discord.__title__ + ' ライブラリのバージョン：' + discord.__version__)
     print(discord.__copyright__)
-    print('---------------------------------------')
 
 
 def add_dir(dir_name: str):
@@ -67,7 +66,8 @@ def add_dir(dir_name: str):
     """
     if not os.path.exists(dir_name):
         os.makedirs(dir_name)
-        print(dir_name + "ディレクトリを作成")
+        print('=======================================')
+        print("ディレクトリを作成: {}".format(dir_name))
 
 
 def print_message_info(message: Any):
@@ -76,12 +76,12 @@ def print_message_info(message: Any):
     Args:
       message(message): discord.pyのmessageモデル
     """
-    print('時刻:' + str(get_now()))
-    print('チャンネル名:' + str(message.channel))
+    print('時刻: ' + str(get_now()))
+    print('チャンネル名: ' + str(message.channel))
     print('チャンネルID: ' + str(message.channel.id))
-    print('ユーザー名:' + get_user_name(message.author))
-    print('ユーザーID:' + str(message.author.id))
-    print('メッセージ受信:' + message.content)
+    print('ユーザー名: ' + get_user_name(message.author))
+    print('ユーザーID: ' + str(message.author.id))
+    print('メッセージ受信: ' + message.content)
 
 
 def get_user_name(user: discord.User) -> str:

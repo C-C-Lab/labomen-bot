@@ -74,6 +74,7 @@ def merge_dict(_dict: dict, file_name: str):
     slv = shelve.open(file_name)
     slv.update(_dict)
     slv.close()
+    print('Slv更新: {}'.format(file_name))
 
 
 def update_slv_dict(slv_dict: dict, index_key: str, new_index_dict: dict) -> dict:
@@ -146,10 +147,11 @@ def initialize_user(user: discord.User) -> Union[dict, None]:
         user_slv = get_user_slv_path(user_id)
         user_dict = get_dict(user_slv)
         user_name = utils.get_user_name(user)
-        print(user_name + 'の一致データなし')
-        print(user_name + 'の項目を作成')
+        print(user_name + ' -> Slvの作成/初期化を実行')
         user_dict = init_user_states.INITIAL_STATES
         now = utils.get_now()
         user_dict['data']['created_at'] = now
         user_dict['data']['last_act_at'] = now
         return user_dict
+    else:
+        return None

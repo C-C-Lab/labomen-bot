@@ -30,7 +30,7 @@ async def on_ready():
     # shelvesディレクトリがない場合は作成
     utils.add_dir('shelves')
     utils.add_dir('shelves/users')
-    print('---------------------------------------')
+    print('=======================================')
 
 
 # メッセージ待受イベント
@@ -53,9 +53,18 @@ async def on_message(message: Any):
         utils.print_message_info(message)
 
         # slvに初期項目がなければ追記
-        user_dict = slv.initialize_user(user)
-        user_dict = slv.get_dict(user_slv_path) if not user_dict else user_dict
-        user_dict = slv.update_slv_dict(user_dict, 'data', {'name': user_name})
+        init_dict = slv.initialize_user(user)
+        if init_dict == None:
+            user_dict = slv.get_dict(user_slv_path)
+        else:
+            user_dict = init_dict
+
+        # ユーザ名が以前と違う場合更新
+        dict_user_name = user_dict['data']['name']
+        if dict_user_name and user_name != dict_user_name:
+            old_name = dict_user_name
+            user_dict = slv.update_slv_dict(user_dict, 'data', {'name': user_name})
+            print('ユーザー名を更新しました: {0} -> {1}'.format(old_name, user_name))
 
         # モード情報を取得
         user_mode = utils.get_mode(user_dict)
@@ -69,13 +78,17 @@ async def on_message(message: Any):
             user_mode = 'normal'
 
         # チャンネルIDを照合
-        if str(message.channel.id) in BOT_CH_IDS:
+        channel_id = str(message.channel.id)
+        if channel_id in BOT_CH_IDS:
+
             # デバッグコマンド
             debug_response = debug.command_check(user_dict, message)
-            user_dict = debug_response['user_dict']
-            debug_content = debug_response['content']
-            if debug_content:
-                return await utils.send_reply(message, debug_content)
+            if debug_response:
+                user_dict = debug_response['user_dict']
+                debug_content = debug_response['content']
+                if debug_content:
+                    return await utils.send_reply(message, debug_content)
+
             # じゃんけんモード
             if user_mode == 'janken':
                 # じゃんけん処理
@@ -115,11 +128,9 @@ async def on_message(message: Any):
                 # 未設定メッセージを受信時
                 else:
                     print('未設定メッセージ -> 反応なし')
-            user_dict['data']['updated_at'] = now
-            slv.merge_dict(user_dict, user_slv_path)
-        # チャンネルIDが不一致
-        elif str(message.channel.id) not in BOT_CH_IDS:
-            return
+        # 最終処理
+        user_dict['data']['updated_at'] = now
+        slv.merge_dict(user_dict, user_slv_path)
         print('=======================================')
 
 

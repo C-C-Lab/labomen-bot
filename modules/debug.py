@@ -4,7 +4,7 @@
 import datetime
 import os
 import pprint
-from typing import Any
+from typing import Any, Union
 from modules import utils
 from settings import init_user_states
 txt = utils.get_text
@@ -18,14 +18,14 @@ command_dict = {
     'check_guild': {'command': 'guild', 'description': 'サーバー情報を表示'},
     'check_slv': {'command': 'slv', 'description': '発言ユーザーのSLVを表示'},
     'check_text_channels': {'command': 'text_ch', 'description': 'サーバー内のテキストチャンネル情報を表示'},
-    'check_version': {'command': 'version', 'description': '現在のバージョンを確認(GithubのコミットID)'},
+    'check_version': {'command': 'version', 'description': '現在のバージョンを確認'},
     'check_voice_channels': {'command': 'voice_ch', 'description': 'サーバー内のボイスチャンネル情報を表示'},
     'debug_command_list': {'command': 'debug_help', 'description': 'デバッグコマンドのリストを表示'},
     'initialize_slv': {'command': 'init_slv', 'description': '発言ユーザーのSLVを初期化'},
     'reset_omikuji': {'command': 'omikuji', 'description': '発言ユーザーのおみくじ日付をリセット'},
 }
 
-def command_check(user_dict: dict, message: Any = None) -> dict:
+def command_check(user_dict: dict, message: Any = None) -> Union[dict, None]:
     """デバッグコマンドを実行して結果を返します
 
     Args:
@@ -40,11 +40,11 @@ def command_check(user_dict: dict, message: Any = None) -> dict:
     command = None
     content = None
     description = ''
+    is_debug_command = message.content[0] == debug_prefix
 
-    if message.content[0] == debug_prefix:
+    if is_debug_command:
 
         command = message.content.replace(debug_prefix, '')
-        print('======== デバッグコマンド検知 =========')
 
         # デバッグコマンド閲覧
         if command == command_dict['debug_command_list']['command']:
@@ -120,6 +120,8 @@ def command_check(user_dict: dict, message: Any = None) -> dict:
             description = command_dict['check_version']['description']
         else:
             description = '無効なデバッグコマンド'
-    print('コマンド内容： {0}'.format(description))
-    print('=======================================')
-    return {'user_dict': user_dict, 'content': content, 'command': command}
+        print('デバッグコマンド検知： {0}'.format(description))
+        print('=======================================')
+        return {'user_dict': user_dict, 'content': content, 'command': command}
+    else:
+        return None
