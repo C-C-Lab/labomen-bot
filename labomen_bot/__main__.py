@@ -12,16 +12,15 @@ import datetime
 import random
 import re
 
-from datetime import datetime as datetime_type
-from discord import User
+from discord import User, Reaction
 from typing import Any
 
 ACCESS_TOKEN = dotenv.ACCESS_TOKEN
 BOT_CH_IDS = dotenv.CHANNEL_IDS
+GUILDS_IDS_TO_GET_URL = dotenv.GUILDS_IDS_TO_GET_URL
 bot_commands = bot_words.BOT_COMMANDS
 client = discord_settings.client
 random_contents = bot_words.RANDOM_CONTENTS
-
 
 # アプリスタート時に走るイベント
 @client.event
@@ -46,7 +45,7 @@ async def on_message(message: Any):
         user_name: str = utils.get_user_name(user)
         user_id = str(user.id)
         user_slv_path = slv.get_user_slv_path(user_id)
-        now: datetime_type = utils.get_now()
+        now = utils.get_now()
         hiragana_content = utils.get_hiragana(message.content)
 
         # メッセージ内容をコンソールに表示
@@ -135,21 +134,28 @@ async def on_message(message: Any):
 
 
 @ client.event
-async def on_reaction_add(reaction, user):
+async def on_reaction_add(reaction: Reaction, user: User):
 
     user_id = str(user.id)
     now = utils.get_now()
     if user.bot:
         return
-    user_slv_path = slv.get_user_slv_path(user.id)
-    user_dict = slv.get_dict(user_slv_path)
+
+    user_slv_path = slv.get_user_slv_path(user_id)
+    # slvに初期項目がなければ追記
+    init_dict = slv.initialize_user(user)
+    if init_dict == None:
+        user_dict = slv.get_dict(user_slv_path)
+    else:
+        user_dict = init_dict
     user_mode = utils.get_mode(user_dict)
-    user_slv = slv.get_user_slv_path(user_id)
     if user_mode == 'janken':
-        last_message_id = slv.get_value(user_slv, 'janken', 'last_message_id')
-        if str(last_message_id) == str(reaction.message.id):
+        last_message_id = str(user_dict['janken']['last_message_id'])
+        reaction_message_id = str(reaction.message.id)
+        if last_message_id == reaction_message_id:
             user_dict = await janken.play(user_dict, user=user, reaction=reaction)
-    user_dict = slv.update_slv_dict(user_dict, 'data', {'updated_at': now})
+    # 最終処理
+    user_dict['data']['updated_at'] = now
     slv.merge_dict(user_dict, user_slv_path)
 
 

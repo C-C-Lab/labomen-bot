@@ -25,3 +25,8 @@ except Exception as e:
     utils.print_error(e)
     print('CHANNEL_IDSの取得に失敗')
 
+try:
+    GUILDS_IDS_TO_GET_URL = os.environ.get('GUILDS_IDS_TO_GET_URL').split(',')
+except Exception as e:
+    utils.print_error(e)
+    print('GUILDS_IDS_TO_GET_URLの取得に失敗')
