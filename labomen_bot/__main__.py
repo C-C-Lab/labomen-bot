@@ -135,28 +135,26 @@ async def on_message(message: Any):
 
 @ client.event
 async def on_reaction_add(reaction: Reaction, user: User):
-
-    user_id = str(user.id)
-    now = utils.get_now()
     if user.bot:
         return
-
-    user_slv_path = slv.get_user_slv_path(user_id)
-    # slvに初期項目がなければ追記
-    init_dict = slv.initialize_user(user)
-    if init_dict == None:
-        user_dict = slv.get_dict(user_slv_path)
     else:
-        user_dict = init_dict
-    user_mode = utils.get_mode(user_dict)
-    if user_mode == 'janken':
-        last_message_id = str(user_dict['janken']['last_message_id'])
-        reaction_message_id = str(reaction.message.id)
-        if last_message_id == reaction_message_id:
-            user_dict = await janken.play(user_dict, user=user, reaction=reaction)
-    # 最終処理
-    user_dict['data']['updated_at'] = now
-    slv.merge_dict(user_dict, user_slv_path)
+        user_id = str(user.id)
+        now = utils.get_now()
+        user_slv_path = slv.get_user_slv_path(user_id)
+        # slvに初期項目がなければ追記
+        init_dict = slv.initialize_user(user)
+        if init_dict == None:
+            user_dict = slv.get_dict(user_slv_path)
+        else:
+            user_dict = init_dict
+        user_mode = utils.get_mode(user_dict)
+        if user_mode == 'janken':
+            [last_message_id, reaction_message_id] = [str(user_dict['janken']['last_message_id']), str(reaction.message.id)]
+            if last_message_id == reaction_message_id:
+                user_dict = await janken.play(user_dict, user=user, reaction=reaction)
+        # 最終処理
+        user_dict['data']['updated_at'] = now
+        slv.merge_dict(user_dict, user_slv_path)
 
 
 client.run(ACCESS_TOKEN)
