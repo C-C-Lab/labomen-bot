@@ -1,21 +1,21 @@
 {
   "dockerComposeFile": ["docker-compose.yml"],
   "extensions": [
+    "codezombiech.gitignore",
+    "davidanson.vscode-markdownlint",
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
+    "mikestead.dotenv",
     "ms-python.python",
     "ms-python.vscode-pylance",
-    "mikestead.dotenv",
     "njpwerner.autodocstring",
+    "redhat.vscode-yaml",
     "richie5um2.vscode-sort-json",
+    "sanaajani.taskrunnercode",
+    "shd101wyy.markdown-preview-enhanced",
     "streetsidesoftware.code-spell-checker",
     "tyriar.sort-lines",
-    "visualstudioexptteam.vscodeintellicode",
-    "codezombiech.gitignore",
-    "shd101wyy.markdown-preview-enhanced",
-    "davidanson.vscode-markdownlint",
-    "sanaajani.taskrunnercode",
-    "redhat.vscode-yaml"
+    "visualstudioexptteam.vscodeintellicode"
   ],
   "name": "labomen-bot-dev",
   "postCreateCommand": "pip3 install -r requirements.txt && pip3 install -r ./.devcontainer/dev_requirements.txt",
@@ -43,5 +43,5 @@
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue"
   },
   "shutdownAction": "stopCompose",
-  "workspaceFolder": "/app/labomen-bot"
+  "workspaceFolder": "/opt/labomen-bot"
 }
