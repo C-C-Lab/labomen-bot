@@ -46,7 +46,11 @@ async def on_message(message: Any):
         user_id = str(user.id)
         user_slv_path = slv.get_user_slv_path(user_id)
         now = utils.get_now()
-        hiragana_content = utils.get_hiragana(message.content)
+        content: str = str(message.content)
+        hiragana_content = utils.get_hiragana(content)
+        guild_id = str(message.guild.id)
+        channel_id = str(message.channel.id)
+        is_url = True if 'http' in content else False
 
         # メッセージ内容をコンソールに表示
         utils.print_message_info(message)
@@ -76,8 +80,11 @@ async def on_message(message: Any):
             user_dict = slv.update_slv_dict(user_dict, 'data', {'mode': 'normal'})
             user_mode = 'normal'
 
+        # URL記録機能
+        if guild_id in GUILDS_IDS_TO_GET_URL and is_url:
+            return
+
         # チャンネルIDを照合
-        channel_id = str(message.channel.id)
         if channel_id in BOT_CH_IDS:
 
             # デバッグコマンド
