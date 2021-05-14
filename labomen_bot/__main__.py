@@ -60,7 +60,6 @@ async def on_message(message: Any):
 
         # 20秒経過している場合normalへ遷移
         last_act_at = slv.get_dict_value(user_dict, 'data', 'last_act_at')
-        print(type(now))
         if isinstance(last_act_at, datetime.datetime):
             time_passed = now - last_act_at
             if time_passed > datetime.timedelta(0, 20) and user_mode != 'normal':
