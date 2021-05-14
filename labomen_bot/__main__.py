@@ -60,11 +60,13 @@ async def on_message(message: Any):
 
         # 20秒経過している場合normalへ遷移
         last_act_at = slv.get_dict_value(user_dict, 'data', 'last_act_at')
-        time_passed = now - last_act_at
-        if time_passed > datetime.timedelta(0, 20) and user_mode != 'normal':
-            print('20秒以上経過 -> normalモードへ遷移')
-            user_dict = slv.update_slv_dict(user_dict, 'data', {'mode': 'normal'})
-            user_mode = 'normal'
+        print(type(now))
+        if isinstance(last_act_at, datetime.datetime):
+            time_passed = now - last_act_at
+            if time_passed > datetime.timedelta(0, 20) and user_mode != 'normal':
+                print('20秒以上経過 -> normalモードへ遷移')
+                user_dict = slv.update_slv_dict(user_dict, 'data', {'mode': 'normal'})
+                user_mode = 'normal'
 
         # チャンネルIDを照合
         if str(message.channel.id) in BOT_CH_IDS:
