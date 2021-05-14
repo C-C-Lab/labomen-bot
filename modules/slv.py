@@ -139,9 +139,7 @@ def initialize_user(user: discord.User) -> Union[dict, None]:
         user (user): discord.pyのuserモデル
     """
     user_id = str(user.id)
-    slv_list = glob.glob('./shelves/users/*.slv')
-    replace_list = [s.replace('./shelves/users/', '') for s in slv_list]
-    id_list = [s.replace('.slv', '') for s in replace_list]
+    id_list = get_user_list()
     if user_id not in id_list:
         user_slv = get_user_slv_path(user_id)
         user_dict = get_dict(user_slv)
@@ -153,3 +151,10 @@ def initialize_user(user: discord.User) -> Union[dict, None]:
         user_dict['data']['created_at'] = now
         user_dict['data']['last_act_at'] = now
         return user_dict
+
+
+def get_user_list() -> list:
+    slv_list = glob.glob('./shelves/users/*.slv')
+    replace_list = [s.replace('./shelves/users/', '') for s in slv_list]
+    id_list = [s.replace('.slv', '') for s in replace_list]
+    return id_list

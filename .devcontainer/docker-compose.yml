@@ -3,8 +3,8 @@ services:
   labomen-bot-dev:
     build: ./
     tty: true
-    working_dir: /app/labomen-bot/
+    working_dir: /opt/labomen-bot/
     container_name: labomen-bot-dev
     volumes:
-      - ..:/app/labomen-bot:delegated
+      - ..:/opt/labomen-bot:delegated
       - ~/.ssh:/root/.ssh:delegated
