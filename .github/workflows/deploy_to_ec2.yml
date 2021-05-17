@@ -1,4 +1,4 @@
-name: Deploy to EC2
+name: Deploy to Server
 # masterにpushされた時にjobを実行する
 on:
   push:
@@ -8,13 +8,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SECRET_KEY: ${{ secrets.EC2_SECRET_KEY }}
-      EC2_USER: ${{ secrets.EC2_USER }}
-      EC2_HOST: ${{ secrets.EC2_HOST }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      USER: ${{ secrets.SERVER_USER }}
+      HOST: ${{ secrets.SERVER_HOST }}
     steps:
       - name: deploy
-        run: echo "$SECRET_KEY" > secret_key && chmod 600 secret_key &&
-          ssh -o StrictHostKeyChecking=no -i secret_key ${EC2_USER}@${EC2_HOST} '
+        run: echo "$SSH_KEY" > ssh_key && chmod 600 ssh_key &&
+          ssh -o StrictHostKeyChecking=no -i ssh_key ${USER}@${HOST} '
           cd /home/ubuntu/labomen-bot &&
           sudo docker-compose down &&
           git checkout master &&
