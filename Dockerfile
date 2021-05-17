@@ -3,8 +3,8 @@ USER root
 LABEL Name "labomen-bot"
 LABEL Version "20210513"
 
-COPY . /opt/labomen-bot
-WORKDIR /opt/labomen-bot
+COPY . /usr/local/labomen-bot
+WORKDIR /usr/local/labomen-bot
 
 RUN apt-get update && \
     apt-get -y install locales locales-all && \

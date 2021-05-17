@@ -43,5 +43,5 @@
     "vsintellicode.modify.editor.suggestSelection": "automaticallyOverrodeDefaultValue"
   },
   "shutdownAction": "stopCompose",
-  "workspaceFolder": "/opt/labomen-bot"
+  "workspaceFolder": "/usr/local/labomen-bot"
 }

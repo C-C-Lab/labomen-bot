@@ -9,7 +9,7 @@ RUN apt-get update && \
     pip3 install --upgrade pip && \
     pip3 install --upgrade setuptools
 
-WORKDIR /opt/labomen-bot
+WORKDIR /usr/local/labomen-bot
 
 ENV LANG ja_JP.UTF-8
 ENV LANGUAGE ja_JP:ja
