@@ -33,11 +33,16 @@ discord.py を使った BOT アプリです。
 
 ## 使い方
 
-`discord-test.py`と同じ階層に下記のような環境変数設定用ファイル`.env`を作ってください。`DISCORD_ACCESS_TOKEN=`の後に DiscordAPP 用のアクセストークン、`DISCORD_CHANNEL_IDS=`の後にターゲットとなるチャンネル ID を`,(カンマ)`で区切って入力してください。
+環境変数設定用ファイル`.env`を作ってください。
+`DISCORD_ACCESS_TOKEN=`の後に DiscordAPP 用のアクセストークン、
+`DISCORD_CHANNEL_IDS=`の後にターゲットとなるチャンネル ID を`,(カンマ)`で区切って入力してください。
+
+チャンネル ID が不明な場合は、BOT をサーバーに参加させたあと、好きなチャンネルで、
+`!text_ch`と発言することでチャンネル ID の一覧を取得することが可能です。
 
 ```env
-DISCORD_ACCESS_TOKEN=
-DISCORD_CHANNEL_IDS=
+DISCORD_ACCESS_TOKEN={DiscordBOTのアクセストークン}
+DISCORD_CHANNEL_IDS={チャンネルID(複数可)}
 ```
 
 ### Docker 環境で動かす場合
