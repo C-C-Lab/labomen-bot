@@ -42,6 +42,19 @@ DISCORD_CHANNEL_IDS=
 
 <br/>
 
+### Docker 環境で動かす場合
+
+```shell
+$ sudo docker-compose up -d
+```
+
+### 通常の Python3 環境で動かす場合
+
+```shell
+$ pip3 install -r requirements.txt
+$ python3 -m labomen_bot
+```
+
 ## 備考
 
 Linux 環境でテスト済みです。
