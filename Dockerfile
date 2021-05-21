@@ -1,14 +1,14 @@
 FROM python:3
 USER root
 LABEL Name "labomen-bot"
-LABEL Version "20210513"
+LABEL Version "prod"
 
-COPY . /usr/local/labomen-bot
 WORKDIR /usr/local/labomen-bot
 
 RUN apt-get update && \
     apt-get -y install locales locales-all && \
     localedef -f UTF-8 -i ja_JP ja_JP.UTF-8 && \
+    echo "ja_JP UTF-8" > /etc/locale.gen && \
     pip3 install --upgrade pip && \
     pip3 install --upgrade setuptools && \
     pip3 install -r requirements.txt
