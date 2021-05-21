@@ -13,15 +13,15 @@ discord.py を使った BOT アプリです。
 - Python 3.7 以上
 - もしくは Docker 環境
 
-## 関連公式ドキュメント
+## 関連リポジトリ
 
-- [discord.py](https://discordpy.readthedocs.io/ja/latest/index.html)
+- [discord.py](https://github.com/Rapptz/discord.py)
 
-## 参考文献
+## 推奨開発環境
 
-- [Python で実用 Discord Bot(discordpy 解説)](https://qiita.com/1ntegrale9/items/9d570ef8175cf178468f)
-- [discord.py 入門](https://qiita.com/sizumita/items/9d44ae7d1ce007391699)
-- [python3 の venv でプロジェクト毎にライブラリを管理する](https://akogare-se.hatenablog.com/entry/2019/01/02/220330)
+- [Docker](https://www.docker.com/)
+- [VSCode](https://azure.microsoft.com/ja-jp/products/visual-studio-code/)
+- [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
 ## 使い方
 
